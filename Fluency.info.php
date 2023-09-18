@@ -9,7 +9,7 @@ $info = [
   'version' => '090',
   'href' => 'https://github.com/SkyLundy/Fluency.git',
   'icon' => 'language',
-  'summary' => 'Adds integrated third-party content translation to ProcessWire.',
+  'summary' => 'The complete translation suite for ProcessWire.',
   'autoload' => true,
   'singular' => true,
   'requires' => [
@@ -20,7 +20,7 @@ $info = [
     'PHP>=8.1'
   ],
   'permissions' => [
-    'fluency-translate' => 'Use Fluency translation'
+    'fluency-translate' => __('Use Fluency translation')
   ],
   'page' => [
     'name' => 'fluency',

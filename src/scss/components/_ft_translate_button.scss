@@ -9,12 +9,12 @@
     margin-right: 0.3rem;
   }
 
-  .ft-translation-available,
+  .ft-translation-status,
   .ft-translate-button {
     cursor: default;
     font: {
       weight: normal;
-      size: 0.85rem;
+      size: 0.9rem;
     }
   }
 
@@ -27,14 +27,6 @@
   }
 
   .ft-translate-button {
-    background: none;
-    border: none;
-    color: var(--ft-inputfield-translate-button-color);
     cursor: pointer;
-    transition: color 0.3s;
-
-    &:hover {
-      color: var(--ft-inputfield-translate-button-hover-color);
-    }
   }
 }

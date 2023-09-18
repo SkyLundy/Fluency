@@ -22,7 +22,7 @@ final class FluencyLocalization {
       'inputfieldTranslateButtons' => [
         'translateButton' => sprintf(__('Translate from %s'), $defaultLanguageTitle),
         'translate' => __('Translate'),
-        'translationReady' => __('Translation Ready'),
+        'translationAvailable' => __('Translation Available'),
         'languageNotAvailable' => __('Translation is not available for this language'),
         'pageNameNotAvailable' => __('Page names cannot be translated to this language'),
         'translateToAllLanguages' => __('Translate to all languages'),
@@ -30,7 +30,8 @@ final class FluencyLocalization {
         'translateFrom' => __('Translate from:'),
         'translateForm' => [ // The multi-language translate button is a form
         ],
-        'poweredBy' => 'Powered by Fluency'
+        'poweredBy' => 'Powered by Fluency',
+        'showTranslator' => __('Show Translator'),
       ],
       'standaloneTranslator' => [
         'menuName' => __('Translator'),

@@ -36,7 +36,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@gitlab.com:SkyLundy/Fluency-Translation.git"
+    "url": "git@gitlab.com:SkyLundy/Fluency.git"
   },
   "browserslist": [
     "defaults"

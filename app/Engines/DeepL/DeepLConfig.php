@@ -43,27 +43,35 @@ final class DeepLConfig implements FluencyEngineConfig {
                                  ->translation_api_ready ? true : Inputfield::collapsedNever;
 
     return wire('modules')->get('InputfieldFieldset')->add([
-      'deepl_account_type' => [
-        'type' => 'InputfieldSelect',
-        'label' => __('DeepL Account Type'),
-        'description' => __('Select your account type'),
-        'required' => true,
-        'themeBorder' => 'hide',
-        'columnWidth' => 50,
+      'deepl_account_credentials' => [
+        'type' => 'InputfieldFieldset',
+        'label' => __('API Credentials'),
+        'notes' => __('Credentials can be found in your DeepL acocunt at the bottom of this page: https://www.deepl.com/de/account/summary'),
         'collapsed' => $hideCredentialFields,
-        'options' => [
-          'free' => 'Free',
-          'pro' => 'Pro',
+        'children' => [
+          'deepl_account_type' => [
+            'type' => 'InputfieldSelect',
+            'label' => __('DeepL Account Type'),
+            'description' => __('Select your account type'),
+            'required' => true,
+            'themeBorder' => 'hide',
+            'columnWidth' => 50,
+            'collapsed' => Inputfield::collapsedNever,
+            'options' => [
+              'free' => 'Free',
+              'pro' => 'Pro',
+            ]
+          ],
+          'deepl_api_key' => [
+            'type' => 'InputfieldText',
+            'label' => __("DeepL API Key"),
+            'description' => __('Ensure that your API key and account type match.'),
+            'columnWidth' => 50,
+            'required' => true,
+            'collapsed' => Inputfield::collapsedNever,
+            'themeBorder' => 'hide',
+          ],
         ]
-      ],
-      'deepl_api_key' => [
-        'type' => 'InputfieldText',
-        'label' => __("DeepL API Key"),
-        'description' => __('Ensure that your API key and account type match.'),
-        'columnWidth' => 50,
-        'required' => true,
-        'themeBorder' => 'hide',
-        'collapsed' => $hideCredentialFields,
       ],
       // Preserve formatting
       'deepl_preserve_formatting' => [

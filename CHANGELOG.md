@@ -4,7 +4,47 @@
 
 ### _Complete Rewrite_, upgrade recommended for all users.
 
-- Details to follow
+- Support for additional Inputfields added, all types are now supported
+- Support for both TinyMCE and CKEditor fields
+- Language tabs/fields now indicate content change status by adding a
+  colored highlight to more easily determine that all fields have had
+  content updated/translated
+- Front-end markup rendering added. Dropdown to select language/navigate to
+  a language can be rendered, JS can be added to automatically handle
+  functionality. Meta/link tags can be rendered in the `<head>`
+  element for better SEO and standards adherence. The current language code
+  can be rendered for use in the `<html lang="">` property. A list of links
+  to languages can be rendered.
+- All requests to Fluency from the admin client are made to a RESTful module
+  API that provides multiple endpoints
+- Translation services are now modular and added as "Translation Engines" new
+  third party translation services can be added using a built in framework
+  that makes use of Data Transfer Objects to standardize interfaces and
+  provide a better development experience
+- Add Google Cloud Translator to available Translation Engines
+- Translations can now be cached to speed up repeated requests and lower
+  API usage where possible
+- The translation icon next to translate buttons now opens the translation
+  tool overlay when clicked
+- Additional methods added to the module for additional functionality,
+  signatures for existing methods changed to more stable structures to work
+  with more translation services
+- Full support for DeepL's formality feature
+- Strict PHP typing and use of PHP 8.1 syntax and features
+- Full module/method documentation that adhere's to the [ProcessWire API
+  Explorer ProDevTools module](https://processwire.com/store/pro-dev-tools/api-explorer/)
+- JavaScript rewritten using ES modules
+- All styles written in Sass
+- Development tools implemented, Gulp, Prettier, Babel, etc.
+- Full localization for all Fluency interface strings
+- Full error handling and client side messaging
+- Developed using ProcessWire 3.0.218
+
+**UPGRADE INFORMATION**
+Upgrading will require that you configure the module again. This
+includes adding your translation API key and configuring language
+pairing. All content is safe and there is no risk of data loss.
+Just install the new module, configure, and done.
 
 ## 0.3.2 2021-07-03
 
