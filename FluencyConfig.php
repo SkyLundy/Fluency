@@ -135,11 +135,6 @@ class FluencyConfig extends ModuleConfig {
    * @param  array ...$newConfigData Named arguments
    */
   private function saveModuleConfig(...$newConfigData): void {
-    bd([
-      ...(array) $this->getModuleConfig(),
-      ...$newConfigData
-    ]);
-
     $this->modules->saveModuleConfigData('Fluency', [
       ...(array) $this->getModuleConfig(),
       ...$newConfigData
@@ -167,7 +162,7 @@ class FluencyConfig extends ModuleConfig {
     $inputfields = parent::getInputFields();
     $modules = $this->modules;
     $moduleConfig = $this->getModuleConfig();
-bd($moduleConfig);
+
     /**
      * Module Information
      */
