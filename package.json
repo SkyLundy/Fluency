@@ -1,0 +1,47 @@
+{
+  "name": "processwire-fluency-translation",
+  "version": "1.1.0",
+  "description": "Translation integration for ProcessWire",
+  "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "@babel/register": "^7.11.5",
+    "@prettier/plugin-php": "^0.20.1",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babelify": "^10.0.0",
+    "browserify": "^16.5.2",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^6.0.0",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-load-plugins": "^1.5.0",
+    "gulp-mode": "^1.1.0",
+    "gulp-notify": "^4.0.0",
+    "gulp-plumber": "^1.2.1",
+    "gulp-rename": "^1.4.0",
+    "gulp-sass": "^5.0.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-uglify": "^3.0.1",
+    "prettier": "^3.0.3",
+    "sass": "^1.43.4",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0"
+  },
+  "scripts": {
+    "watch": "gulp watch --development",
+    "dev": "gulp build --development",
+    "build": "gulp build --production",
+    "list-tasks": "gulp --tasks"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.com:SkyLundy/Fluency-Translation.git"
+  },
+  "browserslist": [
+    "defaults"
+  ],
+  "author": "Sky Lundy",
+  "private": true,
+  "license": "MIT"
+}

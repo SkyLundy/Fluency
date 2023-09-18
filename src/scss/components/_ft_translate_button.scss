@@ -1,0 +1,40 @@
+// Single language translation field label/button
+.ft-translate-button-container,
+.ft-translation-status-container {
+  margin-top: 1rem;
+
+  .ft-icon {
+    color: var(--ft-inputfield-translate-icon-color);
+    display: inline-block;
+    margin-right: 0.3rem;
+  }
+
+  .ft-translation-available,
+  .ft-translate-button {
+    cursor: default;
+    font: {
+      weight: normal;
+      size: 0.85rem;
+    }
+  }
+
+  .ft-translation-status {
+    color: var(--ft-inputfield-translate-status-color);
+    letter-spacing: 0.01rem;
+    font: {
+      style: italic;
+    }
+  }
+
+  .ft-translate-button {
+    background: none;
+    border: none;
+    color: var(--ft-inputfield-translate-button-color);
+    cursor: pointer;
+    transition: color 0.3s;
+
+    &:hover {
+      color: var(--ft-inputfield-translate-button-hover-color);
+    }
+  }
+}

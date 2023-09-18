@@ -1,0 +1,48 @@
+// Not implemented yet
+.ft-field-translate-form {
+  font-size: 0.85rem;
+  margin-top: 1.25rem;
+
+  form.ft-form {
+    width: 100%;
+
+    label.ft-form-label {
+      display: inline !important;
+      margin-right: 0.5rem;
+
+      select.ft-translation-target-language {
+        background-color: transparent;
+        border: {
+          top: 0;
+          right: 0;
+          bottom: 1px solid lighten($pickled-bluewood, 50);
+          left: 0;
+        }
+        color: $pickled-bluewood;
+        cursor: pointer;
+        font-size: 0.8rem;
+        margin-left: 0.3rem;
+        padding: 0.15rem;
+
+        &:invalid,
+        option[value=''] {
+          color: lighten($pickled-bluewood, 20);
+        }
+      }
+    }
+
+    .ft-translate-button {
+      background-color: transparent;
+      border: 0;
+      color: $cerise-red;
+      cursor: pointer;
+      display: inline;
+      font-weight: normal;
+
+      &:disabled {
+        cursor: default;
+        opacity: 0.5;
+      }
+    }
+  }
+}

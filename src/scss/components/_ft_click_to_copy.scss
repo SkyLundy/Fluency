@@ -1,0 +1,37 @@
+.ft-click-to-copy-container {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  .ft-click-to-copy {
+    background-color: transparent;
+    border: 0;
+    color: var(--ft-click-to-copy-text-default);
+    cursor: pointer;
+    display: inline-block;
+    font: {
+      size: 0.8rem;
+      weight: 400;
+    }
+    margin-left: auto;
+    opacity: 0;
+    pointer-events: none;
+    position: relative;
+    transition: color 0.3s, opacity 0.3s;
+
+    &.visible {
+      opacity: 1;
+      pointer-events: initial;
+    }
+
+    .ft-copy-icon {
+      display: inline-block;
+      margin-left: 0.25rem;
+    }
+
+    &:hover {
+      color: var(--ft-click-to-copy-text-hover);
+    }
+  }
+}

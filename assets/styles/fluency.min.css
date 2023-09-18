@@ -1,0 +1,313 @@
+:root {
+  --ft-white: white;
+  --ft-primary: #3eb998;
+  --ft-primary-light: #60caad;
+  --ft-secondary: #f81e66;
+  --ft-secondary-light: #fa6898;
+  --ft-secondary-dark: #d21846;
+  --ft-text: #354b60;
+  --ft-activity-1: rgba(62, 185, 152, 0.85);
+  --ft-activity-2: rgba(96, 202, 173, 0.85);
+  --ft-activity-animation-background: linear-gradient(
+    90deg,
+    var(--ft-activity-1),
+    var(--ft-activity-2),
+    var(--ft-activity-1),
+    var(--ft-activity-2),
+    var(--ft-activity-1)
+  );
+  --ft-error-1: rgba(255, 102, 108, 0.85);
+  --ft-error-2: rgba(255, 51, 59, 0.8);
+  --ft-activity-message-error-background: linear-gradient(
+    90deg,
+    var(--ft-error-1),
+    var(--ft-error-2),
+    var(--ft-error-1),
+    var(--ft-error-2),
+    var(--ft-error-1)
+  );
+  --ft-activity-message-background: rgba(83, 121, 162, 0.8);
+}
+
+.ft-element-tag {
+  bottom: 0.35rem;
+  left: 0.35rem;
+  background-color: #ffcc00;
+  border-radius: 3px;
+  color: #000000;
+  display: inline;
+  font-size: 0.8rem;
+  opacity: 0.65;
+  padding: 0.25rem 0.5rem;
+  position: relative;
+}
+
+/*
+  Begin animated overlays
+  - Overlays consist of a div element appended to a field/fieldset which is
+    shown during a given operation. The animation is consistent with the
+    name of the operation translated into 9 languages that rapidly cycle
+    during the process to illustrate the multi-language capabilities as a design
+    flare.
+
+*/
+/*
+  Allows the overlay to be contained with position: absolute to it's
+  respective container
+*/
+.ft-activity-overlay-container {
+  position: relative;
+}
+.ft-activity-overlay-container .ft-activity-overlay {
+  align-items: center;
+  outline: 1px solid white;
+  color: white;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition: opacity 0.3s;
+  width: 100%;
+  z-index: 10;
+}
+.ft-activity-overlay-container .ft-activity-overlay.visible {
+  opacity: 1;
+  pointer-events: initial;
+}
+.ft-activity-overlay-container .ft-activity-overlay .ft-activity-animation,
+.ft-activity-overlay-container .ft-activity-overlay .ft-activity-message {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  transition: opacity 1s;
+  font-size: 1.3rem;
+}
+.ft-activity-overlay-container .ft-activity-overlay .ft-activity-message {
+  background-color: var(--ft-activity-message-background);
+  padding: 1rem;
+  text-align: center;
+}
+.ft-activity-overlay-container .ft-activity-overlay.message .ft-activity-message {
+  opacity: 1;
+}
+@keyframes scroll-background-gradient {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+.ft-activity-overlay-container .ft-activity-overlay.message.error .ft-activity-message {
+  animation: scroll-background-gradient 7s reverse linear infinite;
+  background: var(--ft-activity-message-error-background);
+  background-size: 200% 100%;
+}
+.ft-activity-overlay-container .ft-activity-overlay.activity .ft-activity-animation {
+  opacity: 1;
+}
+.ft-activity-overlay-container .ft-activity-overlay .ft-activity-animation {
+  animation: scroll-background-gradient 1.5s linear infinite;
+  background: var(--ft-activity-animation-background);
+  background-size: 200% 100%;
+  letter-spacing: 2px;
+  opacity: 0;
+}
+@keyframes text-rotation {
+  0% {
+    opacity: 0;
+  }
+  1% {
+    opacity: 0;
+    transform: translateY(-25px);
+  }
+  3.5% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  11% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  12.5% {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  20% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.ft-activity-overlay-container .ft-activity-overlay .ft-activity-animation .ft-activity-animation-item {
+  animation: text-rotation 4.05s ease-in-out infinite 0s;
+  opacity: 0;
+  position: absolute;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+.ft-activity-overlay-container .ft-activity-overlay .ft-activity-animation .ft-activity-animation-item:nth-of-type(2) {
+  animation-delay: 0.45s;
+}
+.ft-activity-overlay-container .ft-activity-overlay .ft-activity-animation .ft-activity-animation-item:nth-of-type(3) {
+  animation-delay: 0.9s;
+}
+.ft-activity-overlay-container .ft-activity-overlay .ft-activity-animation .ft-activity-animation-item:nth-of-type(4) {
+  animation-delay: 1.35s;
+}
+.ft-activity-overlay-container .ft-activity-overlay .ft-activity-animation .ft-activity-animation-item:nth-of-type(5) {
+  animation-delay: 1.8s;
+}
+.ft-activity-overlay-container .ft-activity-overlay .ft-activity-animation .ft-activity-animation-item:nth-of-type(6) {
+  animation-delay: 2.25s;
+}
+.ft-activity-overlay-container .ft-activity-overlay .ft-activity-animation .ft-activity-animation-item:nth-of-type(7) {
+  animation-delay: 2.7s;
+}
+.ft-activity-overlay-container .ft-activity-overlay .ft-activity-animation .ft-activity-animation-item:nth-of-type(8) {
+  animation-delay: 3.15s;
+}
+.ft-activity-overlay-container .ft-activity-overlay .ft-activity-animation .ft-activity-animation-item:nth-of-type(9) {
+  animation-delay: 3.6s;
+}
+
+.ft-field-translate-form {
+  font-size: 0.85rem;
+  margin-top: 1.25rem;
+}
+.ft-field-translate-form form.ft-form {
+  width: 100%;
+}
+.ft-field-translate-form form.ft-form label.ft-form-label {
+  display: inline !important;
+  margin-right: 0.5rem;
+}
+.ft-field-translate-form form.ft-form label.ft-form-label select.ft-translation-target-language {
+  background-color: transparent;
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 1px solid #bbcad9;
+  border-left: 0;
+  color: #354b60;
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-left: 0.3rem;
+  padding: 0.15rem;
+}
+.ft-field-translate-form form.ft-form label.ft-form-label select.ft-translation-target-language:invalid,
+.ft-field-translate-form form.ft-form label.ft-form-label select.ft-translation-target-language option[value=""] {
+  color: #597ea2;
+}
+.ft-field-translate-form form.ft-form .ft-translate-button {
+  background-color: transparent;
+  border: 0;
+  color: #f81e66;
+  cursor: pointer;
+  display: inline;
+  font-weight: normal;
+}
+.ft-field-translate-form form.ft-form .ft-translate-button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.Inputfield[data-ft-initialized] .notes {
+  margin-top: 0.75rem;
+}
+
+*[data-ft-initialized] .langTabs li a {
+  border-top: 2px solid var(--ft-white);
+  transition: border-top 0.3s;
+}
+*[data-ft-initialized] .langTabs li a.ft-content-changed {
+  font-style: italic;
+  border-top: 2px solid var(--ft-primary-light);
+}
+
+#ProcessPageEditSettings *[data-ft-initialized] .LanguageSupport {
+  border-left: 2px solid var(--ft-white);
+  padding-left: 1rem;
+  transition: border-left 0.3s;
+}
+#ProcessPageEditSettings *[data-ft-initialized] .LanguageSupport.ft-content-changed {
+  border-left: 2px solid var(--ft-primary-light);
+}
+
+.ft-translate-button-container {
+  margin-top: 1rem;
+}
+.ft-translate-button-container .ft-icon {
+  color: #878787;
+  display: inline-block;
+  margin-right: 0.3rem;
+}
+.ft-translate-button-container .ft-translation-available,
+.ft-translate-button-container .ft-translate-button {
+  cursor: default;
+  font-weight: normal;
+  font-size: 0.9rem;
+}
+.ft-translate-button-container .ft-translation-status {
+  color: #878787;
+  letter-spacing: 0.01rem;
+  font-style: italic;
+}
+.ft-translate-button-container .ft-translate-button {
+  background: none;
+  border: none;
+  color: var(--ft-secondary);
+  cursor: pointer;
+  transition: color 0.3s;
+}
+.ft-translate-button-container .ft-translate-button:hover {
+  color: var(--ft-secondary-dark);
+}
+
+/* Click to copy */
+.ft-click-to-copy {
+  position: relative;
+}
+.ft-click-to-copy:before {
+  align-items: center;
+  background-color: rgba(62, 185, 152, 0.7);
+  color: white;
+  content: "Click to copy";
+  cursor: pointer;
+  display: flex;
+  font-size: 18px;
+  font-weight: 800;
+  height: 100%;
+  justify-content: center;
+  opacity: 0;
+  position: absolute;
+  transition: opacity 0.5s, background-color 0.3s;
+  left: 0;
+  top: 0;
+  width: 100%;
+  z-index: 5;
+}
+.ft-click-to-copy:hover:before {
+  opacity: 1;
+}
+.ft-click-to-copy.copied:before {
+  background-color: rgba(62, 185, 152, 0.9);
+  content: "Copied!";
+}
+
+/* Errors */
+.fluency-admin-view .InputfieldHeader,
+.fluency-admin-view .InputfieldContent {
+  transition: color 0.3s, background 0.3s, background-color 0.3s;
+}
+/*# sourceMappingURL=maps/fluency.min.css.map */

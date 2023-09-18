@@ -1,0 +1,85 @@
+// Colors
+
+// Reds
+$cerise-red: rgb(248, 30, 102); // ProcessWire Pink
+$crimson: rgb(210, 24, 70); // ProcessWire Pink (Dark)
+$brink-pink: rgb(255, 102, 108);
+
+// Greens
+$puerto-rico: rgb(62, 185, 152); // ProcessWire Teal
+$forest-green: rgb(34, 156, 53);
+
+// Blues
+$pickled-bluewood: rgb(53, 75, 96);
+$dodger-blue: rgb(51, 153, 255);
+$wedgewood: rgb(83, 121, 162);
+
+// Grayscales
+$white: rgb(255, 255, 255);
+$monsoon: rgb(135, 135, 135);
+
+:root {
+  // Colors
+  --ft-white: #{$white};
+
+  // Theme
+  --ft-primary: #{$puerto-rico};
+  --ft-primary-light: #{lighten($puerto-rico, 10)};
+
+  --ft-secondary: #{$cerise-red};
+  --ft-secondary-light: #{lighten($cerise-red, 15)};
+  --ft-secondary-dark: #{$crimson};
+
+  --ft-text: #{$pickled-bluewood};
+
+  --ft-activity-1: #{rgba(darken($puerto-rico, 5), 0.85)};
+  --ft-activity-2: #{rgba($puerto-rico, 0.85)};
+  --ft-activity-3: #{rgba(lighten($puerto-rico, 10), 0.85)};
+
+  --ft-activity-animation-background: linear-gradient(
+    90deg,
+    var(--ft-activity-1),
+    var(--ft-activity-2),
+    var(--ft-activity-3),
+    var(--ft-activity-2),
+    var(--ft-activity-1)
+  );
+
+  --ft-error-1: #{rgba($brink-pink, 0.8)};
+  --ft-error-2: #{rgba(darken($brink-pink, 15), 0.8)};
+
+  --ft-activity-animation-error-background: linear-gradient(
+    90deg,
+    var(--ft-error-1),
+    var(--ft-error-2),
+    var(--ft-error-1),
+    var(--ft-error-2),
+    var(--ft-error-1)
+  );
+
+  --ft-flash-error-background: var(--ft-error-1);
+
+  --ft-activity-message-success-background: #{rgba($forest-green, 0.6)};
+
+  --ft-activity-message-background: #{rgba($wedgewood, 0.8)};
+
+  --ft-activity-animation-accent: #{rgba($white, 0.3)};
+
+  --ft-activity-text-color: #{$white};
+
+  --ft-inputfield-state-default-border: 2px solid #{$white};
+
+  --ft-inputfield-state-modified-border: 2px solid #{lighten($puerto-rico, 10)};
+
+  --ft-click-to-copy-text-default: var(--ft-secondary);
+
+  --ft-click-to-copy-text-hover: var(--ft-secondary-dark);
+
+  --ft-inputfield-translate-button-color: var(--ft-secondary);
+
+  --ft-inputfield-translate-button-hover-color: var(--ft-secondary);
+
+  --ft-inputfield-translate-status-color: #{$monsoon};
+
+  --ft-inputfield-translate-icon-color: #{$monsoon};
+}

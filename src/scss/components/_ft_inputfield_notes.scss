@@ -1,0 +1,6 @@
+// Adds space between translation button/indicator when present
+.Inputfield[data-ft-initialized] {
+  .notes {
+    margin-top: 0.75rem;
+  }
+}
