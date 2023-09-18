@@ -13,7 +13,11 @@ trait ValidatesArrayContainsOnlyInstancesOfTrait {
    * @param string       $type Name of instance parent class
    * @throws InvalidArgumentException
    */
-  protected static function validateArrayConainsOnlyInstancesOf(array $data, string $type): void {
+  protected static function validateArrayConainsOnlyInstancesOf(?array $data, string $type): void {
+    if (!$data) {
+      return;
+    }
+
     $result = array_filter($data, fn($item) => $item instanceof $type);
 
     count($result) !== count($data) && throw new InvalidArgumentException(

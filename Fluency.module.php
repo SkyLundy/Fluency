@@ -118,21 +118,13 @@ final class Fluency extends Process implements Module, ConfigurableModule {
     $this->fluencyConfig = (new FluencyConfig())->getConfigData();
     $this->translationCache = new TranslationCache();
     $this->engineLanguagesCache = new EngineLanguagesCache();
-
-    if ($this->config->debug && function_exists('bd')) {
-      bd($this->fluencyConfig);
-      bd($this->page->name);
-      bd($this->page->template->name);
-      bd($this->page->template->title);
-    }
-
-    $this->initializeTranslationEngine();
-    $this->insertPageAssets();
+    $this->config->js('fluency', $this->getClientData());
 
     if (!$this->moduleShouldInit()) {
       return false;
     }
 
+    $this->initializeTranslationEngine();
     $this->insertPageAssets();
   }
 
@@ -141,15 +133,14 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    */
   private function moduleShouldInit(): bool {
     return $this->page->name !== 'login' &&
-           $this->userIsAuthorized() &&
-           $this->inputfieldTranslationIsReady();
+           $this->userIsAuthorized();
   }
 
   /**
    * Creates the Translation Engine, engine config, and engine info objects for the module
    */
   private function initializeTranslationEngine(): void {
-    $selectedEngine = $this->fluencyConfig->selected_engine;
+    $selectedEngine = $this->fluencyConfig?->selected_engine;
 
     if (!$selectedEngine) {
       return;
@@ -163,9 +154,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * User is authorized to use Fluency and translation features
    */
   private function userIsAuthorized(): bool {
-    return $this->user->isSuperuser() ||
-           !$this->fluencyConfig->require_translation_permission ||
-           $this->user->hasPermission('fluency-translate');
+    return $this->user->isSuperuser() || $this->user->hasPermission('fluency-translate');
   }
 
   /**
@@ -186,7 +175,6 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * Insert core styles and scripts for use on pages where Inputfield translation is desired
    */
   private function insertCoreAssets(): void {
-    $this->config->js('fluency', $this->getClientData());
     $this->config->styles->add("{$this->moduleCssPath}fluency_core.min.css");
     $this->config->scripts->add("{$this->moduleJsPath}fluency.bundle.js");
   }
@@ -338,6 +326,10 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * Reference `Fluency/app/DataTransferObjects/ConfiguredLanguageData.php`
    */
   public function getConfiguredLanguageByProcessWireId(int $processWireId): ?ConfiguredLanguageData {
+    if (!$this->translationEngineInfo) {
+      return null;
+    }
+
     $configuredLanguage = $this->{createLanguageConfigName($processWireId, $this->translationEngineInfo)};
 
     // If this ProcessWire language is not configured in Fluency, skip.

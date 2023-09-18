@@ -53,7 +53,6 @@ class FluencyConfig extends ModuleConfig {
       'translation_ready' => false,
       'translation_cache_enabled' => false,
       'translatable_languages_cache_enabled' => false,
-      'require_translation_permission' => false,
       'selected_engine' => null
     ];
   }
@@ -395,17 +394,6 @@ class FluencyConfig extends ModuleConfig {
       'name' => 'fieldset_general_configurations',
       'label' => __('Fluency Options'),
       'children' => [
-        // Require ProcessWire permission
-        'require_translation_permission' => [
-          'type' => 'InputfieldCheckbox',
-          'label' => __('Require ProcessWire Permission'),
-          'label2' => __('Enable User Permission'),
-          'description' => __("When selected, a user/role must be assigned the 'fluency-translate' permission to use any translation features."),
-          'notes' => 'Does not apply to superusers',
-          'collapsed' => Inputfield::collapsedNever,
-          'themeBorder' => 'hide',
-          'columnWidth' => 100,
-        ],
          // Translation caching
         'translation_cache_enabled' => [
           'type' => 'InputfieldCheckbox',

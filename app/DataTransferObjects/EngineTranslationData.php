@@ -68,6 +68,7 @@ final class EngineTranslationData extends FluencyDTO implements Countable {
 
     return new self(...[
       'error' => null,
+      'translations' => [],
       ...$data,
       ...$request->toArray(),
       'fromCache' => false,

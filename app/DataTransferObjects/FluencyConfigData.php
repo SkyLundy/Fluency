@@ -20,7 +20,6 @@ final class FluencyConfigData extends FluencyDTO {
    *                                                      is ready
    * @param bool    $translation_cache_enabled            Translation cache will be used
    * @param bool    $translatable_languages_cache_enabled Translatable Languages  cache will be used
-   * @param bool    $require_translation_permission       Fluency permission is required
    * @param ?object $selected_engine                      The engine selected in Fluency config
    * @param ?object $engine                               Current values for the translation engine
    *                                                      config variables
@@ -30,7 +29,6 @@ final class FluencyConfigData extends FluencyDTO {
     public readonly bool $translation_ready,
     public readonly bool $translation_cache_enabled,
     public readonly bool $translatable_languages_cache_enabled,
-    public readonly bool $require_translation_permission,
     public readonly ?object $selected_engine,
     public readonly ?object $engine
   ) {}
@@ -47,7 +45,6 @@ final class FluencyConfigData extends FluencyDTO {
       'translation_ready' => (bool) $config['translation_ready'],
       'translation_cache_enabled' => (bool) $config['translation_cache_enabled'],
       'translatable_languages_cache_enabled' => (bool) $config['translatable_languages_cache_enabled'],
-      'require_translation_permission' => (bool) $config['require_translation_permission'],
       'engine' => (object) $config['engine'] ??= [],
       'selected_engine' => $config['selected_engine']
     ]);

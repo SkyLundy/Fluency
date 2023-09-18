@@ -29,7 +29,7 @@ final class DeepLConfig implements FluencyEngineConfig {
       'deepl_api_key' => '',
       'deepl_formality' => 'default',
       'deepl_global_ignored_strings' => '',
-      'deepl_preserve_formatting' => 1,
+      'deepl_preserve_formatting' => true,
     ];
   }
 

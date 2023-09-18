@@ -42,10 +42,10 @@ final class EngineTranslatableLanguagesData extends FluencyDTO {
    * {@inheritdoc}
    */
   public static function fromArray(array $data): self {
+    $data['languages'] ??= [];
+
     self::validateErrorIfPresent($data, 'error');
     self::validateArrayConainsOnlyInstancesOf($data['languages'], EngineLanguageData::class);
-
-    $data['languages'] ??= [];
 
     usort($data['languages'], fn($a, $b) => strcmp($a->targetName, $b->targetName));
 
