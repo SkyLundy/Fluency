@@ -21,7 +21,7 @@ class FluencyStandaloneTranslatorFieldset {
     $wrapper = $modules->get('InputfieldWrapper');
 
     // Bail early
-    if (!$fluencyConfig->translation_api_ready) {
+    if (!$fluencyConfig || !$fluencyConfig->translation_api_ready) {
       return $wrapper->add([
         'type' => 'InputfieldMarkup',
         "label" => '!',

@@ -32,7 +32,7 @@ final class DeepLEngine implements FluencyEngine {
 
   private ?string $apiKey;
 
-  private ?bool $preserveFormatting;
+  private bool|string|null $preserveFormatting;
 
   private ?string $globalIgnoredStrings;
 

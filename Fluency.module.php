@@ -119,8 +119,6 @@ final class Fluency extends Process implements Module, ConfigurableModule {
     $this->translationCache = new TranslationCache();
     $this->engineLanguagesCache = new EngineLanguagesCache();
 
-    $this->config->js('fluency', $this->getClientData());
-
     if (!$this->moduleShouldInit()) {
       return false;
     }
@@ -165,6 +163,8 @@ final class Fluency extends Process implements Module, ConfigurableModule {
     if ($this->page->rootParent->id !== 2 ) {
       return;
     }
+
+    $this->config->js('fluency', $this->getClientData());
 
     match ($this->page->name) {
       'module' => $this->insertFluencyConfigPageAssets(),
@@ -263,7 +263,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * @return bool
    */
   public function translationEngineIsReady(): bool {
-    return $this->fluencyConfig->translation_api_ready;
+    return $this->fluencyConfig->translation_api_ready ?? false;
   }
 
   /**

@@ -64,7 +64,7 @@ class FluencyConfig extends ModuleConfig {
    * NOTE: Does not return configured languages.
    */
   public function getConfigData(): ?FluencyConfigData {
-    if ($this->fluencyConfigData) {
+    if (!!$this->fluencyConfigData) {
       return $this->fluencyConfigData;
     }
 
@@ -135,7 +135,15 @@ class FluencyConfig extends ModuleConfig {
    * @param  array ...$newConfigData Named arguments
    */
   private function saveModuleConfig(...$newConfigData): void {
-    $this->modules->saveConfig('Fluency', [...(array) $this->getModuleConfig(), ...$newConfigData]);
+    bd([
+      ...(array) $this->getModuleConfig(),
+      ...$newConfigData
+    ]);
+
+    $this->modules->saveModuleConfigData('Fluency', [
+      ...(array) $this->getModuleConfig(),
+      ...$newConfigData
+    ]);
   }
 
 
@@ -145,7 +153,7 @@ class FluencyConfig extends ModuleConfig {
    * @return object Config as an object
    */
   private function getModuleConfig(): object {
-    return (object) $this->modules->Fluency->data;
+    return (object) [...$this->getDefaults(), ...$this->modules->getModuleConfigData('Fluency')];
   }
 
 
@@ -159,7 +167,7 @@ class FluencyConfig extends ModuleConfig {
     $inputfields = parent::getInputFields();
     $modules = $this->modules;
     $moduleConfig = $this->getModuleConfig();
-
+bd($moduleConfig);
     /**
      * Module Information
      */
@@ -273,7 +281,7 @@ class FluencyConfig extends ModuleConfig {
         return $inputfields;
       }
 
-      $modules->saveModuleConfig(translation_api_ready: true);
+      $this->saveModuleConfig(translation_api_ready: true);
     }
 
     // Get languages if the API
@@ -281,7 +289,7 @@ class FluencyConfig extends ModuleConfig {
 
     // Handle authentication failure, show error message
     if ($engineLanguages->error) {
-      $modules->saveModuleConfig(translation_api_ready: false);
+      $this->saveModuleConfig(translation_api_ready: false);
 
       if (!$engineChanged) {
         $this->wire->error(
@@ -403,7 +411,9 @@ class FluencyConfig extends ModuleConfig {
           'notes' => 'Cached translations are kept for one month.',
           'columnWidth' => 50,
           'defaultValue' => $this->getDefaults()['translation_cache_enabled'],
-          'description' => __('Fluency has the ability to cache translations. Enabling caching can help keep API usage lower and increase the speed of translation when the same content is translated more than once.')
+          'description' => __('Fluency has the ability to cache translations. Enabling caching can help keep API usage lower and increase the speed of translation when the same content is translated more than once.'),
+          'checkedValue' => true,
+          'uncheckedValue' => false
         ],
         // Cache clearing
         'translation_cache_management' => [
@@ -437,7 +447,9 @@ class FluencyConfig extends ModuleConfig {
           'notes' => 'Cached translatable languages are kept for one week.',
           'columnWidth' => 50,
           'defaultValue' => $this->getDefaults()['translatable_languages_cache_enabled'],
-          'description' => __('Fluency can cache the list of languages supported by the third party services in use by Translation Engines. This can speed up some operations where a list of languages is needed from the translation service. If a translation service releases new languages, they will not show up in Fluency module method calls until the cache expires, or the cache is manually cleared here. The list of languages on this config page is not cached')
+          'description' => __('Fluency can cache the list of languages supported by the third party services in use by Translation Engines. This can speed up some operations where a list of languages is needed from the translation service. If a translation service releases new languages, they will not show up in Fluency module method calls until the cache expires, or the cache is manually cleared here. The list of languages on this config page is not cached'),
+          'checkedValue' => true,
+          'uncheckedValue' => false
         ],
         // Cache clearing
         'translatable_languages_cache_management' => [

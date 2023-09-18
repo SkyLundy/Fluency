@@ -50,11 +50,11 @@ final class EngineTranslatableLanguagesData extends FluencyDTO {
     usort($data['languages'], fn($a, $b) => strcmp($a->targetName, $b->targetName));
 
     return new self(...[
+      'error' => null,
       ...$data,
       'fromCache' => false,
       'retrievedAt' => self::newRetrievedAtTimestamp(),
       'message' => self::getMessageIfErrorPresent($data),
-      'error' => null
     ]);
   }
 
