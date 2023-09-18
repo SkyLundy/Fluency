@@ -50,7 +50,6 @@ class FluencyConfig extends ModuleConfig {
   public function getDefaults(): array {
     return [
       'translation_api_ready' => false,
-      'translation_ready' => false,
       'translation_cache_enabled' => false,
       'translatable_languages_cache_enabled' => false,
       'selected_engine' => null
@@ -263,7 +262,7 @@ class FluencyConfig extends ModuleConfig {
 
     // Verify API credentials by getting translatable languages
     // 2 birds, 1 stone
-    if ($moduleConfig->selected_engine && !$moduleConfig->translation_api_ready) {
+    if ($moduleConfig->selected_engine && !$moduleConfig->translation_api_ready || $engineChanged) {
       $engineLanguages = $engine->getLanguages();
 
       if ($engineLanguages->error) {
@@ -407,8 +406,8 @@ class FluencyConfig extends ModuleConfig {
           'columnWidth' => 50,
           'defaultValue' => $this->getDefaults()['translation_cache_enabled'],
           'description' => __('Fluency has the ability to cache translations. Enabling caching can help keep API usage lower and increase the speed of translation when the same content is translated more than once.'),
-          'checkedValue' => true,
-          'uncheckedValue' => false
+          'checkedValue' => 1,
+          'uncheckedValue' => 0
         ],
         // Cache clearing
         'translation_cache_management' => [
@@ -443,8 +442,8 @@ class FluencyConfig extends ModuleConfig {
           'columnWidth' => 50,
           'defaultValue' => $this->getDefaults()['translatable_languages_cache_enabled'],
           'description' => __('Fluency can cache the list of languages supported by the third party services in use by Translation Engines. This can speed up some operations where a list of languages is needed from the translation service. If a translation service releases new languages, they will not show up in Fluency module method calls until the cache expires, or the cache is manually cleared here. The list of languages on this config page is not cached'),
-          'checkedValue' => true,
-          'uncheckedValue' => false
+          'checkedValue' => 1,
+          'uncheckedValue' => 0
         ],
         // Cache clearing
         'translatable_languages_cache_management' => [

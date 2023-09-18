@@ -49,7 +49,7 @@ final class GoogleCloudTranslationEngine implements FluencyEngine {
       ]);
     }
 
-    return $translationRequest::fromArray([
+    return EngineTranslationData::fromArray([
       'request' => $translationRequest,
       'translations' => array_map(
         fn($translation) => $translation->translatedText,
