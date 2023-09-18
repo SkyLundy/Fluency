@@ -1,5 +1,8 @@
 import FtStandaloneTranslatorFieldset from './components/FtStandaloneTranslatorFieldset';
+import FtConfig from './global/FtConfig';
 
 window.addEventListener('load', e => {
-  FtStandaloneTranslatorFieldset.init();
+  if (FtConfig.moduleShouldInitialize()) {
+    FtStandaloneTranslatorFieldset.init();
+  }
 });

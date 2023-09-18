@@ -82,7 +82,7 @@ const FtConfig = (function () {
   const getDefaultLanguage = () =>
     getConfiguredLanguages().reduce(
       (defaultLang, lang) => (lang.default ? lang : defaultLang),
-      null
+      null,
     );
 
   const languageIsTranslatable = languageId =>
@@ -98,7 +98,7 @@ const FtConfig = (function () {
 
     return getConfiguredLanguages().reduce(
       (match, language) => (language.id === pwLanguageId ? language : match),
-      null
+      null,
     );
   };
 
