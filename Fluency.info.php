@@ -20,7 +20,7 @@ $info = [
     'PHP>=8.1'
   ],
   'permissions' => [
-    'fluency-translate' => 'Use Fluency translation'
+    'fluency-translate' => __('Use Fluency translation')
   ],
   'page' => [
     'name' => 'fluency',

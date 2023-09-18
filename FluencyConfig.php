@@ -319,8 +319,11 @@ class FluencyConfig extends ModuleConfig {
     $liMarkup = (object) array_reduce(
       $engineLanguages->languages,
       function ($markup, $language) {
-        $sourceItem = Markup::li("{$language->sourceName} - {$language->sourceCode}");
-        $targetItem = Markup::li("{$language->targetName} - {$language->targetCode}");
+        $sourceCode = strtolower($language->sourceCode);
+        $targetCode = strtolower($language->targetCode);
+
+        $sourceItem = Markup::li("{$language->sourceName} - {$sourceCode}");
+        $targetItem = Markup::li("{$language->targetName} - {$targetCode}");
 
         !in_array($sourceItem, $markup['source']) && ($markup['source'][] = $sourceItem);
         !in_array($targetItem, $markup['target']) && ($markup['target'][] = $targetItem);

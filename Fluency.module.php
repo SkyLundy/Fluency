@@ -131,8 +131,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * Determine if module should initialize
    */
   private function moduleShouldInit(): bool {
-    return $this->page->name !== 'login' &&
-           $this->userIsAuthorized();
+    return $this->page->name !== 'login' && $this->userIsAuthorized();
   }
 
   /**
