@@ -182,6 +182,8 @@ class FluencyConfig extends ModuleConfig {
      * Engine select
      */
 
+    $engineSelected = $moduleConfig->selected_engine;
+
     $fieldset = $modules->InputfieldFieldset;
     $fieldset->label = __('Translation Engine Configuration');
     $fieldset->collapsed = Inputfield::collapsedNever;
@@ -191,13 +193,15 @@ class FluencyConfig extends ModuleConfig {
         'label' => __('Select Engine'),
         'collapsed' =>  Inputfield::collapsedNever,
         'themeBorder' => 'hide',
-        'description' =>  __("Choose a translation engine to configure and use Fluency"),
+        'description' => __('Each translation engine uses a differend third party service. Each have their own set of features and languages that they translate. Features and abilities will vary depending on the Translation Engine chosen. Use the one that best suits your application.'),
+        'notes' => $engineSelected ? null
+                                   : __('You must choose a translation engine and save the page to continue configuring Fluency'),
         'required' => true,
         'options' => $this->createTranslationEngineOptions()
       ]
     ]);
 
-    if (!$moduleConfig->selected_engine) {
+    if (!$engineSelected) {
       return $inputfields->add($fieldset);
     }
 
