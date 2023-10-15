@@ -37,11 +37,17 @@ const FtUiElements = (function () {
    * @return {Element}
    */
   const createIcon = () => {
+    const iconLink = document.createElement('a');
+    iconLink.setAttribute('href', `${ProcessWire.config.urls.admin}fluency/?modal=1`);
+    iconLink.setAttribute('class', 'pw-modal pw-modal-large');
+
     const icon = document.createElement('i');
     icon.setAttribute('class', `${elementClasses.icon} fa fa-language`);
-    icon.setAttribute('title', uiText.poweredBy);
+    icon.setAttribute('title', uiText.showTranslator);
 
-    return icon;
+    iconLink.appendChild(icon);
+
+    return iconLink;
   };
 
   /**
@@ -69,15 +75,12 @@ const FtUiElements = (function () {
    * @return {Object} Container element and Button element
    */
   const createTranslateButton = text => {
-    const button = document.createElement('button');
+    const button = document.createElement('a');
     button.innerText = text;
     button.setAttribute('class', elementClasses.translateButton.button);
 
     const container = document.createElement('div');
     container.setAttribute('class', elementClasses.translateButton.container);
-
-    const icon = document.createElement('i');
-    icon.setAttribute('class', 'ft-icon fa fa-language');
 
     container.appendChild(createIcon());
     container.appendChild(button);

@@ -39,7 +39,7 @@ const FtInputfieldTranslateButton = function (inputfield, inputContainers) {
 
     // Translatable, default language
     if (isTranslatable && isDefaultLanguage) {
-      inputContainer.appendChild(FtUiElements.createStatusElement(uiText.translationReady));
+      inputContainer.appendChild(FtUiElements.createStatusElement(uiText.translationAvailable));
     }
 
     // Not translatable
@@ -68,7 +68,7 @@ const FtInputfieldTranslateButton = function (inputfield, inputContainers) {
       Fluency.getTranslation(
         FtConfig.getDefaultLanguage().engineLanguage.sourceCode,
         languageConfig.engineLanguage.targetCode,
-        inputfield.getValueForDefaultLanguage()
+        inputfield.getValueForDefaultLanguage(),
       ).then(result => {
         if (result.error) {
           inputfield.getActivityOverlay().showError(result.message);
