@@ -24,9 +24,11 @@
 - Add Google Cloud Translator to available Translation Engines
 - Translations can now be cached to speed up repeated requests and lower
   API usage where possible
-- Additional methods added for additional functionality, signatures for
-  existing methods changed to more stable structures to work with more
-  translation services
+- The translation icon next to translate buttons now opens the translation
+  tool overlay when clicked
+- Additional methods added to the module for additional functionality,
+  signatures for existing methods changed to more stable structures to work
+  with more translation services
 - Full support for DeepL's formality feature
 - Strict PHP typing and use of PHP 8.1 syntax and features
 - Full module/method documentation that adhere's to the [ProcessWire API
@@ -36,6 +38,7 @@
 - Development tools implemented, Gulp, Prettier, Babel, etc.
 - Full localization for all Fluency interface strings
 - Full error handling and client side messaging
+- Developed using ProcessWire 3.0.218
 
 **UPGRADE INFORMATION**
 Upgrading will require that you configure the module again. This
