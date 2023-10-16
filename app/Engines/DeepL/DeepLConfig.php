@@ -106,7 +106,7 @@ final class DeepLConfig implements FluencyEngineConfig {
       'deepl_global_ignored_strings' => [
         'type' => 'InputfieldTextarea',
         'label' => __('Global Non-Translated Strings'),
-        'notes' => __('Provide multiple strings as comma separated values, case sensitive'),
+        'notes' => __('Provide multiple strings separated with a || (double pipe). Values are case sensitive. Spaces before and after double pipes can be added for readability, e.g. foo || bar'),
         'themeBorder' => 'hide',
         'defaultValue' => $defaults['deepl_global_ignored_strings'],
         'description' => __('Add strings here that will not be translated. This is useful for things like brand names.')

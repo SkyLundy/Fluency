@@ -16,7 +16,7 @@ final class EngineLanguagesCache {
 
   public const CACHE_NAMESPACE = 'Fluency.EngineLanguages';
 
-  private const CACHE_EXPIRY = WireCache::expireWeekly;
+  private const CACHE_EXPIRY = WireCache::expireNever;
 
   private WireCache $cache;
 

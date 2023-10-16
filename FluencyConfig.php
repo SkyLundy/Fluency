@@ -51,7 +51,6 @@ class FluencyConfig extends ModuleConfig {
     return [
       'translation_api_ready' => false,
       'translation_cache_enabled' => false,
-      'translatable_languages_cache_enabled' => false,
       'selected_engine' => null
     ];
   }
@@ -439,25 +438,12 @@ class FluencyConfig extends ModuleConfig {
             ]
           ]
         ],
-         // Translatable languages caching
-        'translatable_languages_cache_enabled' => [
-          'type' => 'InputfieldCheckbox',
-          'label' => __('Enable Translatable Languages Caching'),
-          'collapsed' => Inputfield::collapsedNever,
-          'themeBorder' => 'hide',
-          'notes' => 'Cached translatable languages are kept for one week.',
-          'columnWidth' => 50,
-          'defaultValue' => $this->getDefaults()['translatable_languages_cache_enabled'],
-          'description' => __('Fluency can cache the list of languages supported by the third party services in use by Translation Engines. This can speed up some operations where a list of languages is needed from the translation service. If a translation service releases new languages, they will not show up in Fluency module method calls until the cache expires, or the cache is manually cleared here. The list of languages on this config page is not cached'),
-          'checkedValue' => 1,
-          'uncheckedValue' => 0
-        ],
         // Cache clearing
         'translatable_languages_cache_management' => [
           'type' => 'InputfieldMarkup',
-          'label' => __('Translation Cache Management'),
-          'collapsed' => $moduleConfig->translatable_languages_cache_enabled ? Inputfield::collapsedNever
-                                                                             : Inputfield::collapsedHidden,
+          'label' => __('Translatable Languages Cache Management'),
+          'description' => __('Fluency caches the list of languages a third party supports. If a translation service introduces a language that is not available in Fluency, clear this cache.'),
+          'collapsed' => Inputfield::collapsedNever,
           'columnWidth' => 50,
           'themeBorder' => 'hide',
           'themeColor' => 'none',
@@ -471,7 +457,6 @@ class FluencyConfig extends ModuleConfig {
             'value' => 1,
             'attributes' => [
               'icon' => 'bomb',
-              // CHANGE TO addClass
               'class' => $modules->InputfieldButton->getAttribute('class') . ' js-ft-clear-translatable-languages-cache'
             ]
           ]
