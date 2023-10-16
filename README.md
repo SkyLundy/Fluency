@@ -29,6 +29,10 @@ etc. can all be translated into the language the website is built in.
 
 Translation service usage can be controlled by enabling the user permission requirement on the module config page and assigning the `fluency-translate` permission.
 
+### Changes and Updates
+
+Check out the `CHANGELOG.md` file for an always up-to-date list of features and changes.
+
 ## Translation Engines
 
 Fluency is modular. It contains a framework for adding additional third party services as "Translation Engines". You can choose which Translation Engine you prefer and provide the credentials to connect via their API. Currently Fluency has the ability to use [DeepL](https://www.deepl.com) and [Google Cloud](https://cloud.google.com/translate)

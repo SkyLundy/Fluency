@@ -38,6 +38,7 @@ use Fluency\DataTransferObjects\{
   TranslationRequestData
 };
 use InvalidArgumentException;
+use stdClass;
 
 use function Fluency\Functions\createLanguageConfigName;
 
@@ -405,7 +406,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    *
    * @return array Array with all data needed by client UI scripts.
    */
-  public function getClientData(): object {
+  public function getClientData(): stdClass {
     return (object) [
       'apiEndpoints' => $this->getApiEndpoints(),
       'configuredLanguages' => $this->getConfiguredLanguages(),
@@ -833,14 +834,10 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * Reference `Fluency/app/DataTransferObjects/EngineTranslatableLanguagesData.php`
    */
   public function getTranslatableLanguages(): EngineTranslatableLanguagesData {
-    if ($this->fluencyConfig->translatable_languages_cache_enabled) {
       return $this->engineLanguagesCache->getOrStoreNew(
         $this->translationEngineInfo->configId,
         fn() => $this->translationEngine->getLanguages()
       );
-    }
-
-    return $this->translationEngine->getLanguages();
   }
 
   /**
@@ -894,7 +891,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    *
    * @return object
    */
-  public function getApiEndpoints(): object {
+  public function getApiEndpoints(): stdClass {
     return (object) [
       'endpoints' => "{$this->urls->admin}fluency/api/",
       'usage' => "{$this->urls->admin}fluency/api/usage/",

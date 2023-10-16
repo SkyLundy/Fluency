@@ -91,7 +91,7 @@ final class DeepLConfig implements FluencyEngineConfig {
       'deepl_formality' => [
         'type' => 'InputfieldSelect',
         'label' => __('Formality'),
-        'description' => __("DeepL has the ability to adjust formality for some languages. This can change the tone of the translation and may help better suit how it is used in your website or application. Languages that don't support formality will not be affected."),
+        'description' => __("DeepL has the ability to adjust formality for some languages. This can change the tone of the translation and may help better suit how it is used in your website or application. Languages that don't support formality will not be affected. For a list of supported langauges, visit the service documentation link above."),
         'required' => true,
         'columnWidth' => 50,
         'themeBorder' => 'hide',
@@ -106,7 +106,7 @@ final class DeepLConfig implements FluencyEngineConfig {
       'deepl_global_ignored_strings' => [
         'type' => 'InputfieldTextarea',
         'label' => __('Global Non-Translated Strings'),
-        'notes' => __('Provide multiple strings as comma separated values, case sensitive'),
+        'notes' => __('Provide multiple strings separated with a || (double pipe). Values are case sensitive. Spaces before and after double pipes can be added for readability, e.g. foo || bar'),
         'themeBorder' => 'hide',
         'defaultValue' => $defaults['deepl_global_ignored_strings'],
         'description' => __('Add strings here that will not be translated. This is useful for things like brand names.')

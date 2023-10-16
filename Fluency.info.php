@@ -7,7 +7,7 @@ namespace ProcessWire;
 $info = [
   'title' => 'Fluency',
   'version' => '090',
-  'href' => 'https://github.com/SkyLundy/Fluency.git',
+  'href' => 'https://processwire.com/talk/topic/24567-fluency-integrated-deepl-powered-content-translation',
   'icon' => 'language',
   'summary' => 'The complete translation suite for ProcessWire.',
   'autoload' => true,

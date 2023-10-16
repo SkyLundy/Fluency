@@ -1,11 +1,15 @@
 # Fluency for ProcessWire Changelog
 
-## 0.9 2023-09-17
+## 0.9.0b 2023-10-17
 
 ### _Complete Rewrite_, upgrade recommended for all users.
 
+- Version bumped to 0.9.0 beta
 - Support for additional Inputfields added, all types are now supported
 - Support for both TinyMCE and CKEditor fields
+- Field for entering excluded strings for the DeepL translation engine on the
+  module config page now uses || (double pipe) to separate strings rather
+  that a comma since that is punctuation that could exist in an excludes string
 - Language tabs/fields now indicate content change status by adding a
   colored highlight to more easily determine that all fields have had
   content updated/translated
@@ -22,10 +26,17 @@
   that makes use of Data Transfer Objects to standardize interfaces and
   provide a better development experience
 - Add Google Cloud Translator to available Translation Engines
+- Translation engines provide individual versioning information and developer
+  credits
 - Translations can now be cached to speed up repeated requests and lower
   API usage where possible
+- Translatable languages are now permanently cached until cleared on the module
+  config page
 - The translation icon next to translate buttons now opens the translation
-  tool overlay when clicked
+  tool overlay when clicked. Credit to @BernhardBaumrock for the suggesion
+- Translate buttons below fields are now links that are styled with the admin
+  rather than button elements with specified styles. Credit to @BernhardBaumrock
+  for the suggestion.
 - Additional methods added to the module for additional functionality,
   signatures for existing methods changed to more stable structures to work
   with more translation services
@@ -39,6 +50,7 @@
 - Full localization for all Fluency interface strings
 - Full error handling and client side messaging
 - Developed using ProcessWire 3.0.218
+- Updated README.md
 
 **UPGRADE INFORMATION**
 Upgrading will require that you configure the module again. This

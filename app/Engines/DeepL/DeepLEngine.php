@@ -16,6 +16,7 @@ use Fluency\DataTransferObjects\{
 };
 use Fluency\Engines\FluencyEngine;
 use Fluency\Engines\Traits\LogsEngineData;
+use stdClass;
 
 use function \ProcessWire\wire;
 
@@ -201,7 +202,7 @@ final class DeepLEngine implements FluencyEngine {
     string $endpoint,
     string $method = 'GET',
     array $data = []
-  ): object {
+  ): stdClass {
     $requestUrl = "{$this->apiUrl}{$endpoint}?auth_key={$this->apiKey}";
 
     // WireHttp/http_build_query were not used as DeepL uses multipe 'data' keys queries for
@@ -291,26 +292,23 @@ final class DeepLEngine implements FluencyEngine {
   /**
    * Adds the tag that prevents DeepL from translating specified words/phrases.
    *
-   * @param array  $texts          Array of strings to add ignored tags to
+   * @param array        $texts          Array of content to add ignored tags to
+   * @param array|string $ignored
    */
   private function addIgnoredTags(array $texts, array|string $ignoredStrings = []): array {
     is_string($ignoredStrings) && $ignoredStrings = explode(',', $ignoredStrings);
 
-    $globalIgnoredStrings = explode(',', $this->globalIgnoredStrings);
+    $ignoredStrings = array_map('trim', [
+      ...explode('||', $this->globalIgnoredStrings),
+      ...$ignoredStrings
+    ]);
 
-    $allIgnoredStrings = array_merge($globalIgnoredStrings, $ignoredStrings);
-    $allIgnoredStrings = array_map('trim', $allIgnoredStrings);
-
-    return array_map(function($value) use ($allIgnoredStrings) {
-      return array_reduce($allIgnoredStrings, function($text, $ignored) {
-        $ignoredTagName = self::IGNORED_TAG_NAME;
-
+    return array_map(function($value) use ($ignoredStrings) {
+      return array_reduce($ignoredStrings, function($text, $ignored) {
         preg_match_all('/' . preg_quote($ignored) . '/', $text, $matches);
 
-        if (count($matches)) {
-          $match = end($matches[0]);
-
-          $text = str_replace($match, "<{$ignoredTagName}>{$match}</{$ignoredTagName}>", $text);
+        if (count($matches[0])) {
+          return $text = str_replace($ignored, "<span translate=\"no\">{$ignored}</span>", $text);
         }
 
         return $text;
@@ -325,12 +323,6 @@ final class DeepLEngine implements FluencyEngine {
    * @return string
    */
   private function removeIgnoredTags(array $texts): array {
-    return array_map(function($text) {
-      $tagPattern = '/(<\/?' . self::IGNORED_TAG_NAME . '>)/';
-
-      $clean = preg_replace($tagPattern, '', $text);
-
-      return $clean;
-    }, $texts);
+    return array_map(fn($text) => preg_replace('/<\/?span( translate="no")?>/', '', $text), $texts);
   }
 }
