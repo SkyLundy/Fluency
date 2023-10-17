@@ -34,6 +34,7 @@
   that makes use of Data Transfer Objects to standardize interfaces and
   provide a better development experience
 - Add Google Cloud Translator to available Translation Engines
+  <<<<<<< HEAD
 - Translation engines provide individual versioning information and developer
   credits
 - Translations can now be cached to speed up repeated requests and lower
@@ -45,6 +46,13 @@
 - Translate buttons below fields are now links that are styled with the admin
   rather than button elements with specified styles. Credit to @BernhardBaumrock
   for the suggestion.
+  =======
+- Translations can now be cached to speed up repeated requests and lower
+  API usage where possible
+- Translatable languages are now permanently cached until cleared on the module config page
+- The translation icon next to translate buttons now opens the translation
+  tool overlay when clicked
+  > > > > > > > main
 - Additional methods added to the module for additional functionality,
   signatures for existing methods changed to more stable structures to work
   with more translation services
