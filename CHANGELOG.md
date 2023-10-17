@@ -1,5 +1,13 @@
 # Fluency for ProcessWire Changelog
 
+## 0.9.1b 2023-10-17
+
+### Bugfixes, enhancement
+
+- Removed hard-coded color for click to copy links. Credit to @BernhardBaumrock for finding the issue
+- Added UIKit tooltip for translation tool button icon next to translation triggers. Credit to @BernhardBaumrock for the suggesion
+- Version bumped to 0.9.1 beta
+
 ## 0.9.0b 2023-10-17
 
 ### _Complete Rewrite_, upgrade recommended for all users.

@@ -5,20 +5,20 @@
   justify-content: space-between;
 
   .ft-click-to-copy {
-    background-color: transparent;
-    border: 0;
-    color: var(--ft-click-to-copy-text-default);
     cursor: pointer;
     display: inline-block;
     font: {
       size: 0.8rem;
       weight: 400;
     }
-    margin-left: auto;
+    margin: {
+      left: auto;
+      right: 0.75rem;
+    }
     opacity: 0;
     pointer-events: none;
     position: relative;
-    transition: color 0.3s, opacity 0.3s;
+    transition: opacity 0.3s;
 
     &.visible {
       opacity: 1;
@@ -27,11 +27,7 @@
 
     .ft-copy-icon {
       display: inline-block;
-      margin-left: 0.25rem;
-    }
-
-    &:hover {
-      color: var(--ft-click-to-copy-text-hover);
+      margin-left: 0.35rem;
     }
   }
 }

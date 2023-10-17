@@ -15,7 +15,7 @@ const FtStandaloneTranslatorFieldset = (function () {
    */
   const init = () => {
     const translationApiUsageTables = document.querySelectorAll(
-      `.ft-standalone-translator:not([${initializedAttr}])`
+      `.ft-standalone-translator:not([${initializedAttr}])`,
     );
 
     [...translationApiUsageTables].forEach(usageTableEl => {
@@ -155,14 +155,17 @@ const initializeStandaloneTranslatorFieldset = function (fieldset) {
   this.addCopyContentButton = () => {
     const copyButtonClass = translatorEls.copyButton;
 
-    translatorEls.copyButton = document.createElement('button');
+    translatorEls.copyButton = document.createElement('a');
     translatorEls.copyButton.setAttribute('class', copyButtonClass);
-    translatorEls.copyButton.innerText = uiText.clickToCopy;
 
     const copyIcon = document.createElement('i');
     copyIcon.setAttribute('class', 'ft-copy-icon fa fa-fw fa-clone');
 
-    translatorEls.copyButton.appendChild(copyIcon);
+    const copyText = document.createElement('span');
+    copyText.innerText = uiText.clickToCopy;
+    copyText.setAttribute('class', 'ft--copy-text');
+
+    translatorEls.copyButton.append(copyText, copyIcon);
 
     const inputfieldHeader =
       translatorEls.translatedContentInputfield.querySelector('.InputfieldHeader');
@@ -208,20 +211,20 @@ const initializeStandaloneTranslatorFieldset = function (fieldset) {
 
   this.createInputControllers = () => {
     sourceLanguageSelectController = new languageSelectController(
-      translatorEls.sourceLanguageSelect
+      translatorEls.sourceLanguageSelect,
     );
 
     targetLanguageSelectController = new languageSelectController(
-      translatorEls.targetLanguageSelect
+      translatorEls.targetLanguageSelect,
     );
 
     sourceContentController = new translationContentController(
-      translatorEls.sourceContentInputfield
+      translatorEls.sourceContentInputfield,
     );
 
     translatedContentController = new translationContentController(
       translatorEls.translatedContentInputfield,
-      this.toggleCopyContentButton
+      this.toggleCopyContentButton,
     );
   };
 

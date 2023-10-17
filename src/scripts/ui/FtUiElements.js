@@ -43,7 +43,7 @@ const FtUiElements = (function () {
 
     const icon = document.createElement('i');
     icon.setAttribute('class', `${elementClasses.icon} fa fa-language`);
-    icon.setAttribute('title', uiText.showTranslator);
+    icon.setAttribute('uk-tooltip', uiText.showTranslator);
 
     iconLink.appendChild(icon);
 
