@@ -29,7 +29,8 @@ use Fluency\Components\{
 };
 use Fluency\Engines\FluencyEngine;
 use Fluency\DataTransferObjects\{
-  ConfiguredLanguageData,
+    AllConfiguredLanguagesData,
+    ConfiguredLanguageData,
   EngineApiUsageData,
   EngineInfoData,
   EngineTranslatableLanguagesData,
@@ -43,8 +44,7 @@ use stdClass;
 use function Fluency\Functions\createLanguageConfigName;
 
 /**
- *
- * #pw-summary A translation service integration module for ProcessWire
+ * #pw-summary The complete translation suite module for ProcessWire
  *
  * #pw-body =
  *
@@ -83,9 +83,9 @@ final class Fluency extends Process implements Module, ConfigurableModule {
 
   /**
    * Memoizing Fluency::getConfiguredLanguages() output
-   * @var array<int, object>|null
+   * @var AllConfiguredLanguagesData|null
    */
-  private ?array $configuredLanguages = null;
+  private ?AllConfiguredLanguagesData $configuredLanguages = null;
 
 
   /**
@@ -271,17 +271,18 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    */
 
   /**
-   * Get all ProcessWire languages configured in Fluency as array of ConfiguredLanguageData objects
-   *
-   * Return array contains a ConfiguredLanguageData object for each Fluency configured language.
+   * Get all ProcessWire languages configured in Fluency
+   * Return AllConfiguredLanguagesData object contains methods to access specific configured
+   * languages by property/value
    *
    * #pw-group-Fluency-Module-Configuration-Data
    *
-   * @return array<ConfiguredLanguageData>
+   * @return AllConfiguredLanguagesData
    *
-   * Reference `Fluency/app/DataTransferObjects/ConfiguredLanguageData.php`
+   * Reference `Fluency/app/DataTransferObjects/AllConfiguredLanguagesData.php`
+   * and `Fluency/app/DataTransferObjects/ConfiguredLanguageData.php`
    */
-  public function getConfiguredLanguages(): array {
+  public function getConfiguredLanguages(): AllConfiguredLanguagesData {
     $engineInfo = $this->translationEngineInfo;
 
     if (!$engineInfo?->configId) {
@@ -307,27 +308,32 @@ final class Fluency extends Process implements Module, ConfigurableModule {
 
     $processWireLanguages = array_values($this->languages->getIterator()->getArray());
 
-    // Create an array of Fluency configured language object from an  array of ProcessWire languages
-    return $this->configuredLanguages = array_reduce(
+    $languages = array_reduce(
       $processWireLanguages,
       $createConfiguredLanguage,
       []
     );
+
+    // Create an array of Fluency configured language object from an  array of ProcessWire languages
+    return $this->configuredLanguages = AllConfiguredLanguagesData::fromArray([
+      'languages' => $languages,
+    ]);
   }
 
   /**
    * Gets a language configured in Fluency using it's ProcessWire ID
+   * Internal use only.
    *
-   * Returns null if language is not configured within Fluency
-   *
-   * #pw-group-Fluency-Module-Configuration-Data
+   * #pw-internal
    *
    * @param  int $processWireId ProcessWire language ID
-   * @return ConfiguredLanguageData|null
+   * @return ConfiguredLanguageData|null  Null if language is not configured within Fluency
    *
    * Reference `Fluency/app/DataTransferObjects/ConfiguredLanguageData.php`
    */
-  public function getConfiguredLanguageByProcessWireId(int $processWireId): ?ConfiguredLanguageData {
+  private function getConfiguredLanguageByProcessWireId(
+    int $processWireId
+  ): ?ConfiguredLanguageData {
     if (!$this->translationEngineInfo) {
       return null;
     }
@@ -373,9 +379,11 @@ final class Fluency extends Process implements Module, ConfigurableModule {
       array_values($this->languages->getIterator()->getArray())
     );
 
+    $configuredLanguages = $this->getConfiguredLanguages();
+
     $unconfiguredLanguages = array_filter(
       $languageIds,
-      fn($languageId) => !$this->getConfiguredLanguageByProcessWireId($languageId)
+      fn($languageId) => !$configuredLanguages->getByProcessWireId($languageId)
     );
 
     return $this->unconfiguredLanguages = array_values($unconfiguredLanguages);
@@ -390,12 +398,9 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    *
    * Reference `Fluency/app/DataTransferObjects/ConfiguredLanguageData.php`
    */
-  public function getDefaultConfiguredLanguage(): ?ConfiguredLanguageData {
-    return array_reduce(
-      $this->getConfiguredLanguages(),
-      fn($default, $language) => $default = $language->default ? $language : $default
-    );
-  }
+  // public function getDefaultConfiguredLanguage(): ?ConfiguredLanguageData {
+  //   return $this->getConfiguredLanguages()->getDefault();
+  // }
 
 
   /**
@@ -409,10 +414,13 @@ final class Fluency extends Process implements Module, ConfigurableModule {
   public function getClientData(): stdClass {
     return (object) [
       'apiEndpoints' => $this->getApiEndpoints(),
-      'configuredLanguages' => $this->getConfiguredLanguages(),
+      'configuredLanguages' => $this->getConfiguredLanguages()->languages,
       'unconfiguredLanguages' => $this->getUnconfiguredLanguages(),
       'localization' => Localization::getAll(),
-      'engine' => $this->getTranslationEngineInfo()
+      'engine' => $this->getTranslationEngineInfo(),
+      'interface' => [
+        'inputfieldTranslationAction' => $this->fluencyConfig->inputfield_translation_action,
+      ],
     ];
   }
 
@@ -649,7 +657,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
         'title' => $language->title,
         'isCurrentLanguage' => $language->id === $this->user->language->id
       ],
-      $this->getConfiguredLanguages()
+      $this->getConfiguredLanguages()->languages
     );
   }
 
@@ -1087,4 +1095,3 @@ final class Fluency extends Process implements Module, ConfigurableModule {
     }
   }
 }
-

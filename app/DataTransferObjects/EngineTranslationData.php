@@ -7,7 +7,6 @@ namespace Fluency\DataTransferObjects;
 use \InvalidArgumentException;
 use Countable;
 use Fluency\DataTransferObjects\Traits\CreatesRetrievedAtTimestampTrait;
-use Fluency\App\FluencyErrors;
 use Fluency\DataTransferObjects\{ FluencyDTO, TranslationRequestData };
 
 /**

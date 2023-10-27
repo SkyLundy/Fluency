@@ -21,6 +21,7 @@ final class FluencyLocalization {
     $values = json_encode([
       'inputfieldTranslateButtons' => [
         'translateButton' => sprintf(__('Translate from %s'), $defaultLanguageTitle),
+        'translateToAllButton' => __('Translate to all languages'),
         'translate' => __('Translate'),
         'translationAvailable' => __('Translation Available'),
         'languageNotAvailable' => __('Translation is not available for this language'),

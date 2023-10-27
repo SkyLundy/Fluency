@@ -11,7 +11,11 @@ import FtUiElements from './FtUiElements';
  * inputfield and activityOverlay objects passed.
  */
 
-const FtInputfieldTranslateButton = function (inputfield, inputContainers) {
+const FtInputfieldTranslateButton = function (
+  inputfield,
+  inputContainers,
+  forceEachTranslationAction = false,
+) {
   /**
    * Gets all localized strings from the FluencyConfig object
    * @type {object}
@@ -19,7 +23,7 @@ const FtInputfieldTranslateButton = function (inputfield, inputContainers) {
   const uiText = FtConfig.getUiTextFor('inputfieldTranslateButtons');
 
   /**
-   * Add
+   * Adds translate elements to inputfield containers
    * @param  {string|int} languageId     ProcessWire language ID
    * @param  {Element}    inputContainer Inputcontainer for this language
    * @return {void}
@@ -58,6 +62,12 @@ const FtInputfieldTranslateButton = function (inputfield, inputContainers) {
     buttonElement.addEventListener('click', e => {
       e.preventDefault();
 
+      const translationSourceContent = inputfield.getValueForDefaultLanguage();
+
+      if (!translationSourceContent) {
+        return;
+      }
+
       // Try to get the inputfield activity overlay, fall back to retrieving by language ID where
       // the inputfield element can delegate to a specific activity overlay located within it
       const activityOverlay =
@@ -68,7 +78,7 @@ const FtInputfieldTranslateButton = function (inputfield, inputContainers) {
       Fluency.getTranslation(
         FtConfig.getDefaultLanguage().engineLanguage.sourceCode,
         languageConfig.engineLanguage.targetCode,
-        inputfield.getValueForDefaultLanguage(),
+        translationSourceContent,
       ).then(result => {
         if (result.error) {
           inputfield.getActivityOverlay().showError(result.message);
@@ -84,11 +94,112 @@ const FtInputfieldTranslateButton = function (inputfield, inputContainers) {
   };
 
   /**
+   * Creates the "Translate to all" button and adds it to the inputfield
+   *
+   * @param  {int}          sourceLanguageId     ProcessWire language ID
+   * @param  {HTMLElements} inputContainers      All language input containers for this inputfield
+   * @return {void}
+   */
+  this.addTranslateToAllButton = (sourceLanguageId, inputContainers) => {
+    const sourceInputContainer = inputContainers[sourceLanguageId];
+
+    const { button, container } = FtUiElements.createTranslateButton(uiText.translateToAllButton);
+
+    this.bindTranslateToAllButton(
+      button,
+      FtConfig.getLanguageForId(sourceLanguageId),
+      inputContainers,
+    );
+
+    sourceInputContainer.appendChild(container);
+  };
+
+  /**
+   * Binds translation action to button that translates to all other languages
+   *
+   * @param  {Element}  buttonElement        [description]
+   * @param  {object}   sourceLanguageConfig The FtConfig object for the source language
+   * @param  {HTMLElements} inputContainers      All language input containers for this inputfield
+   * @return {void}
+   */
+  this.bindTranslateToAllButton = (buttonElement, sourceLanguageConfig, inputContainers) => {
+    buttonElement.addEventListener('click', e => {
+      e.preventDefault();
+
+      const translationSourceContent = inputfield.getValueForLanguage(sourceLanguageConfig.id);
+
+      // Do not translate if there's no source content or risk content in other languages to
+      // be removed
+      if (!translationSourceContent) {
+        return;
+      }
+
+      // Used to count the number of languages left when translating to all
+      let translationLanguageCount = Object.keys(inputContainers).length;
+
+      let errorOccurred = false;
+
+      let activityOverlay = inputfield.getActivityOverlay();
+
+      activityOverlay.showActivity();
+
+      for (let targetLanguageId in inputContainers) {
+        // No need to translate self
+        if (targetLanguageId === sourceLanguageConfig.id) {
+          continue;
+        }
+
+        let targetLanguageConfig = FtConfig.getLanguageForId(targetLanguageId);
+
+        Fluency.getTranslation(
+          sourceLanguageConfig.engineLanguage.sourceCode,
+          targetLanguageConfig.engineLanguage.targetCode,
+          translationSourceContent,
+        )
+          .then(result => {
+            if (result.error) {
+              // Only show the error overlay if an error has not already occurred
+              if (!errorOccurred) {
+                inputfield.getActivityOverlay().showError(result.message);
+              }
+
+              errorOccurred = true;
+
+              return;
+            }
+
+            inputfield.setValueForLanguage(targetLanguageConfig.id, result.translations[0]);
+          })
+          .then(result => {
+            translationLanguageCount--;
+
+            // If an error occurred, messaging/overlay will be handled by the error process
+            if (translationLanguageCount === 0 && !errorOccurred) {
+              activityOverlay.hide();
+            }
+          });
+      }
+    });
+  };
+
+  /**
    * Init on object instantiation
    */
   (() => {
     for (let languageId in inputContainers) {
-      this.addTranslateElements(languageId, inputContainers[languageId]);
+      if (
+        FtConfig.getTranslationAction() === FtConfig.translationActionTypes.all &&
+        !forceEachTranslationAction
+      ) {
+        this.addTranslateToAllButton(languageId, inputContainers);
+      }
+
+      if (
+        FtConfig.getTranslationAction() === FtConfig.translationActionTypes.each ||
+        forceEachTranslationAction
+      ) {
+        this.addTranslateElements(languageId, inputContainers[languageId]);
+      }
     }
   })();
 };

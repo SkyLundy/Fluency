@@ -15,11 +15,13 @@ use Fluency\DataTransferObjects\{
   TranslationRequestData,
 };
 use Fluency\Engines\FluencyEngine;
-use Fluency\Engines\Traits\LogsEngineData;
+use Fluency\Engines\Traits\{ LocalizesPageUrls, LogsEngineData };
 
 final class GoogleCloudTranslationEngine implements FluencyEngine {
 
   use LogsEngineData;
+
+  use LocalizesPageUrls;
 
   private const API_URL = 'https://translation.googleapis.com/language/translate/v2';
 
@@ -49,12 +51,19 @@ final class GoogleCloudTranslationEngine implements FluencyEngine {
       ]);
     }
 
+    $translations = array_map(
+      fn($translation) => $translation->translatedText,
+      $result->data->translations
+    );
+
+    $translations = $this->localizePageUrlsInTranslations(
+      $translations,
+      $translationRequest->targetLanguage
+    );
+
     return EngineTranslationData::fromArray([
       'request' => $translationRequest,
-      'translations' => array_map(
-        fn($translation) => $translation->translatedText,
-        $result->data->translations
-      )
+      'translations' => $translations
     ]);
   }
 

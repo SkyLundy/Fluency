@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fluency\Engines\GoogleCloudTranslation;
 
-use Fluency\App\FluencyMarkup;
 use Fluency\Engines\FluencyEngineConfig;
 use ProcessWire\{ Inputfield, InputfieldWrapper };
 use Fluency\DataTransferObjects\FluencyConfigData;

@@ -6,7 +6,7 @@ namespace Fluency\DataTransferObjects\Traits;
 
 use \InvalidArgumentException;
 
-trait ValidatesArrayContainsOnlyInstancesOfTrait {
+trait ValidatesObjectInstancesTrait {
 
   /**
    * @param array<mixed> $data Array of data that should only contain instances of a given class
@@ -24,5 +24,4 @@ trait ValidatesArrayContainsOnlyInstancesOfTrait {
       "Array must only contain instances of {$type}"
     );
   }
-
 }

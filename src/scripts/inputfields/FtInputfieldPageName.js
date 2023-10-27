@@ -213,7 +213,7 @@ const FtInputfieldPageName = function (inputfield) {
       this.registerInputEventListener(languageId);
     }
 
-    new FtInputfieldTranslateButton(this, allInputContainers);
+    new FtInputfieldTranslateButton(this, allInputContainers, true);
   })();
 };
 

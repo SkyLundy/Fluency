@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Fluency\DataTransferObjects;
 
-use JsonSerializable;
-
 /**
  * Provides an immutable and filtered config interface for translation engines
  */
@@ -25,7 +23,8 @@ final class FluencyConfigData extends FluencyDTO {
     public readonly bool $translation_api_ready,
     public readonly bool $translation_cache_enabled,
     public readonly ?object $selected_engine,
-    public readonly ?object $engine
+    public readonly ?object $engine,
+    public readonly ?string $inputfield_translation_action,
   ) {}
 
   /**
@@ -39,7 +38,8 @@ final class FluencyConfigData extends FluencyDTO {
       'translation_api_ready' => (bool) $config['translation_api_ready'],
       'translation_cache_enabled' => (bool) $config['translation_cache_enabled'],
       'engine' => (object) $config['engine'] ??= [],
-      'selected_engine' => $config['selected_engine']
+      'selected_engine' => $config['selected_engine'],
+      'inputfield_translation_action' => $config['inputfield_translation_action'],
     ]);
   }
 
@@ -50,6 +50,7 @@ final class FluencyConfigData extends FluencyDTO {
     $values = parent::toArray();
 
     $values['engine'] = (array) $values['engine'];
+    $values['selected_engine'] = (array) $values['selected_engine'];
 
     return $values;
   }

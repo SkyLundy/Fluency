@@ -7,7 +7,7 @@ namespace Fluency\DataTransferObjects;
 use Fluency\DataTransferObjects\{ FluencyDTO, EngineLanguageData };
 use Fluency\DataTransferObjects\Traits\{
   ValidatesErrorsTrait,
-  ValidatesArrayContainsOnlyInstancesOfTrait,
+  ValidatesObjectInstancesTrait,
   CreatesRetrievedAtTimestampTrait
 };
 
@@ -21,7 +21,7 @@ final class EngineTranslatableLanguagesData extends FluencyDTO {
 
   use ValidatesErrorsTrait;
 
-  use ValidatesArrayContainsOnlyInstancesOfTrait;
+  use ValidatesObjectInstancesTrait;
 
   /**
    * @param array<EngineLanguageData> $languages   List of translatable languages, type validated

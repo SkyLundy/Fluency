@@ -78,6 +78,7 @@ const FtUiElements = (function () {
     const button = document.createElement('a');
     button.innerText = text;
     button.setAttribute('class', elementClasses.translateButton.button);
+    button.setAttribute('href', '');
 
     const container = document.createElement('div');
     container.setAttribute('class', elementClasses.translateButton.container);

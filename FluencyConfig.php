@@ -51,7 +51,8 @@ class FluencyConfig extends ModuleConfig {
     return [
       'translation_api_ready' => false,
       'translation_cache_enabled' => false,
-      'selected_engine' => null
+      'selected_engine' => null,
+      'inputfield_translation_action' => 'translate_to_all_languages',
     ];
   }
 
@@ -459,6 +460,20 @@ class FluencyConfig extends ModuleConfig {
               'icon' => 'bomb',
               'class' => $modules->InputfieldButton->getAttribute('class') . ' js-ft-clear-translatable-languages-cache'
             ]
+          ]
+        ],
+        "inputfield_translation_action" => [
+          'type' => 'InputfieldSelect',
+          'label' => __('Inputfield Translation Action'),
+          'collapsed' =>  Inputfield::collapsedNever,
+          'themeBorder' => 'hide',
+          'description' => __('Field translations can be made using two different methods. Translations can be made by clicking a button on each language tab that translates from the default langauge, or a button on each tab that translates to all languages at once.'),
+          'notes' => $engineSelected ? null
+                                     : __('You must choose a translation engine and save the page to continue configuring Fluency'),
+          'required' => true,
+          'options' => [
+            'translate_each_language' => 'Individual language tab translation',
+            'translate_to_all_languages' => 'Translate to all languages'
           ]
         ],
         // Localization

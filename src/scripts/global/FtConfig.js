@@ -118,6 +118,16 @@ const FtConfig = (function () {
 
   const getEngineProvidesUsageData = () => getEngineInfo().providesUsageData;
 
+  const getTranslationAction = () => config.interface.inputfieldTranslationAction;
+
+  /**
+   * Translation types. No magic strings.
+   */
+  const translationActionTypes = {
+    each: 'translate_each_language',
+    all: 'translate_to_all_languages',
+  };
+
   return {
     fieldInitializedAttr,
     getApiEndpointFor,
@@ -125,12 +135,14 @@ const FtConfig = (function () {
     getDefaultLanguage,
     getEngineInfo,
     getEngineProvidesUsageData,
+    getTranslationAction,
     getLanguageCount,
     getLanguageForId,
     getUiTextFor,
     getUnconfiguredLanguages,
     languageIsTranslatable,
     moduleShouldInitialize,
+    translationActionTypes,
   };
 })();
 

@@ -45,7 +45,7 @@ class FluencyStandaloneTranslatorFieldset {
     $sourceLanguageSelectOptions = self::createLanguageSelectOptions(
       'source',
       $languages,
-      $fluency->getDefaultConfiguredLanguage()
+      $fluency->getConfiguredLanguages()->getDefault()
     );
 
     $targetLanguageSelectOptions = self::createLanguageSelectOptions('target', $languages);

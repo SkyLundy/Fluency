@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Fluency\Engines\GoogleCloudTranslation;
 
+use Fluency\App\FluencyMarkup as Markup;
 use Fluency\DataTransferObjects\EngineInfoData;
 use Fluency\Engines\FluencyEngineInfo;
-use Fluency\App\FluencyMarkup as Markup;
 
 final class GoogleCloudTranslationInfo implements FluencyEngineInfo {
 

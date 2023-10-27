@@ -30,16 +30,6 @@ abstract class FluencyDTO implements JsonSerializable {
   abstract public static function fromArray(array $values): self;
 
   /**
-   * Creates a new DTO with additional/replacement data
-   *
-   * @param  FluencyDTO $data  Data object to carry existing datafrom
-   * @param  array      $merge Addtional values to merge
-   */
-  public static function fromMerge(FLuencyDTO $data, array $merge = []): self {
-    return static::fromArray([...$data->toArray(), ...$merge]);
-  }
-
-  /**
    * Returns object data as an array intended for consumption determined on the DTO's role
    * When a DTO object is converted to JSON, the array that this returns will be used
    *

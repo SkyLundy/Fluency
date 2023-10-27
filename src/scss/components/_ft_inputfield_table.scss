@@ -1,0 +1,4 @@
+// Adds space under translation button when present
+.InputfieldTable_langTabs[data-ft-initialized] {
+  padding-bottom: 0.75rem;
+}

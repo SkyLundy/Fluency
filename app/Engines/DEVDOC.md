@@ -33,12 +33,12 @@ contained within their own directory within the `app/Engines` directory. A Trans
 "Google Cloud Translation" would follow the following structure:
 
 ```
-├── src
+├── app
 │   ├── Engines
 │   │   │   ├── GoogleCloudTranslation
-│   │   │   ├── GoogleCloudTranslationEngine.php
-│   │   │   ├── GoogleCloudTranslationConfig.php
-│   │   │   ├── GoogleCloudTranslationInfo.php
+│   │   │   │   ├── GoogleCloudTranslationEngine.php
+│   │   │   │   ├── GoogleCloudTranslationConfig.php
+│   │   │   │   ├── GoogleCloudTranslationInfo.php
 ```
 
 Each file and their purpose is defined below.

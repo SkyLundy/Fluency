@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fluency\Caching;
 
 use Fluency\DataTransferObjects\EngineTranslatableLanguagesData;
-use ProcessWire\{ ProcessWire, WireCache };
+use ProcessWire\WireCache;
 
 /**
  * This largely acts as a wrapper for ProcessWire's WireCache with added functionality and

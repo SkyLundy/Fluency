@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Fluency\DataTransferObjects;
 
 use Fluency\DataTransferObjects\{ EngineInfoData, FluencyDTO };
-use Fluency\Engines\FluencyEngineInfo;
 
 /**
  * This represents a language as configured in ProcessWire/Fluency

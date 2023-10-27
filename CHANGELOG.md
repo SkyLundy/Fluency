@@ -1,11 +1,44 @@
 # Fluency for ProcessWire Changelog
 
+## 0.1.2b 2023-12-02
+
+## Enhancement, Bugfixes, Potential breaking changes
+
+- Added the ability to enable a "Translate to all languages" button for inputfields. This enables
+  cross-language translation to all languages with one click. The old style of per-field buttons
+  is still available. The option can be chosen on the Fluency module config page.
+- Links to ProcessWire pages in translated content are changed to pages in that language
+- Add AllConfiguredLanguagesData Data Transfer Object, see Potential Breaking Changes
+- Empty fields cannot be translated. This fixes an issue where translating an empty field may lead
+  to data loss in other fields where an empty translation would overwrite content that is already
+  present.
+- Fix issue where translation buttons inside InputfieldTable and FieldsetPage did not work, or
+  worked inconsistently. Credit to @romaincazier for finding/reporting.
+
+### Potential Breaking Changes
+
+These module API changes may break code that interacts with the Fluency module directly.
+
+- Return type of `Fluency::getConfiguredLanguages()` is now a Data Transfer Object rather than an
+  array. This DTO adds many helper methods to working with all languages and is in line with the
+  return types of most other Fluency module methods.
+- `Fluency::getConfiguredLanguageByProcessWireId()` is now private. To find a configured langauge
+  by it's ProcessWire ID, call `Fluency::getConfiguredLanguages()->getLangaugeByProcessWireId()`,
+- Removed `Fluency::getDefaultConfiguredLanguage()`. To get the default configured langauge call
+  `Fluency::getConfiguredLanguages()->getDefaultLanguage()`
+
+### Misc.
+
+- Code cleanup, remove unused imported classes
+- Update API Explorer documentation
+
 ## 0.9.1b 2023-10-17
 
 ### Bugfixes, enhancement
 
 - Removed hard-coded color for click to copy links. Credit to @BernhardBaumrock for finding the issue
-- Added UIKit tooltip for translation tool button icon next to translation triggers. Credit to @BernhardBaumrock for the suggesion
+- Added UIKit tooltip for translation tool button icon next to translation triggers. Credit to
+  @BernhardBaumrock for the suggesion
 - Version bumped to 0.9.1 beta
 
 ## 0.9.0b 2023-10-17
@@ -34,7 +67,6 @@
   that makes use of Data Transfer Objects to standardize interfaces and
   provide a better development experience
 - Add Google Cloud Translator to available Translation Engines
-  <<<<<<< HEAD
 - Translation engines provide individual versioning information and developer
   credits
 - Translations can now be cached to speed up repeated requests and lower
@@ -46,13 +78,6 @@
 - Translate buttons below fields are now links that are styled with the admin
   rather than button elements with specified styles. Credit to @BernhardBaumrock
   for the suggestion.
-  =======
-- Translations can now be cached to speed up repeated requests and lower
-  API usage where possible
-- Translatable languages are now permanently cached until cleared on the module config page
-- The translation icon next to translate buttons now opens the translation
-  tool overlay when clicked
-  > > > > > > > main
 - Additional methods added to the module for additional functionality,
   signatures for existing methods changed to more stable structures to work
   with more translation services

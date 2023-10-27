@@ -15,15 +15,15 @@ use Fluency\DataTransferObjects\{
   TranslationRequestData
 };
 use Fluency\Engines\FluencyEngine;
-use Fluency\Engines\Traits\LogsEngineData;
+use Fluency\Engines\Traits\{ LocalizesPageUrls, LogsEngineData };
 use stdClass;
-
-use function \ProcessWire\wire;
 
 /**
  * Handles all API interaction with the DeepL API
  */
 final class DeepLEngine implements FluencyEngine {
+
+  use LocalizesPageUrls;
 
   use LogsEngineData;
 
@@ -66,8 +66,8 @@ final class DeepLEngine implements FluencyEngine {
    * {@inheritdoc}
    */
   public function translate(TranslationRequestData $translationRequest): EngineTranslationData {
-    $sourceLanguageIso = strtoupper($translationRequest->sourceLanguage);
-    $targetLanguageIso = strtoupper($translationRequest->targetLanguage);
+    $sourceLanguageCode = strtoupper($translationRequest->sourceLanguage);
+    $targetLanguageCode = strtoupper($translationRequest->targetLanguage);
 
     $content = $this->addIgnoredTags(
       $translationRequest->content,
@@ -75,8 +75,8 @@ final class DeepLEngine implements FluencyEngine {
     );
 
     $requestBody = array_merge([
-     'source_lang' => $sourceLanguageIso,
-     'target_lang' => $targetLanguageIso,
+     'source_lang' => $sourceLanguageCode,
+     'target_lang' => $targetLanguageCode,
      'tag_handling' => 'html',
      'ignore_tags' =>  self::IGNORED_TAG_NAME,
      'formality' => $this->formality,
@@ -94,10 +94,14 @@ final class DeepLEngine implements FluencyEngine {
 
     $translations = array_map(fn($translation) => $translation->text, $result->data->translations);
 
+    $translations = $this->removeIgnoredTags($translations);
+
+    $translations = $this->localizePageUrlsInTranslations($translations, $targetLanguageCode);
+
     // Create new object that merges new data with request data
     return EngineTranslationData::fromArray([
       'request' => $translationRequest,
-      'translations' => $this->removeIgnoredTags($translations)
+      'translations' => $translations,
     ]);
   }
 
@@ -293,7 +297,7 @@ final class DeepLEngine implements FluencyEngine {
    * Adds the tag that prevents DeepL from translating specified words/phrases.
    *
    * @param array        $texts          Array of content to add ignored tags to
-   * @param array|string $ignored
+   * @param array|string $ignoredStrings Strings to ignore
    */
   private function addIgnoredTags(array $texts, array|string $ignoredStrings = []): array {
     is_string($ignoredStrings) && $ignoredStrings = explode(',', $ignoredStrings);
@@ -317,10 +321,10 @@ final class DeepLEngine implements FluencyEngine {
   }
 
   /**
-   * Removes the ignored tags from text
+   * Removes the ignored tags from array of translated texts
    *
    * @param  array $texts
-   * @return string
+   * @return array
    */
   private function removeIgnoredTags(array $texts): array {
     return array_map(fn($text) => preg_replace('/<\/?span( translate="no")?>/', '', $text), $texts);

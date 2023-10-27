@@ -4,11 +4,20 @@ Fluency is a module that brings third party translation services to the ProcessW
 
 Fluency can be added to new websites in development, existing websites adding multi-language abilities, or to websites that already have multi-language capabilities where it is desireable to have high quality translation built in.
 
-**Please note, this is an alpha release.** Please use in production after thorough testing for your own project and create Github issues for bugs found if possible.
+**Please note, this is an beta release.** Please use in production after thorough testing for your own project and create Github issues for bugs found if possible.
 
-Fluency has been developed and tested on ProcessWire 3.0.218 and requires at least PHP 8.1
+Please help out by filing Github issues when bugs are found. _Your feedback will help a stable and
+bug-free Fluency make it into the ProcessWire modules directory faster_.
 
-Please help out by filing Github issues when bugs are found.
+## Requirements
+
+Fluency has been developed and tested on ProcessWire 3.0.218
+
+- Requires at least PHP 8.1 (is compatible with PHP 8.2+)
+- Module dependencies: ProcessLanguage, LanguageSupport, LanguageTabs
+- The UIKit or UIKit-based admin theme
+- At least 2 languages configured in ProcessWire (the default, and at least one other, no limit on how many are added)
+- An API key for the Translation Engine selected on the module config page
 
 ## Features
 
@@ -22,7 +31,7 @@ Fluency can translate content in any type of field on any page. These include:
 - Tables
 - Repeater/repeater matrix
 
-Fluency also provides a standalone translation tool located as an item in the admin menu bar that can be accessed from any page. This tool will translate from/to any language that the translation service offers, regardless of whether the languages have been configured in ProcessWire or Fluency.
+Fluency also provides a standalone translation tool located as an item in the admin menu bar that can be accessed from any page, or by clicking the translation icon next to the translate buttons located under fields. This tool will translate from/to any language that the translation service offers, regardless of whether the languages have been configured in ProcessWire or Fluency.
 
 Methods to render HTML markup for your front end are also provided to help make converting a website to a multi-language site faster and easier.
 etc. can all be translated into the language the website is built in.
@@ -77,9 +86,9 @@ All methods return [Data Transfer Objects](https://medium.com/@sjoerd_bol/how-to
 $translation = $fluency->translate(
   string $sourceLanguageCode,        // Language code used by the translation service
   string $targetLanguageCode,        // Language code used by the translation service
-  array|string $content,  // String or array of strings to translate
-  array|null $options,                   // Translation Engine specific options
-  array|null $caching                    // Substrings within content that should not be translated
+  array|string $content,             // String or array of strings to translate
+  array|null $options,               // Translation Engine specific options
+  array|null $caching                // Substrings within content that should not be translated
 );
 
 // $translation->toArray(); Outputs the following:
@@ -105,7 +114,6 @@ $translation = $fluency->translate(
 ## Known Limitations
 
 - The browser plugin for Grammarly conflicts with Fluency. The immediate solution is to either disable Grammarly while using Fluency in the ProcessWire admin, or log into the admin in a private browser window where Grammarly may not be running. Consider disabling Grammarly for the website you are editing content on when in the admin. Instructions [here](https://support.grammarly.com/hc/en-us/articles/115000091612-Turn-off-Grammarly-on-one-or-more-websites).
-- Alpha release - This module is an alpha release. All of my testing during development hasn't turned up any errors or problems, but those don't come out until more wide usage. I will be using this on a website I am building that will be launched in the next couple of weeks so it's going to get real-world usage pretty quickly.
 
 ## Cost
 

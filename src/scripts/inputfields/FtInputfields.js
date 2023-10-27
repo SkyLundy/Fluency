@@ -25,7 +25,8 @@ const FtInputfields = (function () {
    * All inputfield containers on the page that are multilanguage have this class
    * @type {String}
    */
-  const langInputfieldClass = '.hasLangTabs';
+  const langInputfieldClass = "[class*='hasLangTabs']";
+  // const langInputfieldClass = '.hasLangTabs';
 
   /**
    * Initializes multilanguage fields if present on page
@@ -63,7 +64,8 @@ const FtInputfields = (function () {
     // Do not initialized fields that are a list element and not an Inputfield themselves
     if (
       !fieldIsInitialized(langInputfieldContainer) &&
-      !langInputfieldContainer.classList.contains('InputfieldItemList')
+      !langInputfieldContainer.classList.contains('InputfieldItemList') &&
+      !isInputfieldTemplate(langInputfieldContainer)
     ) {
       let inputfield = getFtInputfieldObject(langInputfieldContainer);
 
@@ -74,6 +76,15 @@ const FtInputfields = (function () {
       }
     }
   };
+
+  /**
+   * Detect if Inputfield container is a hidden template element used to dynamically create new
+   * Inputfields on demand
+   * @param  {Element} langInputfieldContainer
+   * @return {Bool}
+   */
+  const isInputfieldTemplate = langInputfieldContainer =>
+    !!langInputfieldContainer.closest("[class*='Template']");
 
   /**
    * Initializes a FtInputfield object instance by type
@@ -128,7 +139,12 @@ const FtInputfields = (function () {
     new MutationObserver((mutations, observer) => {
       for (let mutation of mutations) {
         let targetEl = mutation.target;
-
+        console.debug(
+          targetEl,
+          targetEl.tagName,
+          targetEl.querySelectorAll('.InputfieldTable_hasLangTabs'),
+          targetEl.querySelectorAll(langInputfieldClass),
+        );
         const foundEls = targetEl.querySelectorAll(langInputfieldClass);
 
         if (foundEls.length) {
@@ -167,7 +183,8 @@ const FtInputfields = (function () {
    * @return {bool}
    */
   const fieldIsInitialized = langTabContainer =>
-    langTabContainer.hasAttribute(FtConfig.fieldInitializedAttr);
+    langTabContainer.hasAttribute(FtConfig.fieldInitializedAttr) ||
+    !!langTabContainer.querySelector('.ft-translate-button');
 
   /**
    * Marks a field as initialized by adding a data attribute to the container
