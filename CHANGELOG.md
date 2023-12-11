@@ -1,6 +1,6 @@
 # Fluency for ProcessWire Changelog
 
-## 0.1.2b 2023-12-02
+## 1.0 2023-12-02
 
 ## Enhancement, Bugfixes, Potential breaking changes
 
