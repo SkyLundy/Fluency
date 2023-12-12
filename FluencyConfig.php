@@ -500,6 +500,7 @@ class FluencyConfig extends ModuleConfig {
       'type' => 'InputfieldMarkup',
       'name' => 'fieldset_donation',
       'skipLabel' =>  Inputfield::skipLabelHeader,
+      'collapsed' => Inputfield::collapsedNever,
       'value' => Markup::concat(
         Markup::h(3, __("Support ProcessWire Module Development")),
         Markup::p([
