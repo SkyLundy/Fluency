@@ -1,6 +1,14 @@
 # Fluency for ProcessWire Changelog
 
-## 1.0 2023-12-02
+## 1.0.1 2023-12-12
+
+## Documentation & Fixes
+
+- Updated README.md with current module information
+- Fix spelling errors in Fluency module docblock
+- Remove JS debug logging from development
+
+## 1.0.0 2023-12-02
 
 ## Enhancement, Bugfixes, Potential breaking changes
 

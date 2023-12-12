@@ -1,13 +1,10 @@
-# Fluency - Integrated Translation for ProcessWire
+# Fluency - The complete translation enhancement suite for ProcessWire
 
-Fluency is a module that brings third party translation services to the ProcessWire CMF/CMS.
+Fluency is a module that brings third party translation services to the ProcessWire CMF/CMS with a user friendly interface for translating content on any page.
 
 Fluency can be added to new websites in development, existing websites adding multi-language abilities, or to websites that already have multi-language capabilities where it is desireable to have high quality translation built in.
 
-**Please note, this is an beta release.** Please use in production after thorough testing for your own project and create Github issues for bugs found if possible.
-
-Please help out by filing Github issues when bugs are found. _Your feedback will help a stable and
-bug-free Fluency make it into the ProcessWire modules directory faster_.
+Please help out by filing Github issues when bugs are found, or submit a pull request with fixes.
 
 ## Requirements
 
@@ -40,7 +37,9 @@ Translation service usage can be controlled by enabling the user permission requ
 
 ### Changes and Updates
 
-Check out the `CHANGELOG.md` file for an always up-to-date list of features and changes.
+Adding, upgrading, or removing Fluency from your ProcessWire application will not affect content or come with any risk of data loss. At most, you _may_ (but not always) need to reconfigure your translation settings.
+
+Review the `CHANGELOG.md` file for an always up-to-date list of features and changes.
 
 ## Translation Engines
 
@@ -48,11 +47,11 @@ Fluency is modular. It contains a framework for adding additional third party se
 
 This project is open source so contributions for new third party services via Translation Engines are welcome.
 
-Developer documentation for integrating third party translation services as Translation Engines is located in Fluency/app/Engines/DEVDOC.md
+Developer documentation for integrating third party translation services as Translation Engines is located in `Fluency/app/Engines/DEVDOC.md`
 
 ### Third Party Translation Services
 
-To use Fluency you must have credentials, such as an API key, for the third party service associated with a Translation Engine. When a Translation Engine is selected, service-specific information, settings, and necessary authentication details will be shown in the Fluency module config.
+To use Fluency you must have credentials, such as an API key, for the third party service associated with a Translation Engine. When a Translation Engine is selected, service-specific information, settings, and necessary authentication details will be shown on the Fluency module config page.
 
 ## Instructions
 
@@ -78,20 +77,23 @@ Fluency can be accessed anywhere in ProcessWire using the `$fluency` variable. T
 
 Fluency is fully documented and formatted for the API Explorer tool in the outstanding (and personally recommended) [ProDevTools](https://processwire.com/talk/store/product/22-prodevtools/) module.
 
-All methods return [Data Transfer Objects](https://medium.com/@sjoerd_bol/how-to-use-data-transfer-objects-dtos-for-clean-php-code-3bbd47a2b3ab) that are immutable and predictable in structure and features. They can be converted to an array using the `toArray()` method, encoded to json directly using `json_encode()`, and translations can be counted using `count()`.
+All methods return [Data Transfer Objects](https://medium.com/@sjoerd_bol/how-to-use-data-transfer-objects-dtos-for-clean-php-code-3bbd47a2b3ab) that are immutable and predictable in structure and features. They can be converted to an array using the `toArray()` method, encoded to json directly using `json_encode()`, and translation results can be counted using `count()`.
+
+To translate content:
 
 ```php
-// Translate content
-//
 $translation = $fluency->translate(
-  string $sourceLanguageCode,        // Language code used by the translation service
-  string $targetLanguageCode,        // Language code used by the translation service
-  array|string $content,             // String or array of strings to translate
-  array|null $options,               // Translation Engine specific options
-  array|null $caching                // Substrings within content that should not be translated
+  string $sourceLanguage,  // Language code used by the translation service
+  string $targetLanguage,  // Language code used by the translation service
+  array|string $content,   // String or array of strings to translate
+  array|null $options,     // Translation Engine specific options
+  bool $caching            // Override default caching behavior, false disables cache
 );
 
+// This method returns an immutable EngineTranslationData object
+//
 // $translation->toArray(); Outputs the following:
+//
 // array(10) {
 //   'sourceLanguage' => 'EN'
 //   'targetLanguage' => 'DE'
@@ -108,17 +110,106 @@ $translation = $fluency->translate(
 //   'error' => NULL,
 //   'message' => NULL,
 // }
+```
 
+This method returns all translatable languages that the current translation service recognizes. The
+codes for each language are used when calling `$fluency->translate()`;
+
+```php
+$translatableLanguages = $fluency->getTranslatableLanguages();
+
+// This method returns an immutable EngineTranslatableLanguagesData object
+//
+// $translatableLanguages->toArray(); Outputs the following:
+//
+//array(5) {
+//   ["languages"]=>
+//   array(31) {
+//     [0]=>
+//     object(Fluency\DataTransferObjects\EngineLanguageData)#2667 (7) {
+//       ["sourceName"]=>
+//       string(6) "Danish"
+//       ["sourceCode"]=>
+//       string(2) "DA"
+//       ["targetName"]=>
+//       string(6) "Danish"
+//       ["targetCode"]=>
+//       string(2) "DA"
+//       ["meta"]=>
+//       array(1) {
+//         ["supports_formality"]=>
+//         bool(false)
+//       }
+//       ["error"]=>
+//       NULL
+//       ["message"]=>
+//       NULL
+//     }
+//     [1]=>
+//     object(Fluency\DataTransferObjects\EngineLanguageData)#2668 (7) {
+//       ["sourceName"]=>
+//       string(5) "Dutch"
+//       ["sourceCode"]=>
+//       string(2) "NL"
+//       ["targetName"]=>
+//       string(5) "Dutch"
+//       ["targetCode"]=>
+//       string(2) "NL"
+//       ["meta"]=>
+//       array(1) {
+//         ["supports_formality"]=>
+//         bool(true)
+//       }
+//       ["error"]=>
+//       NULL
+//       ["message"]=>
+//       NULL
+//     }
+//     [2]=>
+//     object(Fluency\DataTransferObjects\EngineLanguageData)#2669 (7) {
+//       ["sourceName"]=>
+//       string(7) "English"
+//       ["sourceCode"]=>
+//       string(2) "EN"
+//       ["targetName"]=>
+//       string(18) "English (American)"
+//       ["targetCode"]=>
+//       string(5) "EN-US"
+//       ["meta"]=>
+//       array(1) {
+//         ["supports_formality"]=>
+//         bool(false)
+//       }
+//       ["error"]=>
+//       NULL
+//       ["message"]=>
+//       NULL
+//     }
+//     // ... Removed rest of languages for brevity
+//   }
+//   ["fromCache"]=>
+//   bool(true)
+//   ["retrievedAt"]=>
+//   string(25) "2023-10-27T04:12:12-07:00"
+//   ["error"]=>
+//   NULL
+//   ["message"]=>
+//   NULL
+// }
 ```
 
 ## Known Limitations
 
-- The browser plugin for Grammarly conflicts with Fluency. The immediate solution is to either disable Grammarly while using Fluency in the ProcessWire admin, or log into the admin in a private browser window where Grammarly may not be running. Consider disabling Grammarly for the website you are editing content on when in the admin. Instructions [here](https://support.grammarly.com/hc/en-us/articles/115000091612-Turn-off-Grammarly-on-one-or-more-websites).
+- The browser plugin for Grammarly conflicts with Fluency and is a known issue for many web apps. The solution is to either disable Grammarly while using Fluency in the ProcessWire admin, or log into the admin in a private browser window where Grammarly may not be running. Consider disabling Grammarly for the website you are editing content on when in the admin. Instructions [here](https://support.grammarly.com/hc/en-us/articles/115000091612-Turn-off-Grammarly-on-one-or-more-websites).
 
 ## Cost
 
-Fluency is free to use. There is no cost for this module and it can be used on any site that you build with ProcessWire.
+Fluency is free to use. There is no cost for this module and it can be used on any site that you build with ProcessWire. This module is provided as a thank you to the outstanding ProcessWire community and as a contribution alongside other module developers who help everyone build great websites and applications.
 
-## In Progress
+## Supporting Module Development
 
-This README is a work in progress.
+Module development is both a lot of work and an important contribution to the ProcessWire ecosystem. Developers who offer both free and paid modules spend many hours creating and maintaining our favorite tools we all use for ProcessWire projects.
+
+You can support module development by giving the Github repo a star, donating, or contributing to development with pull requests. If you find yourself reaching for a module that you can't live without, or if a module fulfills a need for a client request, consider donating or sponsoring a developer or their projects.
+
+While this message is for the ProcessWire community on behalf of all module developers, if you've found Fluency useful and think it's worth a cup of coffee, you can [send me something via PayPal](https://paypal.me/noonesboy).

@@ -121,7 +121,7 @@ const FtInputfields = (function () {
       default:
         console.warn(
           'Fluency does not recognize this inputfield, translation is not available',
-          langInputfieldContainer
+          langInputfieldContainer,
         );
         return null;
     }
@@ -139,12 +139,7 @@ const FtInputfields = (function () {
     new MutationObserver((mutations, observer) => {
       for (let mutation of mutations) {
         let targetEl = mutation.target;
-        console.debug(
-          targetEl,
-          targetEl.tagName,
-          targetEl.querySelectorAll('.InputfieldTable_hasLangTabs'),
-          targetEl.querySelectorAll(langInputfieldClass),
-        );
+
         const foundEls = targetEl.querySelectorAll(langInputfieldClass);
 
         if (foundEls.length) {
