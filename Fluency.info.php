@@ -19,6 +19,7 @@ $info = [
     'ProcessWire>=300',
     'PHP>=8.1'
   ],
+  'permission' => 'fluency-translate',
   'permissions' => [
     'fluency-translate' => __('Use Fluency translation')
   ],
