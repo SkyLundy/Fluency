@@ -6,10 +6,10 @@ namespace ProcessWire;
 
 $info = [
   'title' => 'Fluency',
-  'version' => '100',
+  'version' => '102',
   'href' => 'https://processwire.com/talk/topic/24567-fluency-integrated-deepl-powered-content-translation',
   'icon' => 'language',
-  'summary' => 'The complete translation suite for ProcessWire.',
+  'summary' => 'The complete translation enhancement suite for ProcessWire.',
   'autoload' => true,
   'singular' => true,
   'requires' => [

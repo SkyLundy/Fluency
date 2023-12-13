@@ -46,6 +46,9 @@ final class FluencyLocalization {
         'clickToCopy' => __('Click to Copy'),
         'copied' => __('Copied!')
       ],
+      'languageTranslator' => [
+        'translateAllButton' => __('Click To Translate All'),
+      ],
       'usage' => [
         'title' => __('Translation Service Usage Information'),
         'description' => __('Click Refresh to get usage information'),

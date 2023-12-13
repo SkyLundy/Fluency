@@ -7,6 +7,11 @@ const FtConfig = (function () {
 
   const fieldInitializedAttr = 'data-ft-initialized';
 
+  const translationActionTypes = {
+    each: 'translate_each_language',
+    all: 'translate_to_all_languages',
+  };
+
   // Private properties
 
   /**
@@ -21,6 +26,27 @@ const FtConfig = (function () {
    * @type {Object}
    */
   const localizedStrings = config.localization;
+
+  /**
+   * Classes for elements created in UI
+   * @type {Object}
+   */
+  const elementClasses = {
+    translateButton: {
+      container: 'ft-translate-button-container',
+      button: 'ft-translate-button',
+    },
+    translateAllButton: {
+      container: 'Inputfield InputfieldHeaderHidden',
+      content: 'InputfieldContent',
+      button: 'ft-translate-all-button',
+    },
+    statusPlaceholder: {
+      container: 'ft-translation-status-container',
+      label: 'ft-translation-status',
+    },
+    icon: 'ft-icon',
+  };
 
   /**
    * Objects interface with the Fluency config object so that changes to the object
@@ -39,6 +65,7 @@ const FtConfig = (function () {
     standaloneTranslator: localizedStrings.standaloneTranslator,
     usage: localizedStrings.usage,
     errors: localizedStrings.errors,
+    languageTranslator: localizedStrings.languageTranslator,
   };
 
   /**
@@ -77,22 +104,48 @@ const FtConfig = (function () {
    * Languages
    */
 
+  /**
+   * Get all configured languages
+   * @return {object}
+   */
   const getConfiguredLanguages = () => configuredLanguages;
 
+  /**
+   * Returns ProcessWire's default language
+   * @return {object}
+   */
   const getDefaultLanguage = () =>
     getConfiguredLanguages().reduce(
       (defaultLang, lang) => (lang.default ? lang : defaultLang),
       null,
     );
 
+  /**
+   * Determines if the language with a given ProcessWire ID can be translated
+   * @param  {int|string} languageId ProcessWire language ID
+   * @return {bool}
+   */
   const languageIsTranslatable = languageId =>
     !getUnconfiguredLanguages().includes(parseInt(languageId, 10));
 
+  /**
+   * Get all languages not configured in Fluency
+   * @return {object}
+   */
   const getUnconfiguredLanguages = () => unconfiguredLanguages;
 
+  /**
+   * Gets total count of configured and unconfigured languages
+   * @return {int}
+   */
   const getLanguageCount = () =>
     getConfiguredLanguages().length + getUnconfiguredLanguages().length;
 
+  /**
+   * Get a configured language by it's ProcessWire ID
+   * @param  {string|int} pwLanguageId ProcessWire language ID
+   * @return {object}
+   */
   const getLanguageForId = pwLanguageId => {
     pwLanguageId = parseInt(pwLanguageId, 10);
 
@@ -106,38 +159,55 @@ const FtConfig = (function () {
    * Localization
    */
 
+  /**
+   * Accessor method for localized UI strings
+   * @param  {string} key Object key
+   * @return {string}
+   */
   const getUiTextFor = key => strings[key];
 
   /**
    * Module Configuration/State
    */
 
+  /**
+   * Determines if Fluency JS should initialize based on whether languages have
+   * been configured
+   * @return {bool}
+   */
   const moduleShouldInitialize = () => getConfiguredLanguages().length > 1;
 
+  /**
+   * Returns the translation engine config object for the engine configured in Fluency
+   * @return {object|null}
+   */
   const getEngineInfo = () => config.engine;
 
+  /**
+   * Does this engine provide usage data?
+   * @return {bool}
+   */
   const getEngineProvidesUsageData = () => getEngineInfo().providesUsageData;
 
+  /**
+   * Gets the type of translation action chosen in the Flunecy module config
+   * @return {string}
+   */
   const getTranslationAction = () => config.interface.inputfieldTranslationAction;
 
-  /**
-   * Translation types. No magic strings.
-   */
-  const translationActionTypes = {
-    each: 'translate_each_language',
-    all: 'translate_to_all_languages',
-  };
+  const getElementClassesFor = element => elementClasses[element];
 
   return {
     fieldInitializedAttr,
     getApiEndpointFor,
     getConfiguredLanguages,
     getDefaultLanguage,
+    getElementClassesFor,
     getEngineInfo,
     getEngineProvidesUsageData,
-    getTranslationAction,
     getLanguageCount,
     getLanguageForId,
+    getTranslationAction,
     getUiTextFor,
     getUnconfiguredLanguages,
     languageIsTranslatable,

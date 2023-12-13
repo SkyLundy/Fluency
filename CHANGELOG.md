@@ -1,8 +1,19 @@
 # Fluency for ProcessWire Changelog
 
+## 1.0.2 2023-12-17
+
+### Enhancement, Documentation, Bugfix
+
+- Added single-click translation for ProcessWire core translation pages. Any module or file using
+  `__()` can be translated with one click.
+- Expanded README to include documentation on using the markup output features for front end HTML
+- Expanded README to include additional details on interacting with Fluency programmatically
+- Expanded README to include additional information on caching, performance, and usage
+- Fixed issue where separators in language link list markup were not rendering correctly
+
 ## 1.0.1 2023-12-12
 
-## Documentation & Fixes
+### Documentation & Fixes
 
 - Updated README.md with current module information
 - Fix spelling errors in Fluency module docblock
@@ -10,7 +21,7 @@
 
 ## 1.0.0 2023-12-02
 
-## Enhancement, Bugfixes, Potential breaking changes
+### Enhancement, Bugfixes, Potential breaking changes
 
 - Added the ability to enable a "Translate to all languages" button for inputfields. This enables
   cross-language translation to all languages with one click. The old style of per-field buttons

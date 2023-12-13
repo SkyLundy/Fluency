@@ -57,7 +57,7 @@ final class FluencyMarkup {
   public static function a(
     string $href,
     string $content,
-    string|array $classes = [],
+    string|array|null $classes = [],
     string $target = '_self',
     string|array $rel = []
   ): string {

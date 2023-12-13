@@ -580,20 +580,24 @@ final class Fluency extends Process implements Module, ConfigurableModule {
     string|array|null $classes = null,
     string $id = '',
     string $divider = null,
-    string $languageSource = 'fluency'
+    ?string $activeClass = 'active',
+    string $languageSource = 'fluency',
   ): string {
     $languages = $this->getLanguagesForMarkup($languageSource);
 
-    $items = array_reduce($languages, function($tags, $language) {
+    $items = array_reduce($languages, function($tags, $language) use ($activeClass, $divider) {
       $tags[] = Markup::a(
         href: $this->page->localUrl($language->id),
-        content: $language->title
+        content: $language->title,
+        classes: $language->isCurrentLanguage ? $activeClass : null
       );
+
+      $divider && $tags[] = $divider;
 
       return $tags;
     }, []);
 
-    $divider && $items = implode($divider, $items);
+    end($items) === $divider && array_pop($items);
 
     return Markup::ul(
       items: Markup::li($items),

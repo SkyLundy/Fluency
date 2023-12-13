@@ -11,17 +11,7 @@ const FtUiElements = (function () {
   /**
    * @type {Object}
    */
-  const elementClasses = {
-    translateButton: {
-      container: 'ft-translate-button-container',
-      button: 'ft-translate-button',
-    },
-    statusPlaceholder: {
-      container: 'ft-translation-status-container',
-      label: 'ft-translation-status',
-    },
-    icon: 'ft-icon',
-  };
+  const elementClasses = FtConfig.elementClasses;
 
   /**
    * Gets all localized strings from the FluencyConfig object
@@ -42,7 +32,7 @@ const FtUiElements = (function () {
     iconLink.setAttribute('class', 'pw-modal pw-modal-large');
 
     const icon = document.createElement('i');
-    icon.setAttribute('class', `${elementClasses.icon} fa fa-language`);
+    icon.setAttribute('class', `${FtConfig.getElementClassesFor('icon')} fa fa-language`);
     icon.setAttribute('uk-tooltip', uiText.showTranslator);
 
     iconLink.appendChild(icon);
@@ -56,12 +46,14 @@ const FtUiElements = (function () {
    * @return {Element}
    */
   const createStatusElement = text => {
+    const elClasses = FtConfig.getElementClassesFor('statusPlaceholder');
+
     const label = document.createElement('span');
-    label.setAttribute('class', elementClasses.statusPlaceholder.label);
+    label.setAttribute('class', elClasses.label);
     label.innerText = text;
 
     const container = document.createElement('div');
-    container.setAttribute('class', elementClasses.statusPlaceholder.container);
+    container.setAttribute('class', elClasses.container);
 
     container.appendChild(createIcon());
     container.appendChild(label);
@@ -75,13 +67,15 @@ const FtUiElements = (function () {
    * @return {Object} Container element and Button element
    */
   const createTranslateButton = text => {
+    const elClasses = FtConfig.getElementClassesFor('translateButton');
+
     const button = document.createElement('a');
     button.innerText = text;
-    button.setAttribute('class', elementClasses.translateButton.button);
+    button.setAttribute('class', elClasses.button);
     button.setAttribute('href', '');
 
     const container = document.createElement('div');
-    container.setAttribute('class', elementClasses.translateButton.container);
+    container.setAttribute('class', elClasses.container);
 
     container.appendChild(createIcon());
     container.appendChild(button);
@@ -92,9 +86,32 @@ const FtUiElements = (function () {
     };
   };
 
+  const createTranslateAllButton = text => {
+    const elClasses = FtConfig.getElementClassesFor('translateAllButton');
+
+    const button = document.createElement('a');
+    button.innerText = FtConfig.getUiTextFor('languageTranslator').translateAllButton;
+    button.setAttribute('class', elClasses.button);
+    button.setAttribute('href', '');
+
+    const content = document.createElement('div');
+    content.setAttribute('class', elClasses.content);
+    content.appendChild(button);
+
+    const container = document.createElement('li');
+    container.setAttribute('class', elClasses.container);
+    container.appendChild(content);
+
+    return {
+      button,
+      container,
+    };
+  };
+
   return {
     createStatusElement,
     createTranslateButton,
+    createTranslateAllButton,
     createIcon,
     elementClasses,
   };

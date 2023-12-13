@@ -145,7 +145,7 @@ const watch = async function () {
       Scripts.compileFluency,
       // Scripts.compileStandaloneTranslator,
       // Scripts.compileApiUsage,
-      // Scripts.compileLanguageTranslator,
+      Scripts.compileLanguageTranslator,
       // Scripts.compileModuleConfig,
     ),
   );

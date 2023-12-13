@@ -9,7 +9,20 @@ import Fluency from '../global/Fluency';
  * @return {Object} Public methods
  */
 const FtLanguageTranslatorInputfields = (function () {
+  /**
+   * Initialize
+   * @return {void}
+   */
   const init = () => {
+    initFields();
+    initTranslateAllButton();
+  };
+
+  /**
+   * Initializes per-field translation triggers
+   * @return {void}
+   */
+  const initFields = () => {
     const translationInputfields = document.querySelectorAll('.InputfieldContent');
 
     if (!translationInputfields) {
@@ -17,16 +30,158 @@ const FtLanguageTranslatorInputfields = (function () {
     }
 
     [...translationInputfields].forEach(inputfield => {
-      if (inputfield.querySelector('input.translatable')) {
+      if (inputfield.querySelector('input.translatable, textarea.translatable')) {
         new LanguageTranslatorInputfield(inputfield);
       }
     });
+  };
+
+  const initTranslateAllButton = () => {
+    const container = document.querySelector('.Inputfields');
+
+    new AllInputfieldTranslator(container);
   };
 
   return {
     init,
   };
 })();
+
+/**
+ * Creates and binds the translate all button
+ */
+const AllInputfieldTranslator = function (inputfields) {
+  let activityOverlay;
+
+  let sourceTargetMap = [];
+
+  this.getSelf = () => inputfields;
+
+  this.getActivityOverlay = () => activityOverlay;
+
+  this.addTranslateButton = () => {
+    const { button, container } = FtUiElements.createTranslateAllButton();
+
+    this.bindTranslateButton(button);
+
+    document.querySelector('.Inputfields').insertAdjacentElement('afterbegin', container);
+  };
+
+  this.bindTranslateButton = button => {
+    button.addEventListener('click', e => {
+      e.preventDefault();
+
+      this.translateContent();
+    });
+  };
+
+  /**
+   * This chunks the sourceTargetElement array into an array of smaller arrays that can be
+   * handled by the translation service
+   * @return {array} Array of arrays containing content/inputs
+   */
+  this.getGroupedContentForTranslation = () => {
+    const perChunk = 40; // groups per chunk
+
+    return sourceTargetMap.reduce((chunks, item, index) => {
+      const chunkIndex = Math.floor(index / perChunk);
+
+      if (!chunks[chunkIndex]) {
+        chunks[chunkIndex] = []; // start a new chunk
+      }
+
+      chunks[chunkIndex].push(item);
+
+      return chunks;
+    }, []);
+  };
+
+  /**
+   * Translates all fields in chunks
+   * @return {void}
+   */
+  this.translateContent = () => {
+    const translationGroups = this.getGroupedContentForTranslation();
+
+    activityOverlay.showActivity();
+
+    let groupsToTranslate = translationGroups.length;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = parseInt(urlParams.get('language_id'));
+
+    let errorOccurred = false;
+
+    translationGroups.forEach((translationGroup, i) => {
+      // Stop trying if something went wrong
+      if (errorOccurred) {
+        return;
+      }
+
+      Fluency.getTranslation(
+        FtConfig.getDefaultLanguage().engineLanguage.sourceCode,
+        FtConfig.getLanguageForId(id).engineLanguage.targetCode,
+        translationGroup.map(sourceTarget => sourceTarget.text),
+      )
+        .then(result => {
+          // Handle an error
+          if (result.error) {
+            if (!errorOccurred) {
+              activityOverlay.showError(result.message);
+
+              errorOccurred = true;
+            }
+
+            return;
+          }
+
+          const translations = result.translations;
+
+          if (translationGroup.length !== translations.length) {
+            activityOverlay.showError('Error');
+
+            errorOccurred = true;
+
+            return;
+          }
+
+          for (let i = 0; i < translations.length; i++) {
+            translationGroup[i].input.value = translations[i];
+          }
+        })
+        .then(result => {
+          groupsToTranslate--;
+
+          if (groupsToTranslate === 0 && !errorOccurred) {
+            activityOverlay.hide();
+          }
+        });
+    });
+  };
+
+  /**
+   * Push all source text and target inputs to array that can be translated in bulk
+   * @return {void}
+   */
+  this.mapSourceTargetElements = () => {
+    [...document.querySelectorAll('.InputfieldContent')].forEach(inputfield => {
+      const description = inputfield.querySelector('.description');
+      const targetInput = inputfield.querySelector('input.translatable, textarea.translatable');
+
+      if (targetInput && description && description.innerText) {
+        sourceTargetMap.push({ text: description.innerText, input: targetInput });
+      }
+    });
+  };
+
+  (() => {
+    activityOverlay = new FtActivityOverlay(this);
+
+    this.mapSourceTargetElements();
+
+    this.addTranslateButton();
+  })();
+};
 
 const LanguageTranslatorInputfield = function (inputfieldContainer) {
   /**
@@ -41,7 +196,7 @@ const LanguageTranslatorInputfield = function (inputfieldContainer) {
 
   let sourceText = inputfieldContainer.querySelector('.description').innerText;
 
-  let targetInput = inputfieldContainer.querySelector('input');
+  let targetInput = inputfieldContainer.querySelector('input, textarea');
 
   this.getSelf = () => inputfieldContainer;
 
@@ -72,7 +227,7 @@ const LanguageTranslatorInputfield = function (inputfieldContainer) {
     Fluency.getTranslation(
       FtConfig.getDefaultLanguage().engineLanguage.sourceCode,
       FtConfig.getLanguageForId(id).engineLanguage.targetCode,
-      sourceText
+      sourceText,
     ).then(result => {
       if (result.error) {
         activityOverlay.showError(result.message);
@@ -94,195 +249,3 @@ const LanguageTranslatorInputfield = function (inputfieldContainer) {
 };
 
 export default FtLanguageTranslatorInputfields;
-
-/**
- * Handles IO operations for a multilanguage InputfieldText element
- * Language IDs are always converted to int to accept values from all sources since some may be
- * retrieved from various sources as a string
- *
- * NOTE: This is not a standard inputfield object and should not be instantiated in FtInputfields
- *       and only in specific locations of the PW Admin
- *
- * @param {Element}
- */
-const FtInputfieldText = function (inputfield) {
-  /**
-   * Page-load values for all fields/languages
-   * Populated on object instantiation
-   * @property {String} ProcessWire Language ID
-   * @type {Object}
-   */
-  const initValues = {};
-
-  /**
-   * Will contain new values for fields/languages when content is modified
-   * @property {String} ProcessWire Language ID
-   * @type {Object}
-   */
-  const changedValues = {};
-
-  /**
-   * FtLanguageTab objects for each language
-   * @property {String} ProcessWire Language ID
-   * @type {Object}
-   */
-  const languageTabs = {};
-
-  /**
-   * Will contain all elements containing language inputs
-   * @property {String} ProcessWire Language ID
-   * @type {NodeList}
-   */
-  const inputContainers = {};
-
-  /**
-   * Text input fields
-   * @property {String} ProcessWire Language ID
-   * @type {Object}
-   */
-  const languageFields = {};
-
-  /**
-   * Activity overlay object, set on instantiation
-   *
-   * @access public
-   * @type {Object}
-   */
-  let activityOverlay;
-
-  /*
-   * @access public
-   * @return {Object}
-   */
-  this.getActivityOverlay = () => activityOverlay;
-
-  /**
-   * @access public
-   * @return {Element} Inputfield element passed to this object on creation
-   */
-  this.getSelf = () => inputfield;
-
-  /**
-   * @access public
-   * @return {Mixed}
-   */
-  this.getValueForDefaultLanguage = () =>
-    this.getValueForLanguage(FtConfig.getDefaultLanguage().id);
-
-  /**
-   * @access public
-   * @param  {String|Int}   languageId ProcessWire language ID
-   * @return {Mixed}
-   */
-  this.getValueForLanguage = languageId => this.getFieldForLanguage(languageId).value;
-
-  /**
-   * @access public
-   * @param  {String|Int} languageId ProcessWire language ID
-   * @param  {Mixed}      value      Value to insert into field
-   * @return {Bool}                  Content is different from page load value
-   */
-  this.setValueForLanguage = (languageId, value) => {
-    const field = this.getFieldForLanguage(languageId);
-
-    FtInputfields.updateValue(field, value);
-
-    // Required to programmatically trigger the event listener for this field
-    field.dispatchEvent(new Event('input'));
-
-    return this.contentHasChanged(languageId);
-  };
-
-  /**
-   * @access private
-   * @param  {String|Int}  languageId ProcessWire language ID
-   * @return {Element}                Text field
-   */
-  this.getFieldForLanguage = languageId => {
-    if (Object.hasOwn(languageFields, languageId) && !!languageFields[languageId]) {
-      return languageFields[languageId];
-    }
-
-    languageFields[languageId] =
-      this.getInputContainerForLanguage(languageId).querySelector('input');
-
-    return languageFields[languageId];
-  };
-
-  /**
-   * Gets a specific input container
-   * @access private
-   * @param  {String|Int} languageId ProcessWire language ID
-   * @return {Element}
-   */
-  this.getInputContainerForLanguage = languageId => {
-    if (Object.hasOwn(inputContainers, languageId) && !!inputContainers[languageId]) {
-      return inputContainers[languageId];
-    }
-
-    inputContainers[languageId] = inputfield.querySelector(`[data-language="${languageId}"]`);
-
-    return inputContainers[languageId];
-  };
-
-  /**
-   * Get all input containers where content is entered, memoizes
-   * @access private
-   * @return {Object} All languages keyed by (int) language ID
-   */
-  this.getInputContainers = () => {
-    inputfield
-      .querySelectorAll('[data-language]')
-      .forEach(el => (inputContainers[el.dataset.language] = el));
-
-    return inputContainers;
-  };
-
-  /**
-   * @access private
-   * @param  {String|Int} languageId ProcessWire language ID
-   * @return {Bool}
-   */
-  this.contentHasChanged = languageId =>
-    Object.hasOwn(changedValues, languageId) &&
-    changedValues[languageId] !== initValues[languageId];
-
-  /**
-   * Registers the event listener that watches for changes
-   * @access private
-   * @param  {String|Int} languageId ProcessWire language ID
-   * @return {Void}
-   */
-  this.registerInputEventListener = languageId => {
-    this.getFieldForLanguage(languageId).addEventListener('input', e => {
-      changedValues[languageId] = e.target.value;
-      languageTabs[languageId].setModifiedState(this.contentHasChanged(languageId));
-    });
-  };
-
-  /**
-   * Init method executed on object instantiation
-   * - Stores initial field values for each langauge
-   * - Creates/stores an FtLanguageTab object for each language
-   * - Binds an event that detects changes on input
-   * @return {Void}
-   */
-  (() => {
-    const allInputContainers = this.getInputContainers();
-
-    for (let languageId in allInputContainers) {
-      let inputContainer = allInputContainers[languageId];
-
-      initValues[languageId] = this.getValueForLanguage(languageId);
-      languageTabs[languageId] = new FtLanguageTab(inputContainer);
-
-      this.registerInputEventListener(languageId);
-    }
-
-    activityOverlay = new FtActivityOverlay(this);
-
-    new FtInputfieldTranslateButton(this, allInputContainers);
-  })();
-};
-
-export { LanguageTranslatorInputfield, FtInputfieldText };
