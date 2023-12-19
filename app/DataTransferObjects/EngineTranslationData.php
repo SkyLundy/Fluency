@@ -76,6 +76,9 @@ final class EngineTranslationData extends FluencyDTO implements Countable {
     ]);
   }
 
+  /**
+   * Internal use only
+   */
   public static function fromCache(EngineTranslationData $translation): self {
     return new self(...[...$translation->toArray(), 'fromCache' =>  true]);
   }

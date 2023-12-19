@@ -14,10 +14,12 @@ use ProcessWire\InputfieldWrapper;
 interface FluencyEngineConfig {
 
   /**
-   * Engine config classes are provided a config object created for consumption by classes outside
-   * of FluencyConfig. When an engine is selected on the Fluency config page, the properties defined
-   * in FluencyEngineConfig::getConfig() will be populated, defaults will be replaced with user
-   * selections when made. Refer to Fluency/DataTransferObjects/FluencyConfigData for details
+   * This accepts an instance of FluencyConfigData. The FluencyConfigData is a DTO containing all
+   * current module config values. You can use this to reference information such as whether the
+   * engine has been configured and the API is ready. This is useful for conditionally changing
+   * values in renderConfigInputs()
+   *
+   * Refer to Fluency/DataTransferObjects/FluencyConfigData for details
    *
    * @param FluencyConfigData $fluencyConfig Immutable object containing the current Fluency
    *                                               module configurations, including those of the
@@ -26,32 +28,27 @@ interface FluencyEngineConfig {
   public function __construct(FluencyConfigData $fluencyConfig);
 
   /**
-   * This returns a full array of all config properties used by an engine with default values. These
-   * will be made available, along with all other Fluency config properties at runtime via the
-   * constructor FluencyConfigData instance
+   * This returns a full array of all config properties used by an engine with default values.
    *
-   * Please reference FluencyConfigData::getConfigData() for data and structure
-   *
-   * NOTE:
-   * All config properties used must be unique to this engine. Consider prefixing them with the
-   * engine name in snake case.
+   * You can have these properties populated with user provided values by rendering Inputfields in
+   * the InputfieldWrapper returned by renderConfigInputs()
    *
    * @return array<string, mixed>
    */
   public static function getConfig(): array;
 
   /**
-   * Returns a set of engine-specific  configuration fields that will be rendered on the Fluency
+   * Returns a set of engine-specific configuration fields that will be rendered on the Fluency
    * module configuration page
    *
-   * Kept optional by allowing a null value to be returned, but likely needs to be present.
+   * This can be optionally omitted by returning null
    *
-   * NOTE:
-   * Default values
+   * Inputfields that collect user input must be stored in config properties defined in the keys of
+   * the array returned by getConfig().
    *
    * Configurations include engine specific items like:
    * - Service provider API keys
-   * - User configurable translation features
+   * - Options that are available through the third party translation service
    * - User configured options for data handling
    *
    */

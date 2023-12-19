@@ -321,8 +321,10 @@ final class Fluency extends Process implements Module, ConfigurableModule {
   }
 
   /**
-   * Gets a language configured in Fluency using it's ProcessWire ID
-   * Internal use only.
+   * Gets a language configured in Fluency using it's ProcessWire ID. Internal use only.
+   *
+   * To get a Fluency configured langauge via it's ProcessWire ID, please use:
+   * $fluency->getConfiguredLanguages()->getLangaugeByProcessWireId(int $id);
    *
    * #pw-internal
    *
@@ -829,9 +831,10 @@ final class Fluency extends Process implements Module, ConfigurableModule {
   /**
    * Get an arrays of languages the translation API accepts
    *
-   * Results are cached for 30 days to speed up subsequent requests. If new languages are released
-   * by the translation serviec, this will delay their availability in Fluency. This cache can be
-   * manually cleared on the Fluency module config page
+   * Results are cached forever speed up subsequent requests. If new languages are released
+   * by the translation service, they will not automatically be available in Fluency. This cache can
+   * be manually cleared on the Fluency module config page, or $fluency->clearTranslatableLanguagesCache();
+   *
    *
    * // Return object can be converted to an array
    * $result->toArray();

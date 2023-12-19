@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fluency\DataTransferObjects;
 
+use Countable;
 use Fluency\DataTransferObjects\{ FluencyDTO, EngineLanguageData };
 use Fluency\DataTransferObjects\Traits\{
   ValidatesErrorsTrait,
@@ -15,7 +16,7 @@ use Fluency\DataTransferObjects\Traits\{
  * Represents a full list of languages that a translation engine can translate from and too
  */
 
-final class EngineTranslatableLanguagesData extends FluencyDTO {
+final class EngineTranslatableLanguagesData extends FluencyDTO implements Countable {
 
   use CreatesRetrievedAtTimestampTrait;
 
@@ -58,8 +59,14 @@ final class EngineTranslatableLanguagesData extends FluencyDTO {
     ]);
   }
 
-  public static function fromCache(EngineTranslatableLanguagesData $languages): self {
-    return new self(...[...$languages->toArray(), 'fromCache' =>  true]);
+  /**
+   * Internal use only
+   */
+  public static function fromCache(EngineTranslatableLanguagesData $translatableLanguages): self {
+    return new self(...[
+      ...$translatableLanguages->toArray(),
+      'fromCache' =>  true
+    ]);
   }
 
   public function bySourceCode(string $code): ?EngineLanguageData {
@@ -78,5 +85,12 @@ final class EngineTranslatableLanguagesData extends FluencyDTO {
       fn($match, $language) => $match = strtolower($language->$codeType) === $code ? $language
                                                                                    : $match
     );
+  }
+
+  /**
+   * Countable interface method
+   */
+  public function count(): int {
+    return count($this->languages);
   }
 }

@@ -1,5 +1,17 @@
 # Fluency for ProcessWire Changelog
 
+## 1.0.3 2023-12-18
+
+### Enhancement, Documentation
+
+- Can now get number of engine translatable languages by passing the EngineTranslatableLangauages
+  instance to `count()`
+- Expanded README to include information about site & core translation files
+- Expanded README to include additional detaila about caching
+- Expanded README to include additional details and examples on module methods
+- Spelling errors in docblocks fixed
+- Add additional work to Translation Engine DEVDOC (WIP)
+
 ## 1.0.2 2023-12-17
 
 ### Enhancement, Documentation, Bugfix
