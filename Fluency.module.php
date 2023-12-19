@@ -569,14 +569,15 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    *
    * #pw-group-Page-And-Markup-Utilities
    *
-   * @param  string|array|null $classes Classes to add to <ul> element
-   * @param  string $id                 ID to add to <ul> element
-   * @param  string $divider            String wrapped in <li> added between link <li> elements
-   * @param  string $languageSource       'fluency' to render using Fluency configured languages or
-   *                                    'processwire' to render using all languages in processwire
-   *                                     Default: 'fluency'
+   * @param string|array|null $classes Classes to add to <ul> element
+   * @param string $id                 ID to add to <ul> element
+   * @param string $activeClass        Class added to the <li> element containing the link for the
+   *                                   current page.
+   * @param string $divider            String wrapped in <li> added between link <li> elements
+   * @param string $languageSource     'fluency' to render using Fluency configured languages or
+   *                                   'processwire' to render using all languages in processwire
+   *                                    Default: 'fluency'
    * @return string
-   * @throws InvalidArgumentException
    */
   public function renderLanguageLinks(
     string|array|null $classes = null,
@@ -588,24 +589,22 @@ final class Fluency extends Process implements Module, ConfigurableModule {
     $languages = $this->getLanguagesForMarkup($languageSource);
 
     $items = array_reduce($languages, function($tags, $language) use ($activeClass, $divider) {
-      $tags[] = Markup::a(
-        href: $this->page->localUrl($language->id),
-        content: $language->title,
-        classes: $language->isCurrentLanguage ? $activeClass : null
+      $tags[] = Markup::li(
+          classes: $language->isCurrentLanguage ? $activeClass : null,
+          content: Markup::a(
+            href: $this->page->localUrl($language->id),
+            content: $language->title,
+          )
       );
 
-      $divider && $tags[] = $divider;
+      $divider && $tags[] = Markup::li(content: $divider, classes: 'divider');
 
       return $tags;
     }, []);
 
     end($items) === $divider && array_pop($items);
 
-    return Markup::ul(
-      items: Markup::li($items),
-      classes: $classes ?? '',
-      id: $id
-    );
+    return Markup::ul(items: $items, classes: $classes ?? '', id: $id);
   }
 
   /**

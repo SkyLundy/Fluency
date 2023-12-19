@@ -1,5 +1,23 @@
 # Fluency for ProcessWire Changelog
 
+## 1.0.4 2023-12-19
+
+### Enhancement, Documentation
+
+- Added TOC to README
+- Reorganized/clarified text of README for easier reading
+- Fixed speling mistakes in README
+- Expanded README to include Contributing section
+- Expanded README to include documentation for translating multiple strings in one call
+- Expanded README to include documentation for DTO methods and helpers
+- FluencyMarkup now accepts `null` for `$classes` parameter
+- FluencyMarkup now removes empty HTML attributes on render
+- The module method `renderLanguageLinks` now adds active class to `<li>` element containing the
+  current page language rather than the `<a>` element contained within it.
+- When when a divider value is passed to `renderLanguageLinks`, the `<li>` element is given a
+  `divider` class
+- Added missing parameter description to docblock for `renderLanguageLink`
+
 ## 1.0.3 2023-12-18
 
 ### Enhancement, Documentation

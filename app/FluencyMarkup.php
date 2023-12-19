@@ -21,7 +21,7 @@ final class FluencyMarkup {
   /**
    * Render a headline tag
    */
-  public static function h(int $level, string $content, string|array $classes = []): string {
+  public static function h(int $level, string $content, string|array|null $classes = []): string {
     $markup =<<<EOT
     <h%{LEVEL} class="%{CLASS}">%{CONTENT}</h%{LEVEL}>
     EOT;
@@ -36,7 +36,7 @@ final class FluencyMarkup {
   /**
    * Render one or more <p> tags.
    */
-  public static function p(string|array $values, string|array $classes = []): string {
+  public static function p(string|array $values, string|array|null $classes = []): string {
     $markup =<<<EOT
     <p class="%{CLASS}">%{CONTENT}</p>
     EOT;
@@ -172,7 +172,7 @@ final class FluencyMarkup {
   /**
    * Render one or more <li> elements
    */
-  public static function li(mixed $content, string|array $classes = []): string {
+  public static function li(mixed $content, string|array|null $classes = []): string {
     $markup =<<<EOT
     <li class="%{CLASS}">%{CONTENT}</li>
     EOT;
@@ -190,7 +190,7 @@ final class FluencyMarkup {
   /**
    * Render one or more <span> elements
    */
-  public static function span(mixed $content, string|array $classes = []): string {
+  public static function span(mixed $content, string|array|null $classes = []): string {
     $markup =<<<EOT
     <span class="%{CLASS}">%{CONTENT}</span>
     EOT;
@@ -266,7 +266,6 @@ final class FluencyMarkup {
       });
     }
 
-
     return self::render($markup, [
       'ID' => $id,
       'OPTION_ELS' => $options,
@@ -327,6 +326,11 @@ final class FluencyMarkup {
     $emptyVars = array_fill_keys($templatePlaceholders[0], '');
     $variables = array_merge($emptyVars, $variables);
 
-    return strtr($markup, $variables);
+    $markup = strtr($markup, $variables);
+
+    // Remove all empty attributes
+    $markup = preg_replace('/\s([a-zA-Z\-]+)=""/', '', $markup);
+
+    return $markup;
   }
 }

@@ -1,21 +1,98 @@
 # Fluency - The complete translation enhancement suite for ProcessWire
 
-Fluency is a module that brings third party translation services to the ProcessWire CMF/CMS with a user friendly interface for translating content in any multi-language field on any page. It also provides powerful tools to help developers create multilanguage sites and apps faster.
+Fluency is a feature-rich module for the [ProcessWire CMS/CMF](https://processwire.com/) that integrates third party translation services with a user-friendly interface for translating content in any multi-language field on any page. It also provides powerful tools to help developers create multi-language sites and apps faster.
 
-Fluency can be added to new websites in development, existing websites adding multi-language abilities, or to websites that already have multi-language capabilities where it is desireable to have high quality translation built in.
+Fluency can be used:
+
+- While developing a new ProcessWire application
+- When adding multi-language abilities to an existing ProcessWire application
+- To add translation abilities to an existing multi-language ProcessWire application
 
 You can help out by filing Github issues when bugs are found, or submit a pull request with fixes.
+
+## Contents
+
+- [Requirements](#requirements)
+- [Installing](#installing)
+  - [Translation Engines](#translation-engines)
+  - [Localizing Fluency](#localizing-fluency)
+  - [Upgrading or Removing](#upgrading-or-removing)
+- [Features and Usage](#features-and-usage)
+  - [Translating Inputfields](#translating-inputfields)
+  - [Translating Templates and Modules](#translating-templates-and-modules)
+  - [Standalone Translator](#standalone-translator)
+  - [Modified Content Indication](#modified-content-indication)
+  - [Caching](#caching)
+  - [Rendering Language Markup](#rendering-language-markup)
+    - [Language ISO Codes](#language-iso-codes)
+    - [Meta Link Tags](#meta-link-tags)
+    - [Switch Page Language Select Element](#switch-page-language-select-element)
+    - [Switch Page Language Links](#switch-page-language-links)
+- [Using Fluency Programatically](#using-fluency-programatically)
+  - [Translating Content](#translating-content)
+  - [Get All Translation Service Languages](#get-all-translation-service-languages)
+  - [Get All Configured Languages](#get-all-configured-languages)
+  - [Translation Service API Usage](#translation-service-api-usage)
+  - [Translation Engine Information](#translation-engine-information)
+  - [Managing Cache](#managing-cache)
+  - [Admin REST API Endpoints](#admin-rest-api-endpoints)
+- [Known Issues](#known-issues)
+- [Contributing](#contributing)
+- [Cost](#cost)
+- [Supporting Module Development](#supporting-module-development)
 
 ## Requirements
 
 - ProcessWire >= 3.0.2
 - PHP >= 8.1
-- Module dependencies: ProcessLanguage, LanguageSupport, LanguageTabs
+- Module dependencies
+  - LanguageSupport
+  - LanguageTabs
+  - ProcessLanguage
 - UIKit admin theme
-- At least 2 languages configured in ProcessWire (the default, and at least one other, no limit on how many are added) to add translation to fields
-- An API key for the Translation Engine selected on the module config page
+- At least 2 languages configured in ProcessWire to add translation to fields
+- API key for the chosen third party translation service, free tiers are available
 
-## Features & Module Details
+## Installing
+
+1. Download and unzip the contents into /site/modules and install, or install from the [ProcessWire Modules directory](https://processwire.com/modules/fluency/).
+2. Open the module configuration page, choose a Translation Engine, save
+3. Complete the Translation Engine setup, save
+4. Create language associations, save
+5. Assign the `fluency-translate` permission where appropriate
+
+That's it. All multi-language fields will now feature click to translate buttons and a translator tool available in the Admin menu bar. There is no limit on how many languages may be configured, and new languages can be added at any time.
+
+If no langauges are present in ProcessWire or if languages are present and not configured with Fluency, it is still possible to use the translator tool in the Admin menu as long as a valid API key is present and the current user has the `fluency-translate` permission. Inputfield translation buttons will not render until languages have been configured in Fluency.
+
+### Translation Engines
+
+Fluency integrates third party translation services as "Translation Engines". When you configure Fluency, you'll choose which service to use. Currently the following translation services are availale:
+
+- [DeepL](https://www.deepl.com/)
+- [Google Cloud Translation](https://cloud.google.com/translate?hl=en)
+
+Each translation service has their strengths, however not all features exist for all engines as Fluency relies on what abilities are available via each translation service, so review each and choose the one that is right for your project.
+
+If you're interested in contributing to Fluency by building a Translation Engine, see [Contributing](#Contributing) below.
+
+### Localizing Fluency
+
+All text for the Fluency UI elements can be translated including messages, errors, and elements users use to interact with Fluency. This is done through ProcessWire's language setup. In the Admin visit Setup->Languages, and the "Find Files To Translate" feature within the language management page.
+
+All translatable texts are located in `Fluency/app/FluencyLocalization.php`
+
+### Upgrading Or Removing
+
+Adding, upgrading, or removing Fluency from your ProcessWire application will not affect content. At most, you _may_ (but not always) need to update or reconfigure your Fluency module config. Settings are saved individually for each translation engine, so it is possible to switch between engines without losing your configurations for each.
+
+When upgrading Fluency, check the Fluency config page to ensure that your settings are correct and to review any new features that may have been added.
+
+Review the `CHANGELOG.md` file for an always up-to-date list of changes.
+
+## Features and Usage
+
+### Translating Inputfields
 
 Fluency can translate content in any type of field on any page. These include:
 
@@ -27,109 +104,73 @@ Fluency can translate content in any type of field on any page. These include:
 - Tables
 - Repeater/repeater matrix
 
-Fluency also provides a standalone translation tool located as an item in the admin menu bar that can be accessed from any page, or by clicking the translation icon next to the translate buttons located under fields. This tool will translate from/to any language that the translation service offers, regardless of whether the languages have been configured in ProcessWire or Fluency. This is also accessible by clicking the language icon next to any field translate button;
+Fluency is designed so that any multi-language field in any location or combination/nesting with other fields will be translatable.
 
-Methods to render HTML markup for your front end are also provided to help make converting a website to a multi-language site faster and easier.
-etc. can all be translated into the language the website is built in.
+### Translating Templates and Modules
 
-Translation service usage can be controlled by enabling the user permission requirement on the module config page and assigning the `fluency-translate` permission.
+Fluency integrates with ProcessWire's native translator pages where you can select files to translate. These include:
+
+- Templates that contain strings are wrapped in the `__()` function
+- Core modules
+- Site modules that contain strings wrapped in the `__()` function
+
+In your ProcessWire admin, navigate to a langauge page, use the "Find Files To Translate Button", select your files, and edit the translations. The field for each value will have a button which translates the string above the field to the language you are currently editing. For extra speed, use the "Click To Translate All" button at the top. This will translate all values on the page simultaneously in seconds.
+
+**Note:** Please keep in mind that translating site and core modules _may_ be relatively expensive operations with respect to your API usage. It is recommended that you identify and prioritize the files/modules that are used in your ProcessWire site/app.
+
+### Standalone Translator
+
+Fluency also provides a standalone translation located as an item in the admin menu bar that can be accessed from any page, or by clicking the translation icon next to the translate buttons located under fields. This does not require that ProcessWire languages are configured in Fluency, only that the Translation Engine is configured to use a third party service.
+
+To use Fluency, users must be assigned the `fluency-translate` permission.
 
 ### Modified Content Indication
 
-When content in a ProcessWire field changes, Fluency adds a green line will the top of the language tab for that field. If the content is reverted to it's original value, the indicating line is removed. This lets users who are editing and translating content know which fields have been changed without clicking to another language tab to see that it has changed to help prevent content deviation between langauges.
-
-### Site & Core Translation Files
-
-Translating your files, such as templates using the `__()` function, site modules, and core modules is very easy with Fluency. In your ProcessWire admin, navigate to a langauge page, use the "Find Files To Translate Button", select your files, and edit the translations. The field for each value will have a button which translates the string above the field to the language you are currently editing.
-
-For extra speed, use the "Click To Translate All" button at the top. This will translate all values on the page simultaneously in seconds.
-
-Using these methods, it is possible for you to translate the ProcessWire admin, as well as your template language strings, in minutes rather than hours.
-
-Please keep in mind that translating site and core modules _may_ be relatively expensive operations with respect to your API usage. It is recommended that you identify the module files that are in use and that the end user will interact with then prioritize those first.
+When content in a ProcessWire field changes, Fluency adds a green line at the top of the language tab for that field. If the content is reverted to it's original value, the green line is removed. This lets users who are editing and translating content know which fields have been changed without clicking to another language tab. This assists content input and helps prevent content deviation between languages.
 
 ### Caching
 
-#### Caching - Translations
+**Translations**
 
-All translations are cached by default for a period of one month. This helps reduce API account usage where the same content is translated more than once and significantly increases translation speed. Caching can be toggled on/off on the Fluency module config page. The translation cache can also be manually cleared either on the module config page, via the Fluency API using `$fluency` in your code, or via an AJAX request to the Fluency admin REST API- usage is documented below.
+All translations are cached by default for a period of one month. This helps reduce API account usage where the same content is translated more than once and significantly increases translation speed. Caching can be toggled on/off on the Fluency module config page. The translation cache can also be manually cleared either on the module config page, via the [Fluency module API](#managing-cache), or via an AJAX request using the [Fluency admin REST API](#admin-rest-api-endpoints).
 
-Translation caching relies on _exact_ value matching including punctuation, spelling, and capitalization. This ensures that an exact translation is always returned accurately.
+Translation caching relies on _exact_ value matching including punctuation, spelling, and capitalization. This ensures that an exact translation is always returned accurately. Translations that contain multiple strings are cached together.
 
-#### Caching - Translatable Languages
+**Translatable Languages**
 
 Fluency uses lists of recognized languages from the selected third party translation service to determine what languages to make available when configuring and using Fluency.
 
-PLEASE NOTE: **This is cached forever until manually cleared** the first time that a translation engine is selected/configured to increase the speed of Fluency's operations.
+**Note: This is cached forever until manually cleared** the first time that a translation engine is selected/configured to increase the speed of Fluency's operations.
 
-Available languages are cached on a per-engine basis. This means that if a translation service adds additional translatable languages, this cache must be cleared on the module config page, via the Fluency API using `$fluency` in your code, or via an AJAX request to the Fluency admin REST API- usage is documented below.
+Available languages are cached on a per-engine basis. This means that if a translation service adds additional translatable languages, this cache must be cleared on the module config page, via the [Fluency module API](#managing-cache), or via an AJAX request using the [Fluency admin REST API](#admin-rest-api-endpoints).
 
-### Changes and Upgrades
-
-Adding, upgrading, or removing Fluency from your ProcessWire application will not affect or remove content. At most, you _may_ (but not always) need to reconfigure your translation settings. Settings are saved individually for each translation engine, so it is possible to switch between engines without losing your configurations for each. Be sure to review the Fluency module config page after upgrading to configure new features and ensure that your existing settings were not affected.
-
-Review the `CHANGELOG.md` file for an always up-to-date list of features and changes.
-
-## Translation Engines
-
-Fluency is modular in that it contains a framework for adding additional third party services as "Translation Engines". You can choose which Translation Engine you prefer and provide the credentials to connect via their API. Currently Fluency has the ability to use [DeepL](https://www.deepl.com) and [Google Cloud](https://cloud.google.com/translate). Each have their strengths, however not all features exist for all engines as Fluency relies on what abilities are available via each translation service, so review each and choose the one that is right for your project.
-
-As this project is open source, contributions for new third party services as Translation Engines are welcome!
-
-Developer documentation for integrating third party translation services as Translation Engines is located in `Fluency/app/Engines/DEVDOC.md`. Documentation is a WIP. If you are interested in developing a Translation Engine for Fluency and want more info, feel free to send me a PM on the ProcessWire forum.
-
-### Third Party Translation Services
-
-Fluency may require credentials, such as an API key, for the third party service associated with a Translation Engine. When a Translation Engine is selected, service-specific information, settings, and necessary authentication details will be shown on the Fluency module config page.
-
-## Instructions
-
-1. Download and unzip the contents into /site/modules, or install from the [ProcessWire Modules directory](https://processwire.com/modules/fluency/).
-2. Install the module in the developer admin
-3. Open the module configuration page, choose a Translation Engine and save
-4. Complete the Translation Engine setup
-5. Create language associations and save
-
-All multi-language fields will now have click to translate buttons and a translator tool is available in the Admin menu bar.
-
-If no langauges are present in ProcessWire or if languages are present and not configured with Fluency, it is still possible to use the translator tool in the Admin menu as long as a valid API key is present and the current user has the Fluency permission.
-
-### Localizing the Fluency UI
-
-All text for the Fluency UI elements can be translated including messages, errors, and elements users use to interact with Fluency. This is done through ProcessWire's language setup. In the Admin visit Setup->Languages, and the "Find Files To Translate" feature within the language management page.
-
-All translatable texts are located in `Fluency/app/FluencyLocalization.php`
-
-## Multi-Language Markup Rendering
+### Rendering Language Markup
 
 Fluency provides tools to help make building websites with multi-language capabilities faster and easier. There are HTML best practices that help users with accessibility and improve SEO performance, many of these are available out of the box with Fluency.
 
-### Current Language Code
-
-An HTML best practice is to indicate the current language of the page including the `lang` attribute on the `<html>` tag. Fluency can output the code for the current language as provided by the Translation Engine.
-
 Language names and ARIA attributes are automatically localized when you configure Fluency and use the ProcessWire core translation pages to translate the module.
 
-To get the code for the language the page is currently being viewed in:
+#### Language ISO Codes
 
-```html
-<!doctype html>
-<html lang="<?= $fluency->getLanguageCode(); ?>">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><?php $page->title; ?></title>
-  </head>
-</html>
-```
-
-You can also get the language code for another language that is configured in Fluency by passing it's ProcessWire ID:
+Returns the target language ISO code provided by the third party service.
 
 ```php
+// Get the current language's ISO code
+$fluency->getLanguageCode(); // => en-us
+
+// Get the ISO code for another language using it's ProcessWire ID
 $fluency->getLanguageCode(1034); // 'de'
 ```
 
-### Language Meta Tags
+_Tip:_ Use this to indicate the current language of the page including the `lang` attribute on the `<html>` tag.
+
+```html
+<html lang="<?= $fluency->getLanguageCode(); ?>">
+  <!-- markup -->
+</html>
+```
+
+#### Meta Link Tags
 
 Fluency van render a list of languages `<link>` tags that you can use in the `<head>` of your HTML document. This helps users and search engines find the content for your page in all languages. The URLs will render as configured in ProcessWire.
 
@@ -166,7 +207,7 @@ Output:
 </html>
 ```
 
-### Language Select Element
+#### Switch Page Language Select Element
 
 You can easily render a `<select>` element that will allow a user to choose the langauge that they are currently viewing the page in. By default, Fluency will also render inline JavaScript that will navigate to the page in the language selected but this can be disabled should you want to control that behavior yourself. All text/labels/values will render if translated in the current language.
 
@@ -216,24 +257,34 @@ Output:
 </div>
 ```
 
-### Language Links
+#### Switch Page Language Links
 
 You can also render an unordered list of links to the current page in other languages.
 
 ```html
-<div class="language-list"><?= $fluency->renderLanguageLinks(); ?></div>
+<div class="languages"><?= $fluency->renderLanguageLinks(); ?></div>
 ```
 
 Output:
 
 ```html
-<div class="language-list">
+<div class="languages">
   <ul>
-    <li><a class="active" href="/">English</a></li>
-    <li><a href="/fr/">French</a></li>
-    <li><a href="/de/">German</a></li>
-    <li><a href="/it/">Italian</a></li>
-    <li><a href="/es/">Spanish</a></li>
+    <li class="active">
+      <a href="/">English</a>
+    </li>
+    <li>
+      <a href="/fr/">French</a>
+    </li>
+    <li>
+      <a href="/de/">German</a>
+    </li>
+    <li>
+      <a href="/it/">Italian</a>
+    </li>
+    <li>
+      <a href="/es/">Spanish</a>
+    </li>
   </ul>
 </div>
 ```
@@ -241,7 +292,7 @@ Output:
 With options:
 
 ```html
-<div class="my-element">
+<div class="languages">
   <?= $fluency->renderLanguageLinks( id: 'my-language-links', classes: ['my-class'], divider: '|',
   activeClass: 'current'); ?>
 </div>
@@ -250,17 +301,27 @@ With options:
 Output:
 
 ```html
-<div class="my-element">
+<div class="languages">
   <ul id="my-language-links" class="my-class">
-    <li><a class="current" href="/">English</a></li>
-    <li>|</li>
-    <li><a href="/fr/">French</a></li>
-    <li>|</li>
-    <li><a href="/de/">German</a></li>
-    <li>|</li>
-    <li><a href="/it/">Italian</a></li>
-    <li>|</li>
-    <li><a href="/es/">Spanish</a></li>
+    <li class="current">
+      <a href="/">English</a>
+    </li>
+    <li class="divider">|</li>
+    <li>
+      <a href="/fr/">French</a>
+    </li>
+    <li class="divider">|</li>
+    <li>
+      <a href="/de/">German</a>
+    </li>
+    <li class="divider">|</li>
+    <li>
+      <a href="/it/">Italian</a>
+    </li>
+    <li class="divider">|</li>
+    <li>
+      <a href="/es/">Spanish</a>
+    </li>
   </ul>
 </div>
 ```
@@ -273,23 +334,23 @@ Fluency is fully documented and formatted for the API Explorer tool in the outst
 
 All methods return [Data Transfer Objects](https://medium.com/@sjoerd_bol/how-to-use-data-transfer-objects-dtos-for-clean-php-code-3bbd47a2b3ab) that are immutable and predictable in structure and features. All values can be accessed via:
 
-- Object properties
-- Be converted to an array using the `toArray()` method
-- Encoded to json directly using `json_encode()`
+- Object properties `$dtoObject->property`
+- Be converted to an array using the `$dtoObject->toArray()` method
+- Encoded to JSON directly using `json_encode($dtoObject)`
+
+Data Transfer Objects also contain helper methods to access or find data within the DTO
 
 ### Translating Content
 
 ```php
 $translation = $fluency->translate(
-  string $sourceLanguage,  // Language code used by the translation service
-  string $targetLanguage,  // Language code used by the translation service
-  array|string $content,   // String or array of strings to translate
-  array|null $options,     // Translation Engine specific options
-  bool $caching            // Override default caching behavior, false disables caching
-);
+  sourceLanguage: 'EN',                         // Language code used by the translation service
+  targetLanguage: 'DE',                         // Language code used by the translation service
+  content: 'How do you do fellow developers?',  // String or array of strings to translate
+  options: [],                                  // Translation Engine specific options (optional)
+  caching: true                                 // Default is true, false disables, overrides module config
+); // => EngineTranslationData
 
-// This method returns an immutable EngineTranslationData object
-//
 // $translation->toArray(); Outputs the following:
 //
 // array(10) {
@@ -309,18 +370,52 @@ $translation = $fluency->translate(
 //   'message' => NULL,
 // }
 
+// Get the total number of translated strings returned
 count($translation); // 1
 ```
 
-### Translatable Languages
-
-This method returns all translatable languages that the current translation service recognizes. The codes for each language are used when calling `$fluency->translate()`;
+Translate multiple strings simultaneously
 
 ```php
-$translatableLanguages = $fluency->getTranslatableLanguages();
+$translation = $fluency->translate(sourceLanguage: 'EN', targetLanguage: 'DE', content: [
+  'Must it be?',
+  'It must be.',
+]); // => EngineTranslationData
 
-// This method returns an immutable EngineTranslatableLanguagesData object
+// $translation->toArray(); Outputs the following:
 //
+// array(10) {
+//   'sourceLanguage' => 'EN'
+//   'targetLanguage' => 'DE'
+//   'content' => [
+//     'Must it be?',
+//     'It must be.'
+//   ],
+//   'translations' => [
+//     'Muss das sein?',
+//     'Es muss sein.'
+//   ],
+//   'options' => [],
+//   'fromCache' => true,
+//   'cacheKey' => '18af707954dabf4df8013f3f013bc7382a73fff6050ab0d048f7296214bfb21f',
+//   'retrievedAt' => '2023-09-17T17:16:25-07:00',
+//   'error' => NULL,
+//   'message' => NULL,
+// }
+//
+// Get the total number of translated strings returned
+count($translation); // 2
+```
+
+### Get All Translation Service Languages
+
+This method returns all languages that the current translation service recognizes. This includes languages that aren't configured in Fluency.
+
+The source/target language codes can be used when calling `$fluency->translate()`;
+
+```php
+$translatableLanguages = $fluency->getTranslatableLanguages(); // => EngineTranslatableLanguagesData
+
 // $translatableLanguages->toArray(); Outputs the following:
 //
 //array(5) {
@@ -386,7 +481,7 @@ $translatableLanguages = $fluency->getTranslatableLanguages();
 //       ["message"]=>
 //       NULL
 //     }
-//     // ... Removed rest of languages for brevity
+//     // ... ommitted for brevity
 //   }
 //   ["fromCache"]=>
 //   bool(true)
@@ -405,20 +500,15 @@ $americanEnglish = $translatableLanguages->byTargetCode('EN-US'); // => EngineLa
 
 // Get the total number of translatable languages
 count($translatableLanguages); // => 31
-
 ```
 
-### Configured Languages
+### Get All Configured Languages
 
-Get all languages in ProcessWire that are configured in Fluency. This method packages all available
-language data from both ProcessWire and Fluency, which in certain instances may make it valuable
-to use in place of the ProcessWire `$languages` object.
+Fluency provides robust data for languages configured in Fluency. In certain instances it may be preferrable to using ProcessWire's `$language` object when modifying state is not required.
 
 ```php
-$configuredLanguages = $fluency->getConfiguredLanguages();
+$configuredLanguages = $fluency->getConfiguredLanguages(); // => AllConfiguredLanguagesData
 
-// Returns an immutable AllConfiguredLanguagesData instance
-//
 // $translatableLanguages->toArray(); Outputs the following:
 //
 // array(1) {
@@ -498,33 +588,42 @@ $configuredLanguages = $fluency->getConfiguredLanguages();
 //   }
 // }
 
-// Additional methods are available as well, each return their own DTO. Examples based on the return
-// value above:
+// Additional methods are available as well, each return their own DTO. Examples based on the return value shown above:
 
-$configuredLanguages->getDefault();                         // => EngineLanguageData for English
-$configuredLanguages->getCurrent();                         // => EngineLanguageData for English
-$configuredLanguages->getByProcessWireId(1028)              // => EngineLanguageData for French
-$configuredLanguages->getBySourceCode('FR')                 // => EngineLanguageData for French
-$configuredLanguages->getByTargetCode('EN-US')              // => EngineLanguageData for English
-$configuredLanguages->getBySourceName('French')             // => EngineLanguageData for French
-$configuredLanguages->getByTargetname('English (American)') // => EngineLanguageData for English
+$configuredLanguages->getDefault();                         // => ConfiguredLanguageData for English
+$configuredLanguages->getCurrent();                         // => ConfiguredLanguageData for English
+$configuredLanguages->getByProcessWireId(1028)              // => ConfiguredLanguageData for French
+$configuredLanguages->getBySourceCode('FR')                 // => ConfiguredLanguageData for French
+$configuredLanguages->getByTargetCode('EN-US')              // => ConfiguredLanguageData for English
+$configuredLanguages->getBySourceName('French')             // => ConfiguredLanguageData for French
+$configuredLanguages->getByTargetname('English (American)') // => ConfiguredLanguageData for English
 
-// This makes it trivial to get the short code for a ProcessWire language
-$configuredLanguages->getByProcessWireId(1028)->targetCode; // => FR
+// Since these return ConfiguredLangaugeData objects, you can access very useful information quickly.
+
+$currentLanguage = $configuredLanguages->getCurrent(); // => ConfiguredLanguageData for English
+$currentLanguage->id;                                  // => 1017
+$currentLanguage->title;                               // => 'English' (Returned localized if translated in ProcessWire)
+$currentLanguage->default;                             // => true
+
+// All properties under engineLanguage are provided by the Translation Engine
+// The source/target language codes can be used when calling `$fluency->translate()`;
+
+$currentLanguage->engineLanguage->sourceCode;          // => 'EN'
+$currentLanguage->engineLanguage->targetCode;          // => 'EN-US'
+$currentLanguage->engineLanguage->sourceName;          // => 'English'
+$currentLanguage->engineLanguage->targetName;          // => 'English (American)'
 
 // Get the number of ProcessWire langauges configured in Fluency
 count($configuredLanguages); // => 6
 ```
 
-### API Usage
+### Translation Service API Usage
 
-Get API usage (must be supported by the translation engine in use):
+Note: not all translation services provide this information
 
 ```php
-$usage = $fluency->getTranslationApiUsage();
+$usage = $fluency->getTranslationApiUsage(); // => EngineApiUsageData
 
-// Returns an immutable EngineApiUsageData instance
-//
 // $usage->toArray(); Outputs the following:
 //
 // array(7) {
@@ -545,15 +644,11 @@ $usage = $fluency->getTranslationApiUsage();
 // }
 ```
 
-### Translation Engine
-
-Get information about the current translation engine in use
+### Translation Engine Information
 
 ```php
-$engineInfo = $fluency->getTranslationEngineInfo();
+$engineInfo = $fluency->getTranslationEngineInfo(); // => EngineInfoData
 
-// Returns an instance of EngineInfoData
-//
 // $engineInfo->toArray() outputs the following:
 //
 // array(12) {
@@ -584,41 +679,29 @@ $engineInfo = $fluency->getTranslationEngineInfo();
 // }
 ```
 
-### Caching
-
-Get the current number of cached translations:
+### Managing Cache
 
 ```php
+// Get the current number of cached translations:
 $fluency->getCachedTranslationCount(); // Int
-```
 
-Clear the translation cache:
-
-```php
+// Clear the translation cache:
 $fluency->clearTranslationCache(); // 0 on success
-```
 
-Check if the list of languages translatable by the translation engine are cached:
+// Check if the list of languages translatable by the translation engine are currently cached:
+$fluency->translatableLanguagesAreCached(); // Bool
 
-```php
-$fluency->translatableLanguagesAreCached(); // Boolean
-```
-
-Clear the translatable languages cache:
-
-```php
+// Clear the translatable languages cache:
 $fluency->clearTranslatableLanguagesCache(); // 0 on success
 ```
 
-### Admin Fluency REST API Endpoints
+### Admin REST API Endpoints
 
 AJAX calls can be made to endpoints in the ProcessWire admin to interact with Fluency. The current user must have the `fluency-translate` permission. Refer to `Fluency.module.php` method docblocks to review accepted methods and responses. Base admin URL will match your ProcessWire installation.
 
 ```php
-$endpoints = $fluency->getApiEndpoints();
+$endpoints = $fluency->getApiEndpoints(); // => stdClass
 
-// Returns a stdClass object
-//
 // object(stdClass)#376 (6) {
 //   ["endpoints"]=>
 //   string(19) "/processwire/fluency/api/"
@@ -635,9 +718,23 @@ $endpoints = $fluency->getApiEndpoints();
 // }
 ```
 
-## Known Limitations
+## Known Issues
 
-- The browser plugin for Grammarly may conflict with Fluency and is a known issue for many web apps. If you encounter issues, the solution is to either disable Grammarly while using Fluency in the ProcessWire admin, or log into the admin in a private browser window where Grammarly may not be running. Consider disabling Grammarly for the website you are editing content on when in the admin. Instructions provided by Grammarly [here](https://support.grammarly.com/hc/en-us/articles/115000091612-Turn-off-Grammarly-on-one-or-more-websites).
+- The browser plugin for Grammarly may conflict with Fluency and is a known issue for many web apps. If you encounter issues, the solution is to either disable Grammarly while using Fluency in the ProcessWire admin, or log into the admin in a private browser window where Grammarly may not be running. Instructions provided by Grammarly [here](https://support.grammarly.com/hc/en-us/articles/115000091612-Turn-off-Grammarly-on-one-or-more-websites).
+
+## Contributing
+
+**Module Features**
+
+Feature suggestions are welcome. In fact, Fluency has been made better thanks to great feedback by the ProcessWire community. If you have a suggestion, [file an issue in the Fluency GitHub repository](https://github.com/SkyLundy/Fluency/issues).
+
+**Translation Engines**
+
+Fluency is modular in that it contains a framework for adding additional third party services as "Translation Engines". You can choose which Translation Engine you prefer and provide the credentials to connect via their API. As this project is open source, contributions for new third party services as Translation Engines are welcome. If you would like to request a new third party service, [file an issue in the Fluency GitHub repository](https://github.com/SkyLundy/Fluency/issues)
+
+If you'd like to develop one for yourself, feel free to fork Fluency, build a new Translation Engine, and create a pull request.
+
+Developer documentation for integrating third party translation services as Translation Engines is located in `Fluency/app/Engines/DEVDOC.md`. _Documentation is a work in progress_. If you need help or more information, feel free to send me a PM on the [ProcessWire forum](https://processwire.com/talk/).
 
 ## Cost
 
