@@ -1,5 +1,14 @@
 # Fluency for ProcessWire Changelog
 
+## 1.0.5 2023-12-22
+
+### _Critical update_, Bugfix upgrade recommended for all users.
+
+- Fix return type error when Fluency attempts to get configured languages in some instances credit
+  to @jacmaes for finding and reporting. Closes [issue 3](https://github.com/SkyLundy/Fluency/issues/3).
+- Fix bug where rendering langauge links appended an extra divider after list if a divider was
+  passed to the method
+
 ## 1.0.4 2023-12-19
 
 ### Enhancement, Documentation

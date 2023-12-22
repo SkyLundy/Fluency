@@ -119,19 +119,19 @@ final class Fluency extends Process implements Module, ConfigurableModule {
     $this->fluencyConfig = (new FluencyConfig())->getConfigData();
     $this->translationCache = new TranslationCache();
     $this->engineLanguagesCache = new EngineLanguagesCache();
+    $this->initializeTranslationEngine();
 
-    if (!$this->moduleShouldInit()) {
+    if (!$this->moduleShouldInitInAdmin()) {
       return false;
     }
 
-    $this->initializeTranslationEngine();
-    $this->insertPageAssets();
+    $this->insertAdminAssets();
   }
 
   /**
    * Determine if module should initialize
    */
-  private function moduleShouldInit(): bool {
+  private function moduleShouldInitInAdmin(): bool {
     return $this->page->name !== 'login' && $this->userIsAuthorized();
   }
 
@@ -159,7 +159,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
   /**
    * Inserts required assets into admin pages on load.
    */
-  private function insertPageAssets(): void {
+  private function insertAdminAssets(): void {
     if ($this->page->rootParent->id !== 2 ) {
       return;
     }
@@ -286,7 +286,9 @@ final class Fluency extends Process implements Module, ConfigurableModule {
     $engineInfo = $this->translationEngineInfo;
 
     if (!$engineInfo?->configId) {
-      return [];
+      return AllConfiguredLanguagesData::fromArray([
+        'languages' => []
+      ]);
     }
 
     if (!is_null($this->configuredLanguages)) {
@@ -308,11 +310,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
 
     $processWireLanguages = array_values($this->languages->getIterator()->getArray());
 
-    $languages = array_reduce(
-      $processWireLanguages,
-      $createConfiguredLanguage,
-      []
-    );
+    $languages = array_reduce($processWireLanguages, $createConfiguredLanguage, []);
 
     // Create an array of Fluency configured language object from an  array of ProcessWire languages
     return $this->configuredLanguages = AllConfiguredLanguagesData::fromArray([
@@ -411,7 +409,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    *
    * #pw-group-Fluency-Module-Configuration-Data
    *
-   * @return array Array with all data needed by client UI scripts.
+   * @return stdClass All data needed by client UI scripts.
    */
   public function getClientData(): stdClass {
     return (object) [
@@ -587,6 +585,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
     string $languageSource = 'fluency',
   ): string {
     $languages = $this->getLanguagesForMarkup($languageSource);
+    $divider && $divider = Markup::li(content: $divider, classes: 'divider');
 
     $items = array_reduce($languages, function($tags, $language) use ($activeClass, $divider) {
       $tags[] = Markup::li(
@@ -597,7 +596,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
           )
       );
 
-      $divider && $tags[] = Markup::li(content: $divider, classes: 'divider');
+      $divider && $tags[] = $divider;
 
       return $tags;
     }, []);
