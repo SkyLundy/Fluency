@@ -1,5 +1,7 @@
 # Fluency - The complete translation enhancement suite for ProcessWire
 
+![fluency_welcome](https://github.com/SkyLundy/Fluency/assets/61801600/21a9a94d-2f70-4ba7-901f-ac85760d60ae)
+
 Fluency is a feature-rich module for the [ProcessWire CMS/CMF](https://processwire.com/) that integrates third party translation services with a user-friendly interface for translating content in any multi-language field on any page. It also provides powerful tools to help developers create multi-language sites and apps faster.
 
 Fluency can be used:
@@ -78,6 +80,8 @@ If you're interested in contributing to Fluency by building a Translation Engine
 
 ### Localizing Fluency
 
+![fluency_localization](https://github.com/SkyLundy/Fluency/assets/61801600/2e0067a3-aaf3-42ea-89f5-e46994d478cd)
+
 All text for the Fluency UI elements can be translated including messages, errors, and elements users use to interact with Fluency. This is done through ProcessWire's language setup. In the Admin visit Setup->Languages, and the "Find Files To Translate" feature within the language management page.
 
 All translatable texts are located in `Fluency/app/FluencyLocalization.php`
@@ -94,6 +98,8 @@ Review the `CHANGELOG.md` file for an always up-to-date list of changes.
 
 ### Translating Inputfields
 
+![fluency_translating_inputfields](https://github.com/SkyLundy/Fluency/assets/61801600/09345468-7e39-4287-8e9a-37291edd8e5f)
+
 Fluency can translate content in any type of field on any page. These include:
 
 - Plain textarea or text
@@ -106,7 +112,11 @@ Fluency can translate content in any type of field on any page. These include:
 
 Fluency is designed so that any multi-language field in any location or combination/nesting with other fields will be translatable.
 
+When translating content within a TinyMCE or CKEditor field that contains links to other pages, the URLs will also be converted to links in that language automatically.
+
 ### Translating Templates and Modules
+
+![fluency_templates_and_modules](https://github.com/SkyLundy/Fluency/assets/61801600/261dedb2-4c88-429b-81c8-96fbc7d16c2b)
 
 Fluency integrates with ProcessWire's native translator pages where you can select files to translate. These include:
 
@@ -120,23 +130,31 @@ In your ProcessWire admin, navigate to a langauge page, use the "Find Files To T
 
 ### Standalone Translator
 
+![fluency_translator](https://github.com/SkyLundy/Fluency/assets/61801600/4e0e7ab8-41f8-4d5e-82b4-ad344b1c61b3)
+
 Fluency also provides a standalone translation located as an item in the admin menu bar that can be accessed from any page, or by clicking the translation icon next to the translate buttons located under fields. This does not require that ProcessWire languages are configured in Fluency, only that the Translation Engine is configured to use a third party service.
 
-To use Fluency, users must be assigned the `fluency-translate` permission.
+To use the standalone translator, users must be assigned the `fluency-translate` permission.
 
 ### Modified Content Indication
 
-When content in a ProcessWire field changes, Fluency adds a green line at the top of the language tab for that field. If the content is reverted to it's original value, the green line is removed. This lets users who are editing and translating content know which fields have been changed without clicking to another language tab. This assists content input and helps prevent content deviation between languages.
+When content in a ProcessWire field changes, Fluency italicizes and adds a green line on the language tab for that field. If the content is reverted to it's original value, the green line is removed. This lets users who are editing and translating content know which fields have been changed without clicking to another language tab. This assists content input and helps prevent content deviation between languages.
+
+![fluency_modified_indicator](https://github.com/SkyLundy/Fluency/assets/61801600/bf6cb2e8-b27d-4cad-908e-ba3cb7f6e748)
 
 ### Caching
 
 **Translations**
+
+![fluency_translation_caching](https://github.com/SkyLundy/Fluency/assets/61801600/605aa092-5f72-4eab-9593-e72724892c40)
 
 All translations are cached by default for a period of one month. This helps reduce API account usage where the same content is translated more than once and significantly increases translation speed. Caching can be toggled on/off on the Fluency module config page. The translation cache can also be manually cleared either on the module config page, via the [Fluency module API](#managing-cache), or via an AJAX request using the [Fluency admin REST API](#admin-rest-api-endpoints).
 
 Translation caching relies on _exact_ value matching including punctuation, spelling, and capitalization. This ensures that an exact translation is always returned accurately. Translations that contain multiple strings are cached together.
 
 **Translatable Languages**
+
+![fluency_translatable_languages_caching](https://github.com/SkyLundy/Fluency/assets/61801600/dd1ecf51-92d1-4d63-8a9c-49c69ddd0da3)
 
 Fluency uses lists of recognized languages from the selected third party translation service to determine what languages to make available when configuring and using Fluency.
 
