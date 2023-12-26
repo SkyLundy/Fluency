@@ -109,18 +109,18 @@ final class Fluency extends Process implements Module, ConfigurableModule {
 
     $this->moduleJsPath = "{$this->urls->$this}assets/scripts/";
     $this->moduleCssPath = "{$this->urls->$this}assets/styles/";
-  }
 
-  /**
-   * Executes module when PW is ready
-   * @return void
-   */
-  public function ready() {
     $this->fluencyConfig = (new FluencyConfig())->getConfigData();
     $this->translationCache = new TranslationCache();
     $this->engineLanguagesCache = new EngineLanguagesCache();
     $this->initializeTranslationEngine();
+  }
 
+  /**
+   * Executes admin UI when PW is ready
+   * @return void
+   */
+  public function ready() {
     if (!$this->moduleShouldInitInAdmin()) {
       return false;
     }
@@ -237,9 +237,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * @return bool
    */
   public function inputfieldTranslationIsReady(): bool {
-    return $this->translationEngineIsReady() &&
-           $this->getDefaultConfiguredLanguage() &&
-           count($this->getConfiguredLanguages()) >= 2;
+    return $this->translationEngineIsReady() && count($this->getConfiguredLanguages()) >= 2;
   }
 
   /**
@@ -388,20 +386,6 @@ final class Fluency extends Process implements Module, ConfigurableModule {
 
     return $this->unconfiguredLanguages = array_values($unconfiguredLanguages);
   }
-
-  /**
-   * Get the default language configured in Fluency.
-   *
-   * #pw-group-Fluency-Module-Configuration-Data
-   *
-   * @return ConfiguredLanguageData|null
-   *
-   * Reference `Fluency/app/DataTransferObjects/ConfiguredLanguageData.php`
-   */
-  // public function getDefaultConfiguredLanguage(): ?ConfiguredLanguageData {
-  //   return $this->getConfiguredLanguages()->getDefault();
-  // }
-
 
   /**
    * Gets all configuration data in one object. Can be passed into the ProcessWire JavaScript

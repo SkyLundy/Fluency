@@ -1,5 +1,14 @@
 # Fluency for ProcessWire Changelog
 
+## 1.0.6 2023-12-26
+
+### Bugfix, Internal Updates, Recommended for all users
+
+- Move initializations to `init()` method so that Fluency can be used prior to `ready()` which to
+  allow functionality to be extended beyond the page context. Allows Fluency to be accessed and
+  used by other modules.
+- Removed call to previously removed method in module
+
 ## 1.0.5 2023-12-22
 
 ### _Critical update_, Bugfix upgrade recommended for all users.
