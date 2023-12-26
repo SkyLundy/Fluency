@@ -27,7 +27,7 @@ const FtApiUsageTableFieldset = (function () {
     }
 
     const translationApiUsageTables = document.querySelectorAll(
-      `.ft-api-usage-table-fieldset:not([${initializedAttr}])`
+      `.ft-api-usage-table-fieldset:not([${initializedAttr}])`,
     );
 
     [...translationApiUsageTables].forEach(el => {

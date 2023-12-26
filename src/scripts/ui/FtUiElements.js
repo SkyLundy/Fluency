@@ -1,5 +1,4 @@
 import FtConfig from '../global/FtConfig';
-import FtTools from '../global/FtTools';
 import Fluency from '../global/Fluency';
 
 /**

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fluency\DataTransferObjects;
 
-use \BadMethodCallException;
 use \InvalidArgumentException;
 use Fluency\App\FluencyErrors;
 use JsonSerializable;

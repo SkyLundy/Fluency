@@ -42,12 +42,15 @@ trait LocalizesPageUrls {
 
     $dom = new DOMDocument();
 
+    // Suppressing errors with @ is bad, DOMDocument is a PITA
+    //
+    // <div></div> inserted because of this
     // https://stackoverflow.com/questions/61995451/how-to-prevent-domdocument-from-wrapping-result-in-p-tags
-    $translation = "<div>{$translation}</div>";
-
-    // Suppressing errors with @ is bad, but prevents odd errors from unduely killing the party
+    //
+    // XML encoding is a hack, mb_convert_encoding for UTF-8 was deprecated in PHP 8.2
+    // https://www.php.net/manual/en/domdocument.loadhtml.php#95251
     @$dom->loadHTML(
-      mb_convert_encoding($translation, 'HTML-ENTITIES', 'UTF-8'),
+      "<?xml encoding=\"UTF-8\"><div>{$translation}</div>",
       LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
     );
 
@@ -69,7 +72,7 @@ trait LocalizesPageUrls {
       $output .= $dom->saveHTML($childNode);
     }
 
-    return $output;
+    return html_entity_decode($output);
   }
 
   private function getLocalizedLinkUrlIfExists(

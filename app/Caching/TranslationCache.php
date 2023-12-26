@@ -94,4 +94,31 @@ final class TranslationCache {
 
     return $this->count();
   }
+
+  /**
+   * Delete a cached translation by it's cache key
+   * @param  string $cacheKey Cache key
+   * @return bool             True on success
+   */
+  public function deleteByCacheKey(string $cacheKey): bool {
+    return $this->cache()->deleteFor(self::CACHE_NAMESPACE, $cacheKey);
+  }
+
+  /**
+   * Gets all cached EngineTranslationData objects
+   * @return array<EngineTranslationData>
+   */
+  public function getAllCachedTranslations(): array {
+    $fluencyCaches = array_filter(
+      $this->cache()->getInfo(),
+      fn($item) => str_starts_with($item['name'], self::CACHE_NAMESPACE)
+    );
+
+    return array_map(function($item) {
+      $key = explode('__', $item['name'])[1];
+      $cachedValue = $this->cache()->getFor(self::CACHE_NAMESPACE, $key);
+
+      return unserialize($cachedValue);
+    }, $fluencyCaches);
+  }
 }

@@ -108,17 +108,30 @@ final class FluencyErrors {
    */
   public const FLUENCY_MODULE_ERROR = 'FLUENCY_MODULE_ERROR';
 
+
+  /**
+   * Attempting to translate ProcessWire files to the default language
+   */
+  public const FLUENCY_PW_FILE_TO_DEFAULT_LANGUAGE = 'FLUENCY_PW_FILE_TO_DEFAULT_LANGUAGE';
+
+  /**
+   * Attempting to translate files to invalid target languages
+   */
+  public const FLUENCY_PW_FILE_INVALID_TARGET_LANGUAGE = 'FLUENCY_PW_FILE_INVALID_TARGET_LANGUAGE';
+
   /**
    * Returns an error message based on the provided error type.
    *
-   * @param  string $errorType A FluencyErrors constant value
+   * @param  string       $error A FluencyErrors constant value
+   * @param  string|null  $append    A message to append
    * @return string
    */
-  public static function getMessage(string $errorType): string {
-    $messages = FluencyLocalization::getFor('errors');
+  public static function getMessage(string $error): string {
+    !in_array($error, self::getDefinedErrors()) && throw new InvalidArgumentException(
+      "{$error} is not a valid Fluency Error, reference FluencyErrors.php"
+    );
 
-    return property_exists($messages, $errorType) ? $messages->$errorType
-                                                  : $messages->{self::UNKNOWN_ERROR};
+    return FluencyLocalization::getFor('errors')->$error;
   }
 
   /**

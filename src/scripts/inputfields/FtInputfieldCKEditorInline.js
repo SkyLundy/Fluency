@@ -166,7 +166,7 @@ const FtInputfieldCKEditorInline = function (inputfield) {
     }
 
     contentElements[languageId] = this.getInputContainerForLanguage(languageId).querySelector(
-      '.InputfieldCKEditorInlineEditor'
+      '.InputfieldCKEditorInlineEditor',
     );
 
     return contentElements[languageId];
@@ -283,6 +283,7 @@ const FtInputfieldCKEditorInline = function (inputfield) {
 
       editorInstances[languageId] = this.getEditorInstanceForLanguage(languageId);
       languageTabs[languageId] = new FtLanguageTab(inputContainer);
+
       this.registerInputEventListener(languageId);
     }
 

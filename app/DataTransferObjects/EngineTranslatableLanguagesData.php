@@ -6,11 +6,11 @@ namespace Fluency\DataTransferObjects;
 
 use Countable;
 use Fluency\DataTransferObjects\{ FluencyDTO, EngineLanguageData };
-use Fluency\DataTransferObjects\Traits\{
-  ValidatesErrorsTrait,
-  ValidatesObjectInstancesTrait,
-  CreatesRetrievedAtTimestampTrait
-};
+use Fluency\DataTransferObjects\Traits\{ CreatesRetrievedAtTimestampTrait, ValidatesErrorsTrait };
+
+require_once __DIR__ . '/../Functions/typeChecking.php';
+
+use function Fluency\Functions\arrayContainsOnlyInstancesOf;
 
 /**
  * Represents a full list of languages that a translation engine can translate from and too
@@ -21,8 +21,6 @@ final class EngineTranslatableLanguagesData extends FluencyDTO implements Counta
   use CreatesRetrievedAtTimestampTrait;
 
   use ValidatesErrorsTrait;
-
-  use ValidatesObjectInstancesTrait;
 
   /**
    * @param array<EngineLanguageData> $languages   List of translatable languages, type validated
@@ -46,7 +44,12 @@ final class EngineTranslatableLanguagesData extends FluencyDTO implements Counta
     $data['languages'] ??= [];
 
     self::validateErrorIfPresent($data, 'error');
-    self::validateArrayConainsOnlyInstancesOf($data['languages'], EngineLanguageData::class);
+
+    arrayContainsOnlyInstancesOf(
+      $data['languages'],
+      EngineLanguageData::class,
+      "Languages array must only contain instances of EngineLanguageData"
+    );
 
     usort($data['languages'], fn($a, $b) => strcmp($a->targetName, $b->targetName));
 

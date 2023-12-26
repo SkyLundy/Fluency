@@ -272,9 +272,7 @@ class FluencyConfig extends ModuleConfig {
       if ($engineLanguages->error) {
         $this->saveModuleConfig(translation_api_ready: false);
 
-        $this->wire->message(
-          __('Please configure the selected translation engine')
-        );
+        $this->wire->message($engineLanguages->message);
 
         return $inputfields;
       }
@@ -473,7 +471,8 @@ class FluencyConfig extends ModuleConfig {
           'required' => true,
           'options' => [
             'translate_each_language' => 'Individual language tab translation',
-            'translate_to_all_languages' => 'Translate to all languages'
+            'translate_to_all_languages' => 'Translate to all languages',
+            'both' => 'Both',
           ]
         ],
         // Localization

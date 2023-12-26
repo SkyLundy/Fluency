@@ -143,10 +143,10 @@ const watch = async function () {
     Scripts.paths.watch,
     gulp.series(
       Scripts.compileFluency,
-      // Scripts.compileStandaloneTranslator,
-      // Scripts.compileApiUsage,
+      Scripts.compileStandaloneTranslator,
+      Scripts.compileApiUsage,
       Scripts.compileLanguageTranslator,
-      // Scripts.compileModuleConfig,
+      Scripts.compileModuleConfig,
     ),
   );
 };

@@ -100,7 +100,7 @@ const FtInputfieldText = function (inputfield) {
     FtInputfields.updateValue(field, value);
 
     // Required to programmatically trigger the event listener for this field
-    field.dispatchEvent(new Event('input'));
+    field.dispatchEvent(new Event('keyup'));
 
     return this.contentHasChanged(languageId);
   };
@@ -166,7 +166,7 @@ const FtInputfieldText = function (inputfield) {
    * @return {Void}
    */
   this.registerInputEventListener = languageId => {
-    this.getFieldForLanguage(languageId).addEventListener('input', e => {
+    this.getFieldForLanguage(languageId).addEventListener('keyup', e => {
       changedValues[languageId] = e.target.value;
       languageTabs[languageId].setModifiedState(this.contentHasChanged(languageId));
     });

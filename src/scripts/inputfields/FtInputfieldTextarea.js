@@ -94,7 +94,7 @@ const FtInputfieldTextarea = function (inputfield) {
     FtInputfields.updateValue(field, value);
 
     // Required to programmatically trigger the event listener for this field
-    field.dispatchEvent(new Event('input'));
+    field.dispatchEvent(new Event('keyup'));
 
     return this.contentHasChanged(languageId);
   };
@@ -109,7 +109,7 @@ const FtInputfieldTextarea = function (inputfield) {
     }
 
     languageFields[languageId] = inputfield.querySelector(
-      `[data-language="${languageId}"] textarea`
+      `[data-language="${languageId}"] textarea`,
     );
 
     return languageFields[languageId];
@@ -136,6 +136,19 @@ const FtInputfieldTextarea = function (inputfield) {
     changedValues[languageId] !== initValues[languageId];
 
   /**
+   * Registers the event listener that watches for changes
+   * @access private
+   * @param  {String|Int} languageId ProcessWire language ID
+   * @return {Void}
+   */
+  this.registerInputEventListener = languageId => {
+    this.getFieldForLanguage(languageId).addEventListener('keyup', e => {
+      changedValues[languageId] = e.target.value;
+      languageTabs[languageId].setModifiedState(this.contentHasChanged(languageId));
+    });
+  };
+
+  /**
    * Init method executed on object instantiation
    * - Stores initial field values for each langauge
    * - Creates/stores an FtLanguageTab object for each language
@@ -151,10 +164,7 @@ const FtInputfieldTextarea = function (inputfield) {
       initValues[languageId] = this.getValueForLanguage(languageId);
       languageTabs[languageId] = new FtLanguageTab(inputContainer);
 
-      inputContainer.querySelector('textarea').addEventListener('input', e => {
-        changedValues[languageId] = e.target.value;
-        languageTabs[languageId].setModifiedState(this.contentHasChanged(languageId));
-      });
+      this.registerInputEventListener(languageId);
     }
 
     activityOverlay = new FtActivityOverlay(this);

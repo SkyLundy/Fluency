@@ -6,42 +6,54 @@ declare(strict_types=1);
 
 namespace ProcessWire;
 
-wire('classLoader')->addNamespace('Fluency\App', __DIR__ . '/app');
-wire('classLoader')->addNamespace('Fluency\Assets', __DIR__ . '/assets');
-wire('classLoader')->addNamespace('Fluency\Components', __DIR__ . '/app/Components');
-wire('classLoader')->addNamespace('Fluency\Caching', __DIR__ . '/app/Caching');
-wire('classLoader')->addNamespace('Fluency\Engines', __DIR__ . '/app/Engines');
-wire('classLoader')->addNamespace('Fluency\DataTransferObjects', __DIR__ . '/app/DataTransferObjects');
-wire('classLoader')->addNamespace('Fluency\Functions', __DIR__ . '/app/Functions');
+$namespaces = [
+  'Fluency\App' => '/app',
+  'Fluency\Caching' => '/app/Caching',
+  'Fluency\Components' => '/app/Components',
+  'Fluency\DataTransferObjects' => '/app/DataTransferObjects',
+  'Fluency\Engines' => '/app/Engines',
+  'Fluency\Functions' => '/app/Functions',
+  'Fluency\Services' => '/app/Services',
+];
+
+foreach ($namespaces as $namespace => $directory) {
+  wire('classLoader')->addNamespace($namespace, __DIR__ . $directory);
+}
 
 require_once __DIR__ . '/app/Functions/fluencyEngineConfigNames.php';
 
-use ProcessWire\FluencyConfig;
 use Fluency\App\{
   FluencyLocalization as Localization,
-  FluencyMarkup as Markup
+  FluencyMarkup as Markup,
+  FluencyErrors as Errors,
 };
-use Fluency\App\FluencyErrors;
 use Fluency\Caching\{ TranslationCache, EngineLanguagesCache };
 use Fluency\Components\{
   FluencyApiUsageTableFieldset as ApiUsageTableFieldset,
-  FluencyStandaloneTranslatorFieldset as StandaloneTranslatorFieldset
+  FluencyStandaloneTranslatorFieldset as StandaloneTranslatorFieldset,
 };
-use Fluency\Engines\FluencyEngine;
 use Fluency\DataTransferObjects\{
-    AllConfiguredLanguagesData,
-    ConfiguredLanguageData,
+  AllConfiguredLanguagesData,
+  ConfiguredLanguageData,
   EngineApiUsageData,
   EngineInfoData,
   EngineTranslatableLanguagesData,
   EngineTranslationData,
   FluencyConfigData,
-  TranslationRequestData
+  TranslationRequestData,
 };
+use Fluency\Engines\FluencyEngine;
+use Fluency\Services\FluencyProcessWireFileTranslator as ProcessWireFileTranslator;
 use InvalidArgumentException;
+use ProcessWire\FluencyConfig;
+use RuntimeException;
 use stdClass;
 
-use function Fluency\Functions\createLanguageConfigName;
+use function Fluency\Functions\{
+  arrayContainsOnlyInstancesOf,
+  arrayContainsOnlyType,
+  createLanguageConfigName,
+};
 
 /**
  * #pw-summary The complete translation suite module for ProcessWire
@@ -81,6 +93,8 @@ final class Fluency extends Process implements Module, ConfigurableModule {
 
   private ?EngineLanguagesCache $engineLanguagesCache = null;
 
+  private ?ProcessWireFileTranslator $processWireFileTranslator = null;
+
   /**
    * Memoizing Fluency::getConfiguredLanguages() output
    * @var AllConfiguredLanguagesData|null
@@ -111,9 +125,9 @@ final class Fluency extends Process implements Module, ConfigurableModule {
     $this->moduleCssPath = "{$this->urls->$this}assets/styles/";
 
     $this->fluencyConfig = (new FluencyConfig())->getConfigData();
-    $this->translationCache = new TranslationCache();
-    $this->engineLanguagesCache = new EngineLanguagesCache();
+    $this->initializeCaches();
     $this->initializeTranslationEngine();
+    $this->processWireFileTranslator = new ProcessWireFileTranslator($this);
   }
 
   /**
@@ -147,6 +161,14 @@ final class Fluency extends Process implements Module, ConfigurableModule {
 
     $this->translationEngine = new $selectedEngine->engineClass($this->fluencyConfig);
     $this->translationEngineInfo = $selectedEngine->info();
+  }
+
+  /**
+   * Create instances of cachaes
+   */
+  private function initializeCaches(): void {
+    $this->translationCache = new TranslationCache();
+    $this->engineLanguagesCache = new EngineLanguagesCache();
   }
 
   /**
@@ -195,6 +217,10 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * Inserts assets for use on ProcessWire's Language Support translation pages
    */
   private function insertProcessWireLanguageTranslatorAssets(): void {
+    if ($this->input->urlSegment(1) === 'add') {
+      return;
+    }
+
     $this->config->js('fluency', $this->getClientData());
     $this->config->styles->add("{$this->moduleCssPath}fluency_core.min.css");
     $this->config->scripts->add("{$this->moduleJsPath}fluency_language_translator.bundle.js");
@@ -344,7 +370,6 @@ final class Fluency extends Process implements Module, ConfigurableModule {
     }
 
     $pwLanguage = $this->languages->get($processWireId);
-
     $pwTitle = $pwLanguage->title;
     $userLanguage = $this->user->language;
 
@@ -409,8 +434,104 @@ final class Fluency extends Process implements Module, ConfigurableModule {
   }
 
   /**
-   * Front End Utilities & Markup Rendering
+   * Developer Tools
    */
+
+  /**
+   * Translate files used by ProcessWire to one or more languages
+   *
+   * Translate any file that ProcessWire uses such as templates, modules, or any where the `__()`
+   * translation function is present. These may be located anywhere on the filesystem including in
+   * `site/*` and `wire/*`. This will parse the files passed to the method, find all untranslated
+   * strings, create default language translation files where they exist, and add strings found to
+   * them. Then all values translated to the specified languages.
+   *
+   * **Note:** This has the potential to be an "expensive" operation with high API usage. It is
+   * important to be aware of the amount of translations that will occur and the number of strings
+   * in files.
+   *
+   * **Important:** this relies the internal `translator()` method on the ProcessWire `Language`
+   * object. This feature in Fluency is considered stable however is subject to ProcessWire core
+   * changes. Please report any problems by filing an issue on the Fluency Github repository.
+   *
+   * ~~~~~
+   * // Files must be the full file name with path from the root directory
+   *
+   * // A single file to all languages
+   * $fluency->translateProcessWireFiles('site/templates/home.php');
+   *
+   * // Multiple files to all languages
+   * $fluency->translateProcessWireFiles([
+   *   'site/templates/home.php',
+   *   'site/modules/FieldtypeRepeaterMatrix/InputfieldRepeaterMatrix.module',
+   *   'wire/modules/Inputfield/InputfieldText/InputfieldText.module',
+   * ]);
+   *
+   * // Using one or more ProcessWire IDs languages
+   * $fluency->translateProcessWireFiles([
+   *   'site/templates/home.php',
+   *   'site/modules/FieldtypeRepeaterMatrix/InputfieldRepeaterMatrix.module',
+   * ], [1028, 1032]);
+   *
+   * // Create the required default language files before translating
+   * $fluency->translateProcessWireFiles([
+   *   'site/templates/home.php',
+   *   'site/modules/FieldtypeRepeaterMatrix/InputfieldRepeaterMatrix.module',
+   * ], [1028, 1032], true);
+   *
+   * // Using one or more ConfiguredLanguageData objects
+   * $targetLanguages = $fluency->getConfiguredLanguages()->getByProcessWireTitle(['French', 'German']);
+   *
+   * $fluency->translateProcessWireFiles('site/templates/home.php', $targetLanguages);
+   * ~~~~~
+   *
+   *
+   * #pw-group-Developer-Tools
+   *
+   * @param string|array<string> $files ProcessWire file(s) to translate, with path from root
+   * @param int|ConfiguredLanguageData|null $targetLanguages Language(s) to translate files to. Must
+   *                                                         not be or include the default language
+   * @param bool $createDefaultFiles Create default files required for translating first
+   * @return stdClass Object containing the number of files translated and target languages
+   * @throws RuntimeException
+   * @throws InvalidArgumentException
+   */
+  public function translateProcessWireFiles(
+    string|array $files,
+    int|ConfiguredLanguageData|array|null $targetLanguages = null,
+    bool $overwriteExistingTranslations = false
+  ): stdClass {
+    !$this->inputfieldTranslationIsReady() && throw new RuntimeException(
+      Errors::getMessage(Errors::FLUENCY_NOT_CONFIGURED)
+    );
+
+    $configuredLanguages = $this->getConfiguredLanguages()->withoutDefault();
+    $files = (array) $files;
+    $targetLanguages = (array) $targetLanguages ?: $configuredLanguages->languages;
+
+    $targetsAreIds = arrayContainsOnlyType($targetLanguages, 'integer');
+    $targetsDTOs = arrayContainsOnlyInstancesOf($targetLanguages, ConfiguredLanguageData::class);
+
+    // Handle array of incorrect target language values
+    !$targetsAreIds && !$targetsDTOs && throw new InvalidArgumentException(
+      Errors::getMessage(Errors::FLUENCY_PW_FILE_INVALID_TARGET_LANGUAGE)
+    );
+
+    $targetsAreIds && $targetLanguages = $configuredLanguages->getByProcessWireId($targetLanguages);
+
+    $targetLanguageIds = array_map(fn($language) => $language->id, $targetLanguages);
+    $defaultLanguageId = $this->getConfiguredLanguages()->getDefault()->id;
+
+    in_array($defaultLanguageId, $targetLanguageIds) && throw new InvalidArgumentException(
+      Errors::getMessage(Errors::FLUENCY_PW_FILE_TO_DEFAULT_LANGUAGE)
+    );
+
+    return $this->processWireFileTranslator->translateForProcessWire(
+      $files,
+      $targetLanguages,
+      $overwriteExistingTranslations
+    );
+  }
 
   /**
    * Get a language code by ProcessWire language ID, falls back to current language without ID
@@ -418,7 +539,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * The language code returned is defined by the translation service. The format and style may
    * differ depending on the Translation Engine currently in use
    *
-   * #pw-group-Page-And-Markup-Utilities
+   * #pw-group-Developer-Tools
    *
    * @param int $processWireId ProcessWire language ID
    * @param string $languageSource 'fluency' to render using Fluency configured languages or
@@ -431,12 +552,11 @@ final class Fluency extends Process implements Module, ConfigurableModule {
     ?int $processWireId = null,
     string $languageSource = 'fluency'
   ): ?string {
-    $processWireId ??= $this->user->language->id;
+    $pwId = $processWireId ?? $this->user->language->id;
 
     return array_reduce(
       $this->getLanguagesForMarkup($languageSource),
-      fn ($code, $language) => $iso = $language->id === $processWireId ? strtolower($language->code)
-                                                                       : $code
+      fn ($code, $language) => $code = $language->id === $pwId ? strtolower($language->code) : $code
     );
   }
 
@@ -461,11 +581,11 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * <link rel="alternate" hreflang="https://awesomewebsite.com/es/" href="es" />
    * ~~~~~
    *
-   * #pw-group-Page-And-Markup-Utilities
+   * #pw-group-Developer-Tools
    *
    * @param  string $languageSource 'fluency' to render using Fluency configured languages or
-   *                              'processwire' to render using all languages in processwire
-   *                              Default: 'fluency'
+   *                                'processwire' to render using all languages in processwire
+   *                                 Default: 'fluency'
    * @return string
    * @throws InvalidArgumentException
    */
@@ -498,19 +618,18 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * By default, select options are created only for languages configured within Fluency as the
    * language codes needed are acquired through the Translation Engine
    *
-   * To use ProcessWire languages it is necessary to add an additional text field called
-   * `language_code` to the `language` system template and provide values for each language.
+   * To use ProcessWire languages as the `$languageSource` it is necessary to add an additional text
+   * field called `language_code` to the `language` system template and provide values for each.
    * Languages without a value will not be rendered in the markup.
    *
+   * #pw-group-Developer-Tools
    *
-   * #pw-group-Page-And-Markup-Utilities
-   *
-   * @param  bool $addInline       Include inline JS that navigates on select
-   * @param  string $id            Optional value for `<select>` id attribut
-   * @param  string|array $classes Optional value for `<select>` id attribut
-   * @param  string $languageSource 'fluency' to render using Fluency configured languages or
-   *                                   'processwire' to render using all languages in processwire
-   *                                    Default: 'fluency'
+   * @param  bool $addInline Include inline JS that navigates on select
+   * @param  string $id Optional value for `<select>` id attribute
+   * @param  string|array $classes Optional value for `<select>` id attribute
+   * @param  string $languageSource Pass 'fluency' to render using Fluency configured languages or
+   *                                'processwire' to render using all languages in processwire
+   *                                Default: 'fluency'
    * @return string
    * @throws InvalidArgumentException
    */
@@ -529,7 +648,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
         label: $language->title
       ),
        ''
-     );
+    );
 
     return Markup::languageSelect(
       classes: $classes,
@@ -549,7 +668,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * `language_code` to the `language` system template and provide values for each language.
    * Languages without a value will not be rendered in the markup.
    *
-   * #pw-group-Page-And-Markup-Utilities
+   * #pw-group-Developer-Tools
    *
    * @param string|array|null $classes Classes to add to <ul> element
    * @param string $id                 ID to add to <ul> element
@@ -593,6 +712,10 @@ final class Fluency extends Process implements Module, ConfigurableModule {
   /**
    * Gets languages for markup
    *
+   * NOTE: If 'processwire' is passed, a field with the name 'code' must be added to the language
+   * system template. Passing 'fluency' will automatically use the language codes provided by the
+   * translation service.
+   *
    * @param  string $source Either 'fluency' or 'processwire'
    * @throws InvalidArgumentException
    */
@@ -607,7 +730,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
   }
 
   /**
-   * Creates an array of data consumed by ___renderAltLanguageLinkTags
+   * Creates an array of data used by getLanguagesForMarkup
    */
   private function getProcessWireLanguagesForMarkup(): array {
     $this->fields->get('language_code');
@@ -616,7 +739,8 @@ final class Fluency extends Process implements Module, ConfigurableModule {
 
     if (!in_array('language_code', $fieldNames)) {
       throw new InvalidArgumentException(
-        "Failed to render alt language link tags for ProcessWire languages. A text field with the name 'code' must be added to the ProcessWire 'language' system template"
+        "Failed to render alt language link tags for ProcessWire languages. A text field with " .
+        "the name 'code' must be added to the ProcessWire 'language' system template"
       );
     }
 
@@ -635,7 +759,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
 
 
   /**
-   * Creates an array of data consumed by ___renderAltLanguageLinkTags
+   * Creates an array of data used by getLanguagesForMarkup
    */
   private function getFluencyLanguagesForMarkup(): array {
     return array_map(
@@ -678,12 +802,8 @@ final class Fluency extends Process implements Module, ConfigurableModule {
   /**
    * Clear cached translatable languages list for the currently selected Translation Engine
    *
-   * Cached language lists are automatically cleared weekly by default. If a translation service has
+   * Cached language lists are never automatically cleared. If a translation service has
    * released new languages but are not appearing within Fluency as avalable, clear this cache.
-   *
-   * Translation Engine languages are cached for one week.
-   *
-   * NOTE: This clears the translatable languages cached for all Translation Engines
    *
    * #pw-group-Caching
    *
@@ -695,13 +815,27 @@ final class Fluency extends Process implements Module, ConfigurableModule {
 
   /**
    * Determine if translatable languages are currently cached
-
+   *
    * #pw-group-Caching
    *
    * @return bool
    */
   public function translatableLanguagesAreCached(): bool {
     return (bool) $this->engineLanguagesCache->count();
+  }
+
+  /**
+   * Deletes all caches used by Fluency
+   *
+   * #pw-group-Caching
+   *
+   * @return int Number of items remaining in cache, zero indicates success
+   */
+  public function clearAllCaches(): int {
+    $translatableLanguages = $this->clearTranslatableLanguagesCache();
+    $translations = $this->clearTranslationCache();
+
+    return $translatableLanguages + $translations;
   }
 
   /**
@@ -717,7 +851,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * // Access data using their properties
    * $result->translations;              // => ['Wie geht es Ihnen, liebe Entwicklerfreunde?']
    * $result->content;                   // => ['How do you do, fellow developers?']
-   * $result->error;                     // => null or Fluency\App\FluencyErrors constant value
+   * $result->error;                     // => null or Fluency\App\Errors constant value
    * $result->fromCache;                 // => false
    * $result->retrievedAt;               // => '2023-08-25T23:35:09+00:00'
    *
@@ -749,7 +883,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    *
    * Reference `Fluency/app/DataTransferObjects/EngineTranslationData.php`
    * and `Fluency/app/DataTransferObjects/EngineLanguageData.php`
-   * and `Fluency/App/FluencyErrors.php`
+   * and `Fluency/App/Errors.php`
    */
   public function translate(
     string $sourceLanguage = '',
@@ -768,23 +902,24 @@ final class Fluency extends Process implements Module, ConfigurableModule {
       'options' => $options ?? []
     ];
 
-    if (!$source || !$target) {
-      $requestData['error'] = !$source ? FluencyErrors::FLUENCY_UNKNOWN_SOURCE
-                                       : FluencyErrors::FLUENCY_UNKNOWN_TARGET;
+    $request = TranslationRequestData::fromArray($requestData);
 
-      return EngineTranslationData::fromArray($requestData);
+    if (!$source || !$target) {
+      $error = !$source ? Errors::FLUENCY_UNKNOWN_SOURCE
+                        : Errors::FLUENCY_UNKNOWN_TARGET;
+
+      return EngineTranslationData::fromArray(['request' => $request, 'error' => $error]);
     }
 
-    $translationRequest = TranslationRequestData::fromArray($requestData);
-
+    // If caching is overridden in this method call, if null fall back to module config setting
     if ($caching ?? $this->fluencyConfig->translation_cache_enabled) {
       return $this->translationCache->getOrStoreNew(
-        $translationRequest,
-        fn() => $this->translationEngine->translate($translationRequest)
+        $request,
+        fn() => $this->translationEngine->translate($request)
       );
     }
 
-    return $this->translationEngine->translate($translationRequest);
+    return $this->translationEngine->translate($request);
   }
 
   /**
@@ -804,7 +939,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * @return EngineApiUsageData
    *
    * Reference `Fluency/app/DataTransferObjects/EngineApiUsageData.php`
-   * and `Fluency/app/FluencyErrors.php`
+   * and `Fluency/app/Errors.php`
    */
   public function getTranslationApiUsage(): EngineApiUsageData {
     return $this->translationEngine->getApiUsage();
@@ -894,6 +1029,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
       'usage' => "{$this->urls->admin}fluency/api/usage/",
       'translation' => "{$this->urls->admin}fluency/api/translation/",
       'languages' => "{$this->urls->admin}fluency/api/languages/",
+      'cache' => "{$this->urls->admin}fluency/api/cache/",
       'translationCache' => "{$this->urls->admin}fluency/api/cache/translations",
       'translatableLanguagesCache' => "{$this->urls->admin}fluency/api/cache/languages",
     ];
@@ -984,7 +1120,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
     $data = $this->getTranslationApiUsage();
     $error = $this->getTranslationApiUsage()->error;
 
-    if ($error === FluencyErrors::FLUENCY_NOT_IMPLEMENTED) {
+    if ($error === Errors::FLUENCY_NOT_IMPLEMENTED) {
       $this->emitApiError(501, $error);
     }
 
@@ -1002,6 +1138,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
   }
 
   /**
+   * Endpoint: /{admin-slug}/fluency/api/cache/
    * Endpoint: /{admin-slug}/fluency/api/cache/translations
    * Endpoint: /{admin-slug}/fluency/api/cache/languages
    *
@@ -1024,10 +1161,14 @@ final class Fluency extends Process implements Module, ConfigurableModule {
 
         !$this->clearTranslatableLanguagesCache() && $this->emitApiResponse(204);
 
-        $this->emitApiError(500, FluencyErrors::FLUENCY_MODULE_ERROR);
+        $this->emitApiError(500, Errors::FLUENCY_MODULE_ERROR);
         break;
       default:
-        $this->emitApiError(404, FluencyErrors::FLUENCY_NOT_FOUND);
+        $this->validateRequestedEndpoint(allowedMethods: 'DELETE');
+
+        !$this->clearAllCaches() && $this->emitApiResponse(204);
+
+        $this->emitApiError(500, Errors::FLUENCY_MODULE_ERROR);
         break;
     }
   }
@@ -1043,7 +1184,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
   private function emitApiError(int $status, string $fluencyError): void {
     $this->emitApiResponse($status, [
       'error' => $fluencyError,
-      'message' => FluencyErrors::getMessage($fluencyError)
+      'message' => Errors::getMessage($fluencyError)
     ]);
   }
 
@@ -1076,11 +1217,47 @@ final class Fluency extends Process implements Module, ConfigurableModule {
       !is_null($allowedMethods) &&
       !in_array($this->input->requestMethod(), (array) $allowedMethods)
     ) {
-      $this->emitApiError(405, FluencyErrors::FLUENCY_METHOD_NOT_ALLOWED);
+      $this->emitApiError(405, Errors::FLUENCY_METHOD_NOT_ALLOWED);
     }
 
     if (!is_null($maxEndpointDepth) && count($this->input->urlSegments) > $maxEndpointDepth) {
-      $this->emitApiError(404, FluencyErrors::FLUENCY_NOT_FOUND);
+      $this->emitApiError(404, Errors::FLUENCY_NOT_FOUND);
     }
+  }
+
+  /**
+   * Module Housekeeping
+   */
+
+  /**
+   * Ensures changes are implemented
+   *
+   * @param  string $fromVersion Existing module version
+   * @param  string $toVersion   Upgraded module version
+   * @return void
+   */
+  public function ___upgrade($fromVersion, $toVersion)
+  {
+    $this->initializeCaches();
+
+    if (
+      version_compare($fromVersion, '106', '<=') &&
+      !!$this->getCachedTranslationsCount()
+    ) {
+      $this->wire->warning(
+        Localization::getFor('messages')->upgrade108Message,
+        'noGroup'
+      );
+    }
+  }
+
+  /**
+   * Tidy up.
+   * @return void
+   */
+  public function ___uninstall() {
+    $this->initializeCaches();
+
+    $this->clearAllCaches();
   }
 }

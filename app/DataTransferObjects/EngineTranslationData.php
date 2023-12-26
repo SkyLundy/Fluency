@@ -8,12 +8,13 @@ use \InvalidArgumentException;
 use Countable;
 use Fluency\DataTransferObjects\Traits\CreatesRetrievedAtTimestampTrait;
 use Fluency\DataTransferObjects\{ FluencyDTO, TranslationRequestData };
+use Stringable;
 
 /**
  * Used to return a translation result from a translation engine
  */
 
-final class EngineTranslationData extends FluencyDTO implements Countable {
+final class EngineTranslationData extends FluencyDTO implements Countable, Stringable {
 
   use CreatesRetrievedAtTimestampTrait;
 
@@ -81,6 +82,13 @@ final class EngineTranslationData extends FluencyDTO implements Countable {
    */
   public static function fromCache(EngineTranslationData $translation): self {
     return new self(...[...$translation->toArray(), 'fromCache' =>  true]);
+  }
+
+  /**
+   * Stringable interface method
+   */
+  public function __toString(): string {
+    return $this->translations[0] ?? '';
   }
 
   /**

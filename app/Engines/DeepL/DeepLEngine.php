@@ -92,7 +92,10 @@ final class DeepLEngine implements FluencyEngine {
       ]);
     }
 
-    $translations = array_map(fn($translation) => $translation->text, $result->data->translations);
+    $translations = array_map(
+      fn($translation) => html_entity_decode($translation->text),
+      $result->data->translations
+    );
 
     $translations = $this->removeIgnoredTags($translations);
 

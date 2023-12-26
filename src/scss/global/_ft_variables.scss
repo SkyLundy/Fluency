@@ -16,6 +16,7 @@ $wedgewood: rgb(83, 121, 162);
 
 // Grayscales
 $white: rgb(255, 255, 255);
+$silver: rgb(201, 201, 201);
 $monsoon: rgb(135, 135, 135);
 
 :root {
@@ -74,4 +75,10 @@ $monsoon: rgb(135, 135, 135);
   --ft-inputfield-translate-status-color: #{$monsoon};
 
   --ft-inputfield-translate-icon-color: #{$monsoon};
+
+  --ft-secondary-translate-button-container-border: #{$silver};
+
+  --button-disabled: #{$silver};
+
+  --text-disabled: #{$monsoon};
 }

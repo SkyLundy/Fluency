@@ -103,7 +103,7 @@ const FtInputfieldPageName = function (inputfield) {
     FtInputfields.updateValue(field, value);
 
     // Required to programmatically trigger the event listener for this field
-    field.dispatchEvent(new Event('input'));
+    field.dispatchEvent(new Event('keyup'));
 
     return this.contentHasChanged(languageId);
   };
@@ -188,7 +188,7 @@ const FtInputfieldPageName = function (inputfield) {
    * @return {Void}
    */
   this.registerInputEventListener = languageId => {
-    this.getFieldForLanguage(languageId).addEventListener('input', e => {
+    this.getFieldForLanguage(languageId).addEventListener('keyup', e => {
       changedValues[languageId] = e.target.value;
       this.setModifiedState(languageId, this.contentHasChanged(languageId));
     });

@@ -43,8 +43,9 @@ final class FluencyLocalization {
         'fieldLabelOriginal' => __('Original'),
         'fieldLabelTranslated' => __('Translated'),
         'buttonLabelTranslate' => __('Translate'),
-        'clickToCopy' => __('Click to Copy'),
-        'copied' => __('Copied!')
+        'clickToCopy' => __('Copy Text'),
+        'clickToClear' => __('Clear Text'),
+        'copied' => __('Copied!'),
       ],
       'languageTranslator' => [
         'translateAllButton' => __('Click To Translate All'),
@@ -124,6 +125,9 @@ final class FluencyLocalization {
           ]
         ]
       ],
+      'messages' => [
+        'upgrade108Message' => __("Fluency: If you have experienced issues with encoded HTML characters in translations, please clear Fluency's translation cache"),
+      ],
       'errors' => [
         FluencyErrors::SERVICE_UNAVAILABLE => __('The translation service is not available, please try again later'),
         FluencyErrors::AUTHENTICATION_FAILED => __('Translation API authentication failed, check credentials'),
@@ -140,7 +144,7 @@ final class FluencyLocalization {
         FluencyErrors::FLUENCY_NOT_IMPLEMENTED => __('Fluency API Error: Feature Not Implemented'),
         FluencyErrors::FLUENCY_METHOD_NOT_ALLOWED => __('Fluency API Error: Method Not Allowed'),
         FluencyErrors::FLUENCY_UNKNOWN_SOURCE => __('The source language code was not recognized or is not available in the configured translation engine'),
-        FluencyErrors::FLUENCY_UNKNOWN_TARGET => __('The source language code was not recognized or is not available in the configured translation engine'),
+        FluencyErrors::FLUENCY_UNKNOWN_TARGET => __('The target language code was not recognized or is not available in the configured translation engine'),
         FluencyErrors::FLUENCY_MODULE_ERROR => __('An module error occurred and Fluency could not process your request'),
       ]
     ]);

@@ -10,6 +10,7 @@ const FtConfig = (function () {
   const translationActionTypes = {
     each: 'translate_each_language',
     all: 'translate_to_all_languages',
+    both: 'both',
   };
 
   // Private properties

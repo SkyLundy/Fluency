@@ -56,7 +56,7 @@ class FluencyStandaloneTranslatorFieldset {
         'label' => "Fluency | {$uiText->description} {$fluency->getTranslationEngineInfo()->name}",
         'icon' => 'language',
         'attributes' => [
-          'class' => self::appendInputfieldClasses('InputfieldFieldset',  'ft-standalone-translator'),
+          'class' => self::appendInputfieldClasses('InputfieldFieldset',  'ft-standalone-translator-fieldset'),
         ],
         'collapsed' => $collapsed ? Inputfield::collapsedYes : Inputfield::collapsedNever,
         'children' => [
@@ -64,7 +64,7 @@ class FluencyStandaloneTranslatorFieldset {
             'type' => 'InputfieldSelect',
             'label' => $uiText->fieldLabelFrom,
             'required' => true,
-            'columnWidth' => 50,
+            'columnWidth' => 45,
             'collapsed' => Inputfield::collapsedNever,
             'themeBorder' => 'hide',
             'attributes' => [
@@ -73,11 +73,30 @@ class FluencyStandaloneTranslatorFieldset {
             'options' => $sourceLanguageSelectOptions->options,
             'optionAttributes' => $sourceLanguageSelectOptions->attributes,
           ],
+          'ft_swap_languages' => [
+            'type' => 'InputfieldMarkup',
+            'label' => ' ',
+            'collapsed' => Inputfield::collapsedNever,
+            'columnWidth' => 10,
+            'themeBorder' => 'hide',
+            'children' => [
+              [
+                'type' => 'InputfieldButton',
+                'collapsed' => Inputfield::collapsedNever,
+                'name' => "swap_languages",
+                'value' => 1,
+                'attributes' => [
+                  'icon' => 'exchange',
+                  'class' => self::appendInputfieldClasses('InputfieldSubmit', 'js-ft-swap-languages')
+                ]
+              ],
+            ]
+          ],
           'ft_target_language' => [
             'type' => 'InputfieldSelect',
             'label' => $uiText->fieldLabelTo,
             'required' => true,
-            'columnWidth' => 50,
+            'columnWidth' => 45,
             'collapsed' => Inputfield::collapsedNever,
             'themeBorder' => 'hide',
             'attributes' => [

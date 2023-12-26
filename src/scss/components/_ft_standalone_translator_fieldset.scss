@@ -1,0 +1,47 @@
+.ft-standalone-translator-fieldset {
+  .js-ft-swap-languages[disabled] {
+    cursor: not-allowed;
+    background-color: var(--button-disabled);
+  }
+
+  .ft-click-to-clear-container,
+  .ft-click-to-copy-container {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .ft-click-to-copy,
+    .ft-click-to-clear {
+      cursor: pointer;
+      display: inline-block;
+      font: {
+        size: 0.8rem;
+        weight: 400;
+      }
+      margin: {
+        left: auto;
+        right: 0.75rem;
+      }
+      position: relative;
+
+      .ft-copy-icon,
+      .ft-clear-icon {
+        display: inline-block;
+        margin-left: 0.35rem;
+      }
+    }
+
+    .ft-click-to-copy {
+      pointer-events: none;
+
+      &:not(.enabled) {
+        color: var(--text-disabled);
+      }
+
+      &.enabled {
+        pointer-events: initial;
+      }
+    }
+  }
+}

@@ -1,5 +1,48 @@
 # Fluency for ProcessWire Changelog
 
+## 1.0.7 2024-25-01
+
+### Enhancements, Documentation, Bugfixes, Code Improvement, Recommended for all users
+
+- Add ability to have both 'Translate From Default Language' and 'Translate To All Languages'
+  buttons added to inputfields
+- Add ability to translate any file used by ProcessWire directly where the `__()` string translation
+  method is used from the filesystem in any directory. See `Fluency::translateProcessWireFiles()`
+  method for documentation and usage
+- Translation results can now be casted to a string. Casting `EngineTranslationData` objects to
+  string now outputs the first item in the `translations` property array which is useful when
+  translating individual strings. Credit to @BernhardBaumrock for the feature suggestion
+- Add source/target language swapping and clear field contents buttons to the standalone translator,
+  translated content field is now readonly, various improvements
+- Add cache clearing on module delete, because it's polite.
+- Fix issue where when creating a page, translating page titles would not populate the URLs of other
+  languages
+- Fix improper return value for `Fluency::translate()` method when pre-translation error occurs
+- Add methods to `AllConfiguredLanguageData` object where filtering and finding
+  `ConfiguredLanguageData` objects is improved
+- Remove 'Click To Translate All' button on the 'Find Files To Translate' page where it did nothing
+- Add `Fluency::clearAllCaches()` method and matching Fluency API endpoint
+- Improve documentation
+- Moved PHP array value type checking to importable functions
+- Fluency now makes recommendations for actions where necessary when upgrading
+- Improve messaging when Fluency experiences issues during module configuration. Credit to
+  @BernhardBaumrock for recommending
+- Fix issue where 'Translate to all languages' button would also translate the default content which
+  would unnecessarily increase API usage (sorry)
+- Add `TranslationCache::getAllCachedTranslations()` method to... do what the method name says
+- Add `TranslationCache::deleteByCacheKey()` method to... also do what the method name says
+- Clean up namespace registration in `Fluency.module.php`
+- Remove unused class imports
+- Remove legacy JavaScripts
+- Fix UI issue where translate buttons for page name fields were next to the inputs rather than
+  under them
+- Fix issue where translations may include encoded HTML entities. Bug caused by translating links in
+  content. Credit to @BernhardBaumrock for finding/reporting
+- Fix issue with handling entities via mbstring now errors in PHP 8.2 causing translations with
+  ProcessWire page links to fail, credit to @BernhardBaumrock for finding and reporting.
+- Fix issue where `FluencyErrors::FLUENCY_UNKNOWN_TARGET` showed a message indicating that the
+  source language was the issue. Credit to @BernhardBaumrock for finding and reporting
+
 ## 1.0.6 2023-12-26
 
 ### Bugfix, Internal Updates, Recommended for all users

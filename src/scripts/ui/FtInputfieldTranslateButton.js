@@ -1,5 +1,4 @@
 import FtConfig from '../global/FtConfig';
-import FtTools from '../global/FtTools';
 import Fluency from '../global/Fluency';
 import FtUiElements from './FtUiElements';
 
@@ -11,6 +10,11 @@ import FtUiElements from './FtUiElements';
  * inputfield and activityOverlay objects passed.
  */
 
+/**
+ * @param {Element}  inputfield
+ * @param {NodeList}  inputContainers
+ * @param {Boolean} forceEachTranslationAction Force a single field translation trigger
+ */
 const FtInputfieldTranslateButton = function (
   inputfield,
   inputContainers,
@@ -135,7 +139,8 @@ const FtInputfieldTranslateButton = function (
       }
 
       // Used to count the number of languages left when translating to all
-      let translationLanguageCount = Object.keys(inputContainers).length;
+      // Subtract 1 to account for default language which will not be translated
+      let translationLanguageCount = Object.keys(inputContainers).length - 1;
 
       let errorOccurred = false;
 
@@ -144,7 +149,9 @@ const FtInputfieldTranslateButton = function (
       activityOverlay.showActivity();
 
       for (let targetLanguageId in inputContainers) {
-        // No need to translate self
+        targetLanguageId = parseInt(targetLanguageId, 10);
+
+        // No need to translate source
         if (targetLanguageId === sourceLanguageConfig.id) {
           continue;
         }
@@ -182,23 +189,29 @@ const FtInputfieldTranslateButton = function (
     });
   };
 
+  this.addBothTranslationButtonTypes = (languageId, inputContainers) => {
+    this.addTranslateToAllButton(languageId, inputContainers);
+    this.addTranslateElements(languageId, inputContainers[languageId]);
+  };
+
   /**
    * Init on object instantiation
    */
   (() => {
+    const actionTypes = FtConfig.translationActionTypes;
+    const translationAction = FtConfig.getTranslationAction();
+
     for (let languageId in inputContainers) {
-      if (
-        FtConfig.getTranslationAction() === FtConfig.translationActionTypes.all &&
-        !forceEachTranslationAction
-      ) {
+      if (translationAction === actionTypes.all && !forceEachTranslationAction) {
         this.addTranslateToAllButton(languageId, inputContainers);
       }
 
-      if (
-        FtConfig.getTranslationAction() === FtConfig.translationActionTypes.each ||
-        forceEachTranslationAction
-      ) {
+      if (translationAction === actionTypes.each || forceEachTranslationAction) {
         this.addTranslateElements(languageId, inputContainers[languageId]);
+      }
+
+      if (translationAction === actionTypes.both && !forceEachTranslationAction) {
+        this.addBothTranslationButtonTypes(languageId, inputContainers);
       }
     }
   })();
