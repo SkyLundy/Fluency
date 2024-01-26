@@ -17,7 +17,7 @@ use Fluency\DataTransferObjects\{
   EngineInfoData,
   EngineTranslatableLanguagesData,
   FluencyConfigData,
-  FluencySelectedEngineData,
+  FluencyEngineSelectData,
 };
 use Fluency\Engines\{ FluencyEngineConfig, FluencyEngine };
 use \RuntimeException;
@@ -32,6 +32,8 @@ class FluencyConfig extends ModuleConfig {
 
   private const LANGUAGE_ASSOCIATION_COLUMN_COUNT = 3;
 
+  private const ENGINE_NAMESPACE = 'Fluency\Engines\%{ENGINE_DIRECTORY}\%{CLASS_NAME}';
+
   private ?FluencyEngine $engine = null;
 
   private ?FluencyEngineConfig $engineConfig = null;
@@ -39,7 +41,6 @@ class FluencyConfig extends ModuleConfig {
   private ?EngineInfoData $engineInfo = null;
 
   private ?FluencyConfigData $fluencyConfigData = null;
-
 
   /**
    * Config variable default values
@@ -50,7 +51,7 @@ class FluencyConfig extends ModuleConfig {
   public function getDefaults(): array {
     return [
       'translation_api_ready' => false,
-      'translation_cache_enabled' => false,
+      'translation_cache_enabled' => true,
       'selected_engine' => null,
       'inputfield_translation_action' => 'translate_to_all_languages',
     ];
@@ -73,26 +74,28 @@ class FluencyConfig extends ModuleConfig {
       return null;
     }
 
-    $selectedEngine = unserialize($moduleConfig->selected_engine);
+    $selectedEngine = FluencyEngineSelectData::fromJson($moduleConfig->selected_engine);
 
     $fluencyDefaultProperties =  array_keys($this->getDefaults());
     $engineDefaults = $selectedEngine->configClass::getConfig();
 
-    $moduleConfigArray = (array) $moduleConfig;
+    $configData = (array) $moduleConfig;
+
+    $configData['selected_engine'] = $selectedEngine;
 
     // Unset raw language config values
     $fluencyConfig = array_filter(
-      $moduleConfigArray,
-      fn($k) => !isLanguageConfigName($k) &&
-                !array_key_exists($k, $engineDefaults) &&
-                in_array($k, $fluencyDefaultProperties),
+      $configData,
+      fn ($k) => !isLanguageConfigName($k) &&
+        !array_key_exists($k, $engineDefaults) &&
+        in_array($k, $fluencyDefaultProperties),
       ARRAY_FILTER_USE_KEY
     );
 
     // Separate out engine config and relocate them under the engine property
     $fluencyConfig['engine'] = array_filter(
-      array_merge($engineDefaults, $moduleConfigArray),
-      fn($k) => array_key_exists($k, $engineDefaults),
+      array_merge($engineDefaults, $configData),
+      fn ($k) => array_key_exists($k, $engineDefaults),
       ARRAY_FILTER_USE_KEY
     );
 
@@ -140,7 +143,6 @@ class FluencyConfig extends ModuleConfig {
     ]);
   }
 
-
   /**
    * Internal module use only
    *
@@ -150,6 +152,13 @@ class FluencyConfig extends ModuleConfig {
     return (object) [...$this->getDefaults(), ...$this->modules->getModuleConfigData('Fluency')];
   }
 
+  /**
+   * Resets all configured engine data by removing the selected engine and it's associated settings
+   * @return [type] [description]
+   */
+  public function resetEngineData(): void {
+
+  }
 
   /**
    * This renders all Fluency config fields, as well as integrating the Translation Engine Config
@@ -195,7 +204,7 @@ class FluencyConfig extends ModuleConfig {
         'themeBorder' => 'hide',
         'description' => __('Each translation engine uses a differend third party service. Each have their own set of features and languages that they translate. Features and abilities will vary depending on the Translation Engine chosen. Use the one that best suits your application.'),
         'notes' => $engineSelected ? null
-                                   : __('You must choose a translation engine and save the page to continue configuring Fluency'),
+          : __('You must choose a translation engine and save the page to continue configuring Fluency'),
         'required' => true,
         'options' => $this->createTranslationEngineOptions()
       ]
@@ -233,9 +242,9 @@ class FluencyConfig extends ModuleConfig {
           $engineInfo->version,
           $engineInfo->provider,
           $engineInfo->providerApiVersion,
-          [__('Website Link') => $engineInfo->providerApiDocs],
+          [__('Link') => $engineInfo->providerApiDocs],
           $engineInfo->authorName ?? '-',
-          $engineInfo->authorUrl ? [__('Website Link') => $engineInfo->authorUrl] : '-',
+          $engineInfo->authorUrl ? [__('Link') => $engineInfo->authorUrl] : '-',
         ])->render(),
     ]);
 
@@ -339,14 +348,14 @@ class FluencyConfig extends ModuleConfig {
       'type' => 'InputfieldFieldset',
       'name' => 'fieldset_available_langauges',
       'label' => __('Translation Engine Available Languages'),
-      'description' => __('Ensure that the languages you are translating from are available here'),
+      'description' => __('Ensure that the languages you are translating are available here'),
       'collapsed' => Inputfield::collapsedYes,
       'children' => [
         // Source Languages
         [
           'type' => 'InputfieldMarkup',
           'label' => __('Source Languages'),
-          'notes' => __('The language of the content you are translating from must be listed here in the Source Languages column.'),
+          'notes' => __('The language you are translating from must be listed in this column.'),
           'value' => Markup::ol($liMarkup->source),
           'columnWidth' => 50,
           'collapsed' => Inputfield::collapsedNever,
@@ -356,6 +365,7 @@ class FluencyConfig extends ModuleConfig {
         [
           'type' => 'InputfieldMarkup',
           'label' => __('Target Languages'),
+          'notes' => __('The language you are translating to must be listed in this column.'),
           'value' => Markup::ol($liMarkup->target),
           'columnWidth' => 50,
           'collapsed' => Inputfield::collapsedNever,
@@ -401,7 +411,7 @@ class FluencyConfig extends ModuleConfig {
       'name' => 'fieldset_general_configurations',
       'label' => __('Fluency Options'),
       'children' => [
-         // Translation caching
+        // Translation caching
         'translation_cache_enabled' => [
           'type' => 'InputfieldCheckbox',
           'label' => __('Enable Translation Caching'),
@@ -419,7 +429,7 @@ class FluencyConfig extends ModuleConfig {
           'type' => 'InputfieldMarkup',
           'label' => __('Translation Cache Management'),
           'collapsed' => $moduleConfig->translation_cache_enabled ? Inputfield::collapsedNever
-                                                                  : Inputfield::collapsedHidden,
+            : Inputfield::collapsedHidden,
           'columnWidth' => 50,
           'themeBorder' => 'hide',
           'themeColor' => 'none',
@@ -452,7 +462,7 @@ class FluencyConfig extends ModuleConfig {
             'text' => __('Clear Translatable Languages Cache'),
             'name' => "cache_clear_button",
             'notes' => (new EngineLanguagesCache())->count() ? __('Languages are cached')
-                                                             : __('There are no languages cached'),
+              : __('There are no languages cached'),
             'value' => 1,
             'attributes' => [
               'icon' => 'bomb',
@@ -467,7 +477,7 @@ class FluencyConfig extends ModuleConfig {
           'themeBorder' => 'hide',
           'description' => __('Field translations can be made using two different methods. Translations can be made by clicking a button on each language tab that translates from the default langauge, or a button on each tab that translates to all languages at once.'),
           'notes' => $engineSelected ? null
-                                     : __('You must choose a translation engine and save the page to continue configuring Fluency'),
+            : __('You must choose a translation engine and save the page to continue configuring Fluency'),
           'required' => true,
           'options' => [
             'translate_each_language' => 'Individual language tab translation',
@@ -505,7 +515,7 @@ class FluencyConfig extends ModuleConfig {
         Markup::p([
           __("Module developers are dedicated members of the ProcessWire community and an important component of the ecosystem. Many hours and hard work are put into developing and maintaining modules that create great developer and end user experiences. Consider donating to developers of the modules you find most useful or are a consistent part of your projects!"),
         ]),
-        Markup::p(
+        Markup::div(
           Markup::a(
             href: 'https://paypal.me/noonesboy',
             content: Markup::img("{$this->wire('urls')->get('Fluency')}/assets/img/paypal_me.png", 'PayPal Me'),
@@ -521,50 +531,31 @@ class FluencyConfig extends ModuleConfig {
   }
 
   /**
-   * Private helper methods
+   * Private support methods
    */
-
-  /**
-   * Creates options for assignment to an InputfieldSelect where selecting a module is needed.
-   * Checks if a requested module exists, excludes if it does not
-   *
-   * @param  string ...$desiredModules Names of modules to create options from
-   */
-  private function createModuleSelectOptions(string ...$desiredModules): array {
-    return array_reduce($desiredModules, function($options, $desiredModule) {
-      $foundModule = $this->modules->$desiredModule;
-
-      if (!$foundModule) {
-        return $options;
-      }
-
-      $options[$desiredModule] = $foundModule->getModuleInfo()['title'];
-
-      return $options;
-    }, []);
-  }
 
   /**
    * Creates a fillter fieldset to act as spacing in fieldset column layouts
    *
-   * @param  int    $width Width in %
+   * @param int $width Width as a %
    */
   private function createFillerFieldset(int $width): InputfieldFieldset {
-      $filler = $this->modules->InputfieldFieldset;
-      $filler->attr('style', $filler->attr('style') . ' visibility: hidden !important;');
-      $filler->wrapAttr('style', $filler->attr('style') . ' visibility: hidden !important;');
-      $filler->columnWidth = 100 / $width;
-      $filler->themeBorder = 'hide';
-      $filler->themeColor = 'none';
+    $filler = $this->modules->InputfieldFieldset;
+    $filler->attr('style', $filler->attr('style') . ' visibility: hidden !important;');
+    $filler->wrapAttr('style', $filler->attr('style') . ' visibility: hidden !important;');
+    $filler->columnWidth = 100 / $width;
+    $filler->themeBorder = 'hide';
+    $filler->themeColor = 'none';
 
-      return $filler;
+    return $filler;
   }
 
   /**
    * Adds a language association select inputfield for a given ProcessWire language object
-   * @param InputfieldFieldset    $langAssocationFieldset Fieldset containing language associations
-   * @param Language              $pwLanguage             ProcessWire language object
-   * @param EngineTranslatableLanguagesData $engineLanguages    Object from translation engine containing source/target
+   *
+   * @param Language                        $pwLanguage             ProcessWire language object
+   * @param EngineTranslatableLanguagesData $engineLanguages        Object from translation engine
+   *                                                                containing source/target
    */
   private function addLanguageAssociationSelect(
     Language $pwLanguage,
@@ -572,17 +563,16 @@ class FluencyConfig extends ModuleConfig {
   ): InputfieldWrapper {
     $userLanguage = $this->user->language->name;
 
-   // Get information from languages configured in ProcessWire
+    // Get information from languages configured in ProcessWire
     $pwLanguageName = $pwLanguage->getLanguageValue($userLanguage, 'name');
     $pwLanguageTitle = $pwLanguage->getLanguageValue($userLanguage, 'title');
 
     $isDefault = $pwLanguageName === 'default';
 
-    $languages = $engineLanguages->languages;
-
-    $options = array_reduce($languages, function($options, $language) {
-      return [...$options, ...[serialize($language) => $language->targetName]];
-    }, []);
+    $options = array_reduce($engineLanguages->languages, fn($options, $language) => [
+      ...$options,
+      ...[json_encode($language) => $language->targetName]
+    ], []);
 
     $configName = createLanguageConfigName($pwLanguage->id, $this->engineInfo);
 
@@ -608,44 +598,48 @@ class FluencyConfig extends ModuleConfig {
   }
 
   /**
-   * Get all available translation engines located in app/Engines
-   * Return object contains the EngineInfoData object and qualified class names for config and
-   * engine
+   * Get all available translation engines located in app/Engines as InputfieldSelect option
+   * keys/values
    *
-   * @return object
+   * @return array
    */
   private function createTranslationEngineOptions(): array {
     $fluencyEngineDir = __DIR__ . '/app/Engines/';
 
     $engineDirs = array_filter(
       scandir($fluencyEngineDir),
-      fn($item) => !str_contains($item, '.') && !str_contains($item, 'Traits')
+      fn ($directory) => !str_contains($directory, '.') && !str_contains($directory, 'Traits')
     );
 
-    return array_reduce($engineDirs, function($engines, $engineDir) use ($fluencyEngineDir) {
+    // Create config engine select options for all found engines
+    return array_reduce($engineDirs, function ($engines, $engineDir) use ($fluencyEngineDir) {
       $contents = scandir("{$fluencyEngineDir}{$engineDir}");
 
-      $files = array_reduce($contents, function($files, $item) {
-        str_ends_with($item, 'Info.php') && $files['infoFile'] = $item;
-        str_ends_with($item, 'Engine.php') && $files['engineFile'] = $item;
-        str_ends_with($item, 'Config.php') && $files['configFile'] = $item;
+      // Get all engine classes in this engine directory
+      $engineAssets = array_reduce($contents, function ($classes, $item) {
+        str_ends_with($item, 'Info.php') && $classes['infoClass'] = $item;
+        str_ends_with($item, 'Engine.php') && $classes['engineClass'] = $item;
+        str_ends_with($item, 'Config.php') && $classes['configClass'] = $item;
 
-        return $files;
+        return $classes;
       }, []);
 
-      if (count($files) < 3) {
-        throw new RuntimeException(
-          "Translation engines require Info, Engine, and Config files/classes"
-        );
-      }
+      // Check that this engine has all of the required files
+      count($engineAssets) < 3 && throw new RuntimeException(
+        __("Translation engines require Info, Engine, and Config files/classes")
+      );
 
-      $engineOptionData = FluencySelectedEngineData::fromArray([
-        'directory' => $engineDir,
-        ...$files
-      ]);
+      // Create fully qualified class names
+      array_walk($engineAssets, function (&$asset) use ($engineDir) {
+        $asset = strtr(self::ENGINE_NAMESPACE, [
+          '%{ENGINE_DIRECTORY}' => $engineDir,
+          '%{CLASS_NAME}' => rtrim($asset, '.php'),
+        ]);
+      });
 
-      // Serialize FluencySelectedEngineData and store it as the select value
-      $engines[serialize($engineOptionData)] = $engineOptionData->info()->name;
+      $engineData = FluencyEngineSelectData::fromArray($engineAssets);
+
+      $engines[json_encode($engineData)] = $engineData->info()->name;
 
       return $engines;
     }, []);

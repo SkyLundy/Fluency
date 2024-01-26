@@ -1,0 +1,24 @@
+{
+  "name": "firewire/fluency",
+  "type": "pw-module",
+  "description": "The complete translation enhancement suite for ProcessWire",
+  "keywords": [
+    "processwire",
+    "module",
+    "translation",
+    "localization"
+  ],
+  "homepage": "https://processwire.com/modules/fluency/",
+  "license": "GPL-3.0",
+  "authors": [
+    {
+      "name": "Sky Lundy",
+      "homepage": "https://www.skylundy.io",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=8.1.0",
+    "wireframe-framework/processwire-composer-installer": "^1.1.1"
+  }
+}

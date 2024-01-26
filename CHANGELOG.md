@@ -1,11 +1,39 @@
 # Fluency for ProcessWire Changelog
 
+## 1.0.8 DEVELOPMENT
+
+### New features, Bugfixes, Documentation, Code Improvement, Recommended for all users
+
+NOTE: You will be required to configure your selected translation engine again after upgrading.
+Existing content will not be affected.
+
+- Added ability to disable translation on a per-field basis. Reference README.md for usage.
+- Updated the style of the text in the activity overlay, like "Translating" and "Refreshing" to
+  look better where fields may be smaller.
+- Acitivity overlay animation texts are now randomized for each instance. Just aesthetics.
+- Fix issue where CKEditors in collapsed Repeater and RepeaterMatrix fields would fail to be
+  initialized using Fluency when loaded via AJAX after expanding the repeater item. Credit to
+  @saintsfield for finding and reporting
+- Fix issue where translating a field when there are both languages that are and are not
+  translatable/configured in Fluency are present would fail. Now indicates per-language
+  unavailability depending if configured in Fluency or not. Credit to @ryangorley for finding and
+  reporting
+- Made the donate button on the config page smaller
+- Fix error caused by Fluency attempting to get the translation action from the module config before
+  it was available
+- Uninstalling the module now deletes the Fluency admin page
+- Fluency config values are now stored as JSON rather than serialized objects which in some
+  instances was causing issues on some servers with ModSecurity and false positives
+- Add fromJson method to FluencyDTO parent class to better handle Data Transfer Object instantiation
+  where data may come from storage as JSON
+- Translation cache is now enabled by default as described in the README.md file
+
 ## 1.0.7 2024-25-01
 
 ### Enhancements, Documentation, Bugfixes, Code Improvement, Recommended for all users
 
 - Add ability to have both 'Translate From Default Language' and 'Translate To All Languages'
-  buttons added to inputfields
+  buttons added to inputfields. Credit to @ryangorley for the feature suggestion
 - Add ability to translate any file used by ProcessWire directly where the `__()` string translation
   method is used from the filesystem in any directory. See `Fluency::translateProcessWireFiles()`
   method for documentation and usage
@@ -16,7 +44,7 @@
   translated content field is now readonly, various improvements
 - Add cache clearing on module delete, because it's polite.
 - Fix issue where when creating a page, translating page titles would not populate the URLs of other
-  languages
+  languages credit to @ryangorley for finding and reporting
 - Fix improper return value for `Fluency::translate()` method when pre-translation error occurs
 - Add methods to `AllConfiguredLanguageData` object where filtering and finding
   `ConfiguredLanguageData` objects is improved

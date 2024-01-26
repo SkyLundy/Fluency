@@ -25,7 +25,12 @@ const FtInputfields = (function () {
    * @type {String}
    */
   const langInputfieldClass = "[class*='hasLangTabs']";
-  // const langInputfieldClass = '.hasLangTabs';
+
+  /**
+   * Attribute present where per-field translation is disabled
+   * @type {String}
+   */
+  const disableTranslationAttr = FtConfig.getTranslationDisabledFieldAttribute();
 
   /**
    * Initializes multilanguage fields if present on page
@@ -49,9 +54,21 @@ const FtInputfields = (function () {
    */
   const initInputfields = langInputfieldContainers => {
     for (let langInputfieldContainer of langInputfieldContainers) {
+      if (translationIsDisabled(langInputfieldContainer)) {
+        continue;
+      }
+
       initInputfield(langInputfieldContainer);
     }
   };
+
+  /**
+   * Determines if a provided language inputfield has had Fluency translation disabled
+   * @param  {HTMLElement} langInputfieldContainer
+   * @return {Bool}
+   */
+  const translationIsDisabled = langInputfieldContainer =>
+    !!langInputfieldContainer.querySelectorAll(disableTranslationAttr).length;
 
   /**
    * Initializes the field within a container

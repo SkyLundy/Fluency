@@ -33,10 +33,25 @@ final class FluencyMarkup {
     ]);
   }
 
+  public static function div(string|int|array $values, string|array|null $classes = []): string {
+    $markup =<<<EOT
+    <div class="%{CLASS}">%{CONTENT}</p>
+    EOT;
+
+    $classes = self::createAttributeValue($classes);
+
+    return array_reduce((array) $values, function($output, $value) use ($classes, $markup) {
+      return $output .= self::render($markup, [
+        'CONTENT' => $value,
+        'CLASS' => $classes
+      ]);
+    }, '');
+  }
+
   /**
    * Render one or more <p> tags.
    */
-  public static function p(string|array $values, string|array|null $classes = []): string {
+  public static function p(string|int|array $values, string|array|null $classes = []): string {
     $markup =<<<EOT
     <p class="%{CLASS}">%{CONTENT}</p>
     EOT;

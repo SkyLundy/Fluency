@@ -282,7 +282,7 @@ const FtActivityOverlay = function (targetContainer, activityType = 'translating
    * @access Private
    */
   this.buildActivityEl = () => {
-    let text = FtConfig.getUiTextFor('activityOverlay')[activityType];
+    let text = this.getActivityTexts();
 
     let activityAnimationContainer = document.createElement('div');
     activityAnimationContainer.setAttribute('class', elClasses.activityAnimationContainer);
@@ -313,6 +313,33 @@ const FtActivityOverlay = function (targetContainer, activityType = 'translating
     activityContainer.appendChild(activityAnimationContainer);
 
     return activityContainer;
+  };
+
+  /**
+   * Gets activity overlay texts and shuffles the animated array
+   * No purpose really other than to add some uniqueness to overlay animations and prevent looking
+   * like one language was preferred by me over another.
+   *
+   * Fisher-Yates algorithm, for the curious
+   *
+   * @return {Array} Randomized array of the activity animation texts for this instance
+   * @access Private
+   */
+  this.getActivityTexts = () => {
+    let uiTexts = FtConfig.getUiTextFor('activityOverlay')[activityType];
+    let animationTexts = uiTexts.animated;
+
+    for (let i = animationTexts.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      let temp = animationTexts[i];
+
+      animationTexts[i] = animationTexts[j];
+      animationTexts[j] = temp;
+    }
+
+    uiTexts.animated = animationTexts;
+
+    return uiTexts;
   };
 
   /**

@@ -46,7 +46,7 @@ final class DeepLConfig implements FluencyEngineConfig {
       'deepl_account_credentials' => [
         'type' => 'InputfieldFieldset',
         'label' => __('API Credentials'),
-        'notes' => __('Credentials can be found in your DeepL acocunt at the bottom of this page: https://www.deepl.com/de/account/summary'),
+        'notes' => __('Credentials can be found in your DeepL acocunt at the bottom of this page: https://www.deepl.com/account/summary'),
         'collapsed' => $hideCredentialFields,
         'children' => [
           'deepl_account_type' => [

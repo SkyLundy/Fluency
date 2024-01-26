@@ -8,6 +8,8 @@ use Fluency\DataTransferObjects\EngineInfoData;
 use Fluency\Engines\FluencyEngineInfo;
 use Fluency\App\FluencyMarkup as Markup;
 
+use function ProcessWire\__;
+
 final class DeepLInfo implements FluencyEngineInfo {
 
   /**
@@ -25,12 +27,9 @@ final class DeepLInfo implements FluencyEngineInfo {
       'providesUsageData' => true,
       'configId' => '6559e628-c6d9-426a-8c86-21f0c095c7a6',
       'details' => Markup::concat(
-        Markup::h(3, 'DeepL Translation Engine'),
+        Markup::h(3, __('DeepL Translation Engine')),
         Markup::p(
-          'This is the core translation engine that serves as the default translation engine for Fluency. It provides both high quality machine learning driven translation and a reference codebase for the development of other Fluency engines.'
-        ),
-        Markup::p(
-          'Both Fluency and the DeepL translation engine were developed to broaden power and abilities of the built-in core language support present in ProcessWire. It is and will remain free for use as a thank you to the outstanding ProcessWire community and to contribute alongside the many other module developers that make ProcessWire even better.'
+          __('This is the default translation engine for Fluency. It provides both high quality machine learning driven translation and a reference codebase for the development of other Fluency engines.')
         )
       )
     ]);

@@ -196,6 +196,18 @@ const FtConfig = (function () {
    */
   const getTranslationAction = () => config.interface.inputfieldTranslationAction;
 
+  /**
+   * The attribute added to individual field elements where translation has been disabled
+   * @return {string}
+   */
+  const getTranslationDisabledFieldAttribute = () =>
+    `[${config.interface.translationDisabledFieldAttr}]`;
+
+  /**
+   * Class names added to UI components
+   * @param  {string} element The type of component
+   * @return {string}
+   */
   const getElementClassesFor = element => elementClasses[element];
 
   return {
@@ -209,6 +221,7 @@ const FtConfig = (function () {
     getLanguageCount,
     getLanguageForId,
     getTranslationAction,
+    getTranslationDisabledFieldAttribute,
     getUiTextFor,
     getUnconfiguredLanguages,
     languageIsTranslatable,

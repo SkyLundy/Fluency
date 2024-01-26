@@ -42,7 +42,9 @@ final class DeepLEngine implements FluencyEngine {
   /**
    * {@inheritdoc}
    */
-  public function __construct(private FluencyConfigData $fluencyConfig) {
+  public function __construct(
+    private FluencyConfigData $fluencyConfig
+  ) {
     // Destructure config, get engine values
     [
       'deepl_account_type' => $accountType,

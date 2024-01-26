@@ -37,6 +37,7 @@ use Fluency\DataTransferObjects\{
   ConfiguredLanguageData,
   EngineApiUsageData,
   EngineInfoData,
+  EngineLanguageData,
   EngineTranslatableLanguagesData,
   EngineTranslationData,
   FluencyConfigData,
@@ -74,14 +75,16 @@ use function Fluency\Functions\{
  * For more information regarding Translation Engine development, reference the documentation file
  * at `Fluency/app/Engines/DEVDOC.md`
  *
- * Note: Methods that act as interfaces for Translation Engines, in that they relay execution to
- * Translation Engine methods where all translation functionality is defined.
- *
  * #pw-body
  *
  */
 
 final class Fluency extends Process implements Module, ConfigurableModule {
+
+  /**
+   * The attribute applied to fields at render time where translation is disabled
+   */
+  private const TRANSLATION_DISABLED_FIELD_ATTR = 'data-ft-disable-translation';
 
   private ?FluencyEngine $translationEngine = null;
 
@@ -97,7 +100,6 @@ final class Fluency extends Process implements Module, ConfigurableModule {
 
   /**
    * Memoizing Fluency::getConfiguredLanguages() output
-   * @var AllConfiguredLanguagesData|null
    */
   private ?AllConfiguredLanguagesData $configuredLanguages = null;
 
@@ -139,7 +141,53 @@ final class Fluency extends Process implements Module, ConfigurableModule {
       return false;
     }
 
+    $this->registerFieldConfigurationHooks();
+    $this->registerFieldRenderHooks();
     $this->insertAdminAssets();
+  }
+
+  /**
+   * Adds ability to disable translation per-field when configuring multi-language fields
+   */
+  private function registerFieldConfigurationHooks(): void {
+    $localization = Localization::getFor('fieldConfiguration');
+
+    // Adds a "Disable Fluency" checkbox for a hooked field configuration
+    $addCheckbox = function(HookEvent $e) use ($localization): void {
+      $field = $e->arguments(0);
+
+      $checkbox = $this->modules->InputfieldCheckbox;
+      $checkbox->icon = 'language';
+      $checkbox->attr('name', 'ftDisableTranslation');
+      $checkbox->label = $localization->checkboxTitle;
+      $checkbox->checkboxLabel = $localization->checkboxLabel;
+      $checkbox->checkedValue = 1;
+      $checkbox->uncheckedValue = 0;
+      $checkbox->checked((bool) $field->get('ftDisableTranslation'));
+
+      $e->return->add($checkbox);
+    };
+
+    $this->wire->addHookAfter("FieldtypeTextLanguage::getConfigInputfields", $addCheckbox);
+    $this->wire->addHookAfter("FieldtypeTextAreaLanguage::getConfigInputfields", $addCheckbox);
+  }
+
+  /**
+   * Renders multi-language fields without translation abilities where configured
+   */
+  private function registerFieldRenderHooks(): void {
+    $disableTranslation = function(HookEvent $e): void {
+      $inputfield = $e->object;
+
+      if (!$inputfield->useLanguages || !$inputfield->hasField?->ftDisableTranslation) {
+        return;
+      }
+
+      $e->object->setAttribute(self::TRANSLATION_DISABLED_FIELD_ATTR, '');
+    };
+
+    $this->wire->addHookBefore("InputfieldTextArea::render", $disableTranslation);
+    $this->wire->addHookBefore("InputfieldText::render", $disableTranslation);
   }
 
   /**
@@ -380,7 +428,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
       'id' => $processWireId,
       'title' => $pwTitle,
       'default' => $pwLanguage->name === 'default',
-      'engineLanguage' => unserialize($configuredLanguage),
+      'engineLanguage' => EngineLanguageData::fromJson($configuredLanguage),
       'isCurrentLanguage' => $pwLanguage === $userLanguage
     ]);
   }
@@ -428,7 +476,8 @@ final class Fluency extends Process implements Module, ConfigurableModule {
       'localization' => Localization::getAll(),
       'engine' => $this->getTranslationEngineInfo(),
       'interface' => [
-        'inputfieldTranslationAction' => $this->fluencyConfig->inputfield_translation_action,
+        'inputfieldTranslationAction' => $this->fluencyConfig?->inputfield_translation_action,
+        'translationDisabledFieldAttr' => self::TRANSLATION_DISABLED_FIELD_ATTR,
       ],
     ];
   }
@@ -1226,38 +1275,40 @@ final class Fluency extends Process implements Module, ConfigurableModule {
   }
 
   /**
-   * Module Housekeeping
-   */
-
-  /**
-   * Ensures changes are implemented
+   * Upgrade housekeeping
    *
    * @param  string $fromVersion Existing module version
    * @param  string $toVersion   Upgraded module version
    * @return void
    */
-  public function ___upgrade($fromVersion, $toVersion)
-  {
+  public function ___upgrade($fromVersion, $toVersion) {
     $this->initializeCaches();
+    $upgradeMessages = [];
 
-    if (
-      version_compare($fromVersion, '106', '<=') &&
-      !!$this->getCachedTranslationsCount()
-    ) {
-      $this->wire->warning(
-        Localization::getFor('messages')->upgrade108Message,
-        'noGroup'
-      );
+    if (version_compare($fromVersion, '106', '<=') && !!$this->getCachedTranslationsCount()) {
+      $upgradeMessages[] = "If you have experienced issues with encoded HTML characters in translations and translation cache is enabled, please clear Fluency's translation cache";
+      $upgradeMessages[] = "Translation engine must be reconfigured after upgrading to Fluency 1.0.6";
+    }
+
+    if (version_compare($fromVersion, '108', '<=')) {
+      $upgradeMessages[] = "Translation engine must be reconfigured after upgrading to Fluency 1.0.8";
+    }
+
+    foreach ($upgradeMessages as $message) {
+      $this->wire->warning("Fluency: {$message}", 'noGroup');
     }
   }
 
   /**
-   * Tidy up.
+   * Uninstall housekeeping
+   *
    * @return void
    */
   public function ___uninstall() {
     $this->initializeCaches();
-
     $this->clearAllCaches();
+
+    $adminPage = $this->pages->get("{$this->urls->admin}fluency/");
+    $adminPage->id && $adminPage->delete();
   }
 }

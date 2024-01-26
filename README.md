@@ -22,6 +22,7 @@ You can help out by filing Github issues when bugs are found, or submit a pull r
 - [Features and Usage](#features-and-usage)
   - [Translating Inputfields](#translating-inputfields)
   - [Translating Templates and Modules](#translating-templates-and-modules)
+  - [Disabling Translation For Individual Fields](#disabling-translation-for-individual-fields)
   - [Standalone Translator](#standalone-translator)
   - [Modified Content Indication](#modified-content-indication)
   - [Caching](#caching)
@@ -128,6 +129,10 @@ In your ProcessWire admin, navigate to a langauge page, use the "Find Files To T
 
 **Note:** Please keep in mind that translating site and core modules _may_ be relatively expensive operations with respect to your API usage. It is recommended that you identify and prioritize the files/modules that are used in your ProcessWire site/app.
 
+### Disabling Translation For Individual Fields
+
+There may be individual fields that are multi-language but translation is not desired. These could be fields that need different values for each language but contain content not suitable for translating such as URLs, phone numbers, email addresses, etc. To disable translation individually, navigate to the Details tab of a multi-language field and check the "Disable translation for this field" checkbox. This can be modified at any time without affecting content or other functionality.
+
 ### Standalone Translator
 
 ![fluency_translator](https://github.com/SkyLundy/Fluency/assets/61801600/4e0e7ab8-41f8-4d5e-82b4-ad344b1c61b3)
@@ -190,7 +195,7 @@ _Tip:_ Use this to indicate the current language of the page including the `lang
 
 #### Meta Link Tags
 
-Fluency van render a list of languages `<link>` tags that you can use in the `<head>` of your HTML document. This helps users and search engines find the content for your page in all languages. The URLs will render as configured in ProcessWire.
+Fluency can render a list of languages `<link>` tags that you can use in the `<head>` of your HTML document. This helps users and search engines find the content for your page in all languages. The URLs will render as configured in ProcessWire.
 
 To render the tags:
 
@@ -227,7 +232,7 @@ Output:
 
 #### Switch Page Language Select Element
 
-You can easily render a `<select>` element that will allow a user to choose the langauge that they are currently viewing the page in. By default, Fluency will also render inline JavaScript that will navigate to the page in the language selected but this can be disabled should you want to control that behavior yourself. All text/labels/values will render if translated in the current language.
+You can easily render a `<select>` element that will allow a user to choose the langauge that they are currently viewing the page in. By default, Fluency will also render inline JavaScript that will navigate to the page in the language selected but this can be disabled should you want to control that behavior yourself. All text/labels/values will render in the current language if translated.
 
 ```html
 <div class="language-select"><?= $fluency->renderLanguageSelect() ?></div>

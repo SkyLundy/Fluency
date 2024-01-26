@@ -188,17 +188,11 @@ const FtInputfieldCKEditor = function (inputfield) {
   };
 
   /**
-   * Init on object instantiation
+   * Initialized the uninitialized
    * @access private
-   * @return {Void}
+   * @return {void}
    */
-  (() => {
-    if (CKEDITOR === undefined) {
-      console.error('CKEditor was not found by Fluency, translation unavailable');
-
-      return;
-    }
-
+  this.initContainers = () => {
     const allInputContainers = this.getInputContainers();
 
     defaultLanguageInstanceId = Object.values(allInputContainers)[0].id.replace('langTab_', '');
@@ -214,6 +208,24 @@ const FtInputfieldCKEditor = function (inputfield) {
     activityOverlay = new FtActivityOverlay(this);
 
     new FtInputfieldTranslateButton(this, allInputContainers);
+  };
+
+  /**
+   * Init on object instantiation
+   * @access private
+   * @return {Void}
+   */
+  (() => {
+    if (CKEDITOR === undefined) {
+      console.error('CKEditor was not found by Fluency, translation unavailable');
+
+      return;
+    }
+
+    // CKEditor experiences a delay between being added to the DOM and a ready state in some
+    // situations, notably after AJAX insertion. This was a lot easier than attempting to use the
+    // CKEditor events API which fired off more events than editors
+    setTimeout(this.initContainers, 50);
   })();
 };
 

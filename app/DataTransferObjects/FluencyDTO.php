@@ -46,6 +46,19 @@ abstract class FluencyDTO implements JsonSerializable {
   }
 
   /**
+   * Helper method to instantiate a DTO from JSON
+   * JSON contents must satisfy the fromArray() method of the DTO
+   *
+   * @param  string $json JSON to be decoded and passed to fromArray()
+   * @return self
+   */
+  public static function fromJson(string $json): self {
+    $data = json_decode($json, true);
+
+    return static::fromArray($data);
+  }
+
+  /**
    * Implements JsonSerializable
    */
   #[\ReturnTypeWillChange]

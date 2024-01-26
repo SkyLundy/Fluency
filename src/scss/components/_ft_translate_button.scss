@@ -33,7 +33,8 @@
   }
 }
 
-.ft-translate-button-container + .ft-translation-status-container {
+.ft-translate-button-container + .ft-translation-status-container,
+.ft-translation-status-container + .ft-translation-status-container {
   display: none;
 }
 

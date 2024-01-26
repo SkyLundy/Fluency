@@ -125,8 +125,9 @@ final class FluencyLocalization {
           ]
         ]
       ],
-      'messages' => [
-        'upgrade108Message' => __("Fluency: If you have experienced issues with encoded HTML characters in translations, please clear Fluency's translation cache"),
+      'fieldConfiguration' => [
+        'checkboxTitle' => __('Fluency Translation'),
+        'checkboxLabel' => __('Disable translation for this field'),
       ],
       'errors' => [
         FluencyErrors::SERVICE_UNAVAILABLE => __('The translation service is not available, please try again later'),
