@@ -16,6 +16,7 @@ You can help out by filing Github issues when bugs are found, or submit a pull r
 
 - [Requirements](#requirements)
 - [Installing](#installing)
+  - [Configuring](#configuring)
   - [Translation Engines](#translation-engines)
   - [Localizing Fluency](#localizing-fluency)
   - [Upgrading or Removing](#upgrading-or-removing)
@@ -58,11 +59,22 @@ You can help out by filing Github issues when bugs are found, or submit a pull r
 
 ## Installing
 
-1. Download and unzip the contents into /site/modules and install, or install from the [ProcessWire Modules directory](https://processwire.com/modules/fluency/).
-2. Open the module configuration page, choose a Translation Engine, save
-3. Complete the Translation Engine setup, save
-4. Create language associations, save
-5. Assign the `fluency-translate` permission where appropriate
+You can install Fluency by adding the module to your ProcessWire project using any of the three following methods.
+ 
+**Method 1**: Within ProcessWire using 'Add Module From Directory' and the class name `Fluency`
+
+**Method 2**: Via Composer with `composer require firewire/fluency`
+
+**Method 3**: Download from this repository or the [Modules directory](https://processwire.com/modules/fluency/) and unzip the contents into `/site/modules/`
+
+After adding the module, install in ProcessWire.
+
+## Configuring
+
+1. Open the module configuration page, choose a Translation Engine, save
+2. Complete the Translation Engine setup, save
+3. Create language associations, save
+4. Assign the `fluency-translate` permission where appropriate
 
 That's it. All multi-language fields will now feature click to translate buttons and a translator tool available in the Admin menu bar. There is no limit on how many languages may be configured, and new languages can be added at any time.
 

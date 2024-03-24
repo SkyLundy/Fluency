@@ -1,6 +1,6 @@
 # Fluency for ProcessWire Changelog
 
-## 1.0.8 DEVELOPMENT
+## 1.0.8 2024-24-03
 
 ### New features, Bugfixes, Documentation, Code Improvement, Recommended for all users
 
