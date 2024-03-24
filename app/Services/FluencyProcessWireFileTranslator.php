@@ -30,6 +30,12 @@ class FluencyProcessWireFileTranslator {
   public function __construct(
     private Fluency $fluency
   ) {
+    if (!!$fluency->fluencyConfig) {
+      $this->init();
+    }
+  }
+
+  private function init(): void {
     $this->defaultFluencyLanguage = $this->fluency->getConfiguredLanguages()->getDefault();
     $this->defaultPwLanguage = wire('languages')->getDefault();
     $this->defaultPwLanguageTranslator = $this->defaultPwLanguage->translator();
