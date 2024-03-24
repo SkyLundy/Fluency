@@ -40,6 +40,7 @@ You can help out by filing Github issues when bugs are found, or submit a pull r
   - [Translation Engine Information](#translation-engine-information)
   - [Managing Cache](#managing-cache)
   - [Admin REST API Endpoints](#admin-rest-api-endpoints)
+- [Error Handling and Logging](#error-handling-and-logging)
 - [Known Issues](#known-issues)
 - [Contributing](#contributing)
 - [Cost](#cost)
@@ -60,7 +61,11 @@ You can help out by filing Github issues when bugs are found, or submit a pull r
 ## Installing
 
 You can install Fluency by adding the module to your ProcessWire project using any of the three following methods.
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> e655028 (Version bump to 1.0.8)
 **Method 1**: Within ProcessWire using 'Add Module From Directory' and the class name `Fluency`
 
 **Method 2**: Via Composer with `composer require firewire/fluency`
@@ -231,7 +236,7 @@ Output:
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><?= $page->title; ?></title>
+    <title>Your Awesome Website</title>
     <link rel="alternate" hreflang="https://awesomewebsite.com/" href="x-default" />
     <link rel="alternate" hreflang="https://awesomewebsite.com/" href="en-us" />
     <link rel="alternate" hreflang="https://awesomewebsite.com/fr/" href="fr" />
@@ -244,7 +249,7 @@ Output:
 
 #### Switch Page Language Select Element
 
-You can easily render a `<select>` element that will allow a user to choose the langauge that they are currently viewing the page in. By default, Fluency will also render inline JavaScript that will navigate to the page in the language selected but this can be disabled should you want to control that behavior yourself. All text/labels/values will render in the current language if translated.
+You can easily render a `<select>` element that will allow a user to choose the langauge that they are currently viewing the page in. By default, Fluency will also render inline JavaScript that will navigate to the page in the language selected but this can be disabled should you want to control that behavior yourself. All text/labels/values will render in the current language if translated and as configured in ProcessWire.
 
 ```html
 <div class="language-select"><?= $fluency->renderLanguageSelect() ?></div>
@@ -385,6 +390,11 @@ $translation = $fluency->translate(
   options: [],                                  // Translation Engine specific options (optional)
   caching: true                                 // Default is true, false disables, overrides module config
 ); // => EngineTranslationData
+
+// Results may be accessed via properties on the return object, see toArray() example below for all
+// properties present in the EngineTranslationData object
+$translation->translations; // => ['Wie geht es Ihnen, liebe Entwickler?']
+$translation->fromCache;    // => true
 
 // $translation->toArray(); Outputs the following:
 //
@@ -752,6 +762,15 @@ $endpoints = $fluency->getApiEndpoints(); // => stdClass
 //   string(34) "/processwire/fluency/api/cache/languages"
 // }
 ```
+
+## Error Handling and Logging
+
+Fluency handles errors encountered when communicating with the translation API and errors experienced in ProcessWire. All Data Transfer Objects contain `error` and `message` properties.
+
+`error` - Will contain an error type string defined as class constants in in `app/FluencyErrors.php`
+`message` - Will contain a human-friendly message for the error type that occurred. These are located in `app/FluencyLocalization.php` and can be translated
+
+Translation Engine and third party service errors are stored under the `fluency-engine` log. If there are issues with translating content, refer to that log first to check whether the translation service is experiencing issues.
 
 ## Known Issues
 

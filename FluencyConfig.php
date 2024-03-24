@@ -149,15 +149,15 @@ class FluencyConfig extends ModuleConfig {
    * @return object Config as an object
    */
   private function getModuleConfig(): object {
-    return (object) [...$this->getDefaults(), ...$this->modules->getModuleConfigData('Fluency')];
+    return (object) [...$this->getDefaults(), ...$this->modules->getConfig('Fluency')];
   }
 
   /**
    * Resets all configured engine data by removing the selected engine and it's associated settings
-   * @return [type] [description]
+   * This may be required when upgrading the module
    */
   public function resetEngineData(): void {
-
+    $this->saveModuleConfig(translation_api_ready: false, selected_engine: null);
   }
 
   /**
