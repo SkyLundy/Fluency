@@ -59,9 +59,13 @@ function parseLanguageConfigName(string $configProperty): ?array {
 /**
  * Parses a given config property name to determine if it is a language config name
  *
- * @param  string  $configProperty Config name
+ * @param  mixed  $configProperty Config name
  * @return boolean
  */
-function isLanguageConfigName(string $configProperty): bool {
-    return (bool) parseLanguageConfigName($configProperty);
+function isLanguageConfigName(mixed $configProperty): bool {
+  if (!is_string($configProperty)) {
+    return false;
+  }
+
+  return (bool) parseLanguageConfigName($configProperty);
 }

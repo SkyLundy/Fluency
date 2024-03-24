@@ -1291,6 +1291,8 @@ final class Fluency extends Process implements Module, ConfigurableModule {
     }
 
     if (version_compare($fromVersion, '108', '<=')) {
+      // Necessary since changing how Fluency stores data
+      (new FluencyConfig())->resetEngineData();
       $upgradeMessages[] = "Translation engine must be reconfigured after upgrading to Fluency 1.0.8";
     }
 
