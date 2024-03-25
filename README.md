@@ -61,11 +61,11 @@ You can help out by filing Github issues when bugs are found, or submit a pull r
 
 You can install Fluency by adding the module to your ProcessWire project using any of the three following methods.
  
-[ProcessWire Modules directory](https://processwire.com/modules/fluency/).
+**Method 1**: Within ProcessWire using 'Add Module From Directory' and the class name `Fluency`
 
-Via Composer with `composer require firewire/fluency`
+**Method 2**: Via Composer with `composer require firewire/fluency`
 
-Download and unzip the contents into /site/modules
+**Method 3**: Download from this repository or the [Modules directory](https://processwire.com/modules/fluency/) and unzip the contents into `/site/modules/`
 
 After adding the module, install in ProcessWire.
 
