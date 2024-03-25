@@ -23,7 +23,8 @@ Existing content will not be affected.
   it was available
 - Uninstalling the module now deletes the Fluency admin page
 - Fluency config values are now stored as JSON rather than serialized objects which in some
-  instances was causing issues on some servers with ModSecurity and false positives
+  instances was causing issues on some servers with ModSecurity and false positives. Credit to
+  @update-switzerland for finding and reporting.
 - Add fromJson method to FluencyDTO parent class to better handle Data Transfer Object instantiation
   where data may come from storage as JSON
 - Translation cache is now enabled by default as described in the README.md file
