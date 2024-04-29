@@ -1,7 +1,22 @@
 .ft-standalone-translator-fieldset {
-  .js-ft-swap-languages[disabled] {
-    cursor: not-allowed;
-    background-color: var(--button-disabled);
+  .ft-swap-languages {
+    .Inputfield.InputfieldButton {
+      margin-right: auto;
+      margin-left: auto;
+
+      button {
+        margin: {
+          top: 0.3rem;
+          right: auto;
+          left: auto;
+        }
+      }
+    }
+
+    .js-ft-swap-languages[disabled] {
+      cursor: not-allowed;
+      background-color: var(--button-disabled);
+    }
   }
 
   .ft-click-to-clear-container,

@@ -61,11 +61,7 @@ You can help out by filing Github issues when bugs are found, or submit a pull r
 ## Installing
 
 You can install Fluency by adding the module to your ProcessWire project using any of the three following methods.
-<<<<<<< HEAD
- 
-=======
 
->>>>>>> e655028 (Version bump to 1.0.8)
 **Method 1**: Within ProcessWire using 'Add Module From Directory' and the class name `Fluency`
 
 **Method 2**: Via Composer with `composer require firewire/fluency`
@@ -205,6 +201,7 @@ $fluency->getLanguageCode(1034); // 'de'
 _Tip:_ Use this to indicate the current language of the page including the `lang` attribute on the `<html>` tag.
 
 ```html
+<!doctype html>
 <html lang="<?= $fluency->getLanguageCode(); ?>">
   <!-- markup -->
 </html>
