@@ -1289,7 +1289,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
       $upgradeMessages[] = "If you have experienced issues with encoded HTML characters in translations and translation cache is enabled, please clear Fluency's translation cache";
       $upgradeMessages[] = "Translation engine must be reconfigured after upgrading to Fluency 1.0.6";
     }
-
+dd('fired');
     if (version_compare($fromVersion, '108', '<=')) {
       // Necessary since changing how Fluency stores data
       (new FluencyConfig())->resetEngineData();
