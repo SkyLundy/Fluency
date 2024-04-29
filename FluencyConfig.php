@@ -70,7 +70,11 @@ class FluencyConfig extends ModuleConfig {
 
     $moduleConfig = $this->getModuleConfig();
 
-    if (!$moduleConfig->selected_engine) {
+    // Addresses issues where selected_engine may contain legacy or invalid engine config data
+    // If so, reset and return null
+    if (!$this->selectedEngineIsValid()) {
+      $this->resetEngineData();
+
       return null;
     }
 
@@ -160,6 +164,12 @@ class FluencyConfig extends ModuleConfig {
     $this->saveModuleConfig(translation_api_ready: false, selected_engine: null);
   }
 
+  public function selectedEngineIsValid(): bool {
+    $moduleConfig = $this->getModuleConfig();
+
+    return !!$moduleConfig->selected_engine && !!json_decode($moduleConfig->selected_engine);
+  }
+
   /**
    * This renders all Fluency config fields, as well as integrating the Translation Engine Config
    * fields, when necessary, when an engine is selected
@@ -210,7 +220,7 @@ class FluencyConfig extends ModuleConfig {
       ]
     ]);
 
-    if (!$engineSelected) {
+    if (!$this->selectedEngineIsValid()) {
       return $inputfields->add($fieldset);
     }
 
@@ -275,7 +285,7 @@ class FluencyConfig extends ModuleConfig {
 
     // Verify API credentials by getting translatable languages
     // 2 birds, 1 stone
-    if ($moduleConfig->selected_engine && !$moduleConfig->translation_api_ready || $engineChanged) {
+    if ($this->selectedEngineIsValid() && !$moduleConfig->translation_api_ready || $engineChanged) {
       $engineLanguages = $engine->getLanguages();
 
       if ($engineLanguages->error) {

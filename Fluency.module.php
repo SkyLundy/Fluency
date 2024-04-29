@@ -120,6 +120,10 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * @return void
    */
   public function init() {
+    if (!$this->translationEngineIsReady()) {
+      return;
+    }
+
     // Create global $fluency variable
     $this->wire->set('fluency', $this);
 
@@ -144,6 +148,48 @@ final class Fluency extends Process implements Module, ConfigurableModule {
     $this->registerFieldConfigurationHooks();
     $this->registerFieldRenderHooks();
     $this->insertAdminAssets();
+  }
+
+  /**
+   * ProcessWire languages are configured within Fluency and translation is available for admin Inputfields
+   *
+   * Requires that:
+   * - The default ProcessWire language has been configured in Fluency
+   * - At least one additional language has been configured in Fluency
+   * - The Translation Engine has been configured and is ready to process requests
+   *
+   * #pw-notes Requires that ProcessWire languages are configured in Fluency
+   *
+   * #pw-group-Translation-Readiness
+   *
+   * @return bool
+   */
+  public function inputfieldTranslationIsReady(): bool {
+    return $this->translationEngineIsReady() && count($this->getConfiguredLanguages()) >= 2;
+  }
+
+  /**
+   * Translation Engine has been configured and is ready to process requests
+   *
+   * This indicates that the Translation Engine authenticates and is able to send and receive data
+   * via the corresponding translation service API. This is separate from
+   * Fluency::inputfieldTranslationIsReady() in that it does not indicate whether languages have
+   * been configured within Fluency.
+   *
+   * Requires that:
+   *
+   * - A Translation Engine is selected in Fluency
+   * - The Translation Engine is configured in Fluency and ready
+   * - The translation service API used by the engine successfuly accepts/returns requests
+   *
+   * #pw-notes Does not require ProcessWire languages to be configured in Fluency
+   *
+   * #pw-group-Translation-Readiness
+   *
+   * @return bool
+   */
+  public function translationEngineIsReady(): bool {
+    return $this->fluencyConfig->translation_api_ready ?? false;
   }
 
   /**
@@ -194,7 +240,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * Determine if module should initialize
    */
   private function moduleShouldInitInAdmin(): bool {
-    return $this->page->name !== 'login' && $this->userIsAuthorized();
+    return $this->page->name !== 'login' && $this->userIsAuthorized() && !!$this->moduleConfig;
   }
 
   /**
@@ -294,48 +340,6 @@ final class Fluency extends Process implements Module, ConfigurableModule {
     $this->config->js('fluency', $this->getClientData());
     $this->config->scripts->add("{$this->moduleJsPath}fluency_api_usage.bundle.js");
     $this->config->styles->add("{$this->moduleCssPath}fluency_api_usage.min.css");
-  }
-
-  /**
-   * ProcessWire languages are configured within Fluency and translation is available for admin Inputfields
-   *
-   * Requires that:
-   * - The default ProcessWire language has been configured in Fluency
-   * - At least one additional language has been configured in Fluency
-   * - The Translation Engine has been configured and is ready to process requests
-   *
-   * #pw-notes Requires that ProcessWire languages are configured in Fluency
-   *
-   * #pw-group-Translation-Readiness
-   *
-   * @return bool
-   */
-  public function inputfieldTranslationIsReady(): bool {
-    return $this->translationEngineIsReady() && count($this->getConfiguredLanguages()) >= 2;
-  }
-
-  /**
-   * Translation Engine has been configured and is ready to process requests
-   *
-   * This indicates that the Translation Engine authenticates and is able to send and receive data
-   * via the corresponding translation service API. This is separate from
-   * Fluency::inputfieldTranslationIsReady() in that it does not indicate whether languages have
-   * been configured within Fluency.
-   *
-   * Requires that:
-   *
-   * - A Translation Engine is selected in Fluency
-   * - The Translation Engine is configured in Fluency and ready
-   * - The translation service API used by the engine successfuly accepts/returns requests
-   *
-   * #pw-notes Does not require ProcessWire languages to be configured in Fluency
-   *
-   * #pw-group-Translation-Readiness
-   *
-   * @return bool
-   */
-  public function translationEngineIsReady(): bool {
-    return $this->fluencyConfig->translation_api_ready ?? false;
   }
 
   /**
@@ -1289,7 +1293,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
       $upgradeMessages[] = "If you have experienced issues with encoded HTML characters in translations and translation cache is enabled, please clear Fluency's translation cache";
       $upgradeMessages[] = "Translation engine must be reconfigured after upgrading to Fluency 1.0.6";
     }
-dd('fired');
+
     if (version_compare($fromVersion, '108', '<=')) {
       // Necessary since changing how Fluency stores data
       (new FluencyConfig())->resetEngineData();
