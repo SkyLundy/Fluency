@@ -141,14 +141,30 @@ class FluencyConfig extends ModuleConfig {
    * @param  array ...$newConfigData Named arguments
    */
   private function saveModuleConfig(...$newConfigData): void {
-    $this->modules->saveModuleConfigData('Fluency', [
+    $this->modules->saveConfig('Fluency', [
       ...(array) $this->getModuleConfig(),
       ...$newConfigData
     ]);
   }
 
   /**
-   * Internal module use only
+   * Removes config keys and their values from the module's config
+   * @param  array<string>  $configRemovalKeys Keys of configs to remove
+   */
+  private function removeFromModuleConfig(array $configRemovalKeys): void {
+    $config = (array) $this->getModuleConfig();
+
+    $config = array_filter(
+      $config,
+      fn($config) => !in_array($config, $configRemovalKeys),
+      ARRAY_FILTER_USE_KEY
+    );
+
+    $this->modules->saveConfig('Fluency', $config);
+  }
+
+  /**
+   * Get module config as an object containing all set and default values
    *
    * @return object Config as an object
    */
@@ -158,12 +174,27 @@ class FluencyConfig extends ModuleConfig {
 
   /**
    * Resets all configured engine data by removing the selected engine and it's associated settings
-   * This may be required when upgrading the module
+   * This may be required when upgrading the module due to previous storage formats
    */
   public function resetEngineData(): void {
+    $configKeys = array_keys((array) $this->getModuleConfig());
+
+    $removals = array_filter(
+      $configKeys,
+      fn($key) => !!str_starts_with($key, 'pw_language_')
+    );
+
+    $this->removeFromModuleConfig($removals);
+
     $this->saveModuleConfig(translation_api_ready: false, selected_engine: null);
   }
 
+  /**
+   * Determines if there is a currently selected translation engine and that it is stored in the
+   * valid format
+   *
+   * @todo Deprecate this in the future when possible, only needed for upgrades from < 1.0.8
+   */
   public function selectedEngineIsValid(): bool {
     $moduleConfig = $this->getModuleConfig();
 
