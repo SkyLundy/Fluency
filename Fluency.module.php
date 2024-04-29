@@ -120,6 +120,8 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * @return void
    */
   public function init() {
+    $this->fluencyConfig = (new FluencyConfig())->getConfigData();
+
     if (!$this->translationEngineIsReady()) {
       return;
     }
@@ -130,7 +132,6 @@ final class Fluency extends Process implements Module, ConfigurableModule {
     $this->moduleJsPath = "{$this->urls->$this}assets/scripts/";
     $this->moduleCssPath = "{$this->urls->$this}assets/styles/";
 
-    $this->fluencyConfig = (new FluencyConfig())->getConfigData();
     $this->initializeCaches();
     $this->initializeTranslationEngine();
     $this->processWireFileTranslator = new ProcessWireFileTranslator($this);
@@ -189,7 +190,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * @return bool
    */
   public function translationEngineIsReady(): bool {
-    return $this->fluencyConfig->translation_api_ready ?? false;
+    return $this->fluencyConfig?->translation_api_ready ?? false;
   }
 
   /**
@@ -240,7 +241,7 @@ final class Fluency extends Process implements Module, ConfigurableModule {
    * Determine if module should initialize
    */
   private function moduleShouldInitInAdmin(): bool {
-    return $this->page->name !== 'login' && $this->userIsAuthorized() && !!$this->moduleConfig;
+    return $this->page->name !== 'login' && $this->userIsAuthorized() && !!$this->fluencyConfig;
   }
 
   /**

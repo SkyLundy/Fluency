@@ -528,11 +528,14 @@ class FluencyConfig extends ModuleConfig {
         Markup::div(
           Markup::a(
             href: 'https://paypal.me/noonesboy',
-            content: Markup::img("{$this->wire('urls')->get('Fluency')}/assets/img/paypal_me.png", 'PayPal Me'),
+            content: Markup::img(
+              source: "{$this->wire('urls')->get('Fluency')}/assets/img/paypal_me.png",
+              alt: 'PayPal Me'
+            ),
             rel: 'noopener',
-            target: '_blank'
-          ),
-          'button-donate'
+            target: '_blank',
+            classes: 'button-donate'
+          )
         )
       )
     ]);

@@ -6,6 +6,11 @@
 @import 'components/ft_translatable_language_list';
 
 .button-donate {
+  display: block;
   margin: 2.5rem auto 1rem;
   width: 180px;
+
+  img {
+    width: 100%;
+  }
 }
