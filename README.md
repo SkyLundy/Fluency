@@ -10,7 +10,9 @@ Fluency can be used:
 - When adding multi-language abilities to an existing ProcessWire application
 - To add translation abilities to an existing multi-language ProcessWire application
 
-You can help out by filing Github issues when bugs are found, or submit a pull request with fixes.
+You can help make Fluency better by filing Github issues when bugs are found, or submit a pull request with fixes.
+
+For support and community discussion about Fluency, visit [the module thread in the ProcessWire forums](https://processwire.com/talk/topic/24567-fluency-the-complete-translation-enhancement-suite-for-processwire/).
 
 ## Contents
 
@@ -55,7 +57,7 @@ You can help out by filing Github issues when bugs are found, or submit a pull r
   - LanguageTabs
   - ProcessLanguage
 - UIKit admin theme
-- At least 2 languages configured in ProcessWire to add translation to fields
+- At least 2 languages configured in ProcessWire and Fluency to add translation to fields
 - API key for the chosen third party translation service, free tiers are available
 
 ## Installing

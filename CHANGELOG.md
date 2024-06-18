@@ -1,5 +1,14 @@
 # Fluency for ProcessWire Changelog
 
+### 1.0.9 2024-06-18
+
+NOTE: If upgrading from 1.0.7 or earlier, you will be required to configure your selected
+translation engine again after upgrading. Existing content will not be affected.
+
+- Fix issue where upgrading from v1.0.7 or earlier to v1.0.8 would cause translation failure due to
+  updating how the module stores configuration data. Credit to @jacmaes for finding and reporting.
+  Resolves https://github.com/SkyLundy/Fluency/issues/5
+
 ## 1.0.8 2024-24-03
 
 ### New features, Bugfixes, Documentation, Code Improvement, Recommended for all users
