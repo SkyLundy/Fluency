@@ -1314,8 +1314,6 @@ final class Fluency extends Process implements Module, ConfigurableModule {
   public function ___uninstall() {
     $this->initializeCaches();
     $this->clearAllCaches();
-
-    $adminPage = $this->pages->get("{$this->urls->admin}fluency/");
-    $adminPage->id && $adminPage->delete();
+    $this->uninstallPage();
   }
 }
