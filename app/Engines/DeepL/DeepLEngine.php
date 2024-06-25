@@ -312,15 +312,12 @@ final class DeepLEngine implements FluencyEngine {
       ...$ignoredStrings
     ]);
 
+    // Ignore longest strings first
+    usort($ignoredStrings, fn ($a, $b) => strlen($b) <=> strlen($a));
+
     return array_map(function($value) use ($ignoredStrings) {
       return array_reduce($ignoredStrings, function($text, $ignored) {
-        preg_match_all('/' . preg_quote($ignored) . '/', $text, $matches);
-
-        if (count($matches[0])) {
-          return $text = str_replace($ignored, "<span translate=\"no\">{$ignored}</span>", $text);
-        }
-
-        return $text;
+        return preg_replace('/\b' . preg_quote($ignored) . '?\b/', "<span translate=\"no\">{$ignored}</span>", $text);
       }, $value);
     }, $texts);
   }
