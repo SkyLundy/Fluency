@@ -1,5 +1,11 @@
 # Fluency for ProcessWire Changelog
 
+### 1.0.10 2024-07-20 Beta
+
+- Fix issue where global excluded strings were not being split correctly in DeepL engine
+- Remove legacy references to previous exclude tag name in DeepL no longer needed since move to
+  JSON API
+
 ### 1.0.9 2024-06-18
 
 NOTE: If upgrading from 1.0.7 or earlier, you will be required to configure your selected
