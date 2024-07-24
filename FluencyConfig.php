@@ -615,7 +615,7 @@ class FluencyConfig extends ModuleConfig {
 
     $options = array_reduce($engineLanguages->languages, fn($options, $language) => [
       ...$options,
-      ...[json_encode($language) => $language->targetName]
+      ...[json_encode($language) => "{$language->targetName} - {$language->targetCode}"]
     ], []);
 
     $configName = createLanguageConfigName($pwLanguage->id, $this->engineInfo);
