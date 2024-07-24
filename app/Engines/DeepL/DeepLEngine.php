@@ -27,8 +27,6 @@ final class DeepLEngine implements FluencyEngine {
 
   use LogsEngineData;
 
-  private const IGNORED_TAG_NAME = 'fluency-ignore';
-
   private ?string $apiUrl;
 
   private ?string $apiKey;
@@ -80,7 +78,6 @@ final class DeepLEngine implements FluencyEngine {
      'source_lang' => $sourceLanguageCode,
      'target_lang' => $targetLanguageCode,
      'tag_handling' => 'html',
-     'ignore_tags' =>  self::IGNORED_TAG_NAME,
      'formality' => $this->formality,
      'text' => $content
     ], $translationRequest->options['requestParameters'] ?? []);
@@ -255,11 +252,12 @@ final class DeepLEngine implements FluencyEngine {
     $return = [
       'data' => [],
       'status' => $status,
-      'error' => null
+      'error' => null,
     ];
 
     // Handle fail
     if (!$response || $status < 200 || $status >= 300) {
+
       $return['error'] = match ($status) {
         403 => FluencyErrors::AUTHENTICATION_FAILED,
         400 => FluencyErrors::BAD_REQUEST,
@@ -305,14 +303,16 @@ final class DeepLEngine implements FluencyEngine {
    * @param array|string $ignoredStrings Strings to ignore
    */
   private function addIgnoredTags(array $texts, array|string $ignoredStrings = []): array {
-    is_string($ignoredStrings) && $ignoredStrings = explode(',', $ignoredStrings);
+    is_string($ignoredStrings) && $ignoredStrings = explode('||', $ignoredStrings);
 
     $ignoredStrings = array_map('trim', [
       ...explode('||', $this->globalIgnoredStrings),
       ...$ignoredStrings
     ]);
 
-    // Ignore longest strings first
+    $ignoredStrings = array_filter($ignoredStrings);
+
+    // Ignore longest strings first to prevent substring matches
     usort($ignoredStrings, fn ($a, $b) => strlen($b) <=> strlen($a));
 
     return array_map(function($value) use ($ignoredStrings) {
