@@ -79,6 +79,9 @@ class FluencyStandaloneTranslatorFieldset {
             'collapsed' => Inputfield::collapsedNever,
             'columnWidth' => 10,
             'themeBorder' => 'hide',
+            'attributes' => [
+              'class' => self::appendInputfieldClasses('InputfieldMarkup', 'ft-swap-languages')
+            ],
             'children' => [
               [
                 'type' => 'InputfieldButton',

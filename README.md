@@ -203,6 +203,7 @@ $fluency->getLanguageCode(1034); // 'de'
 _Tip:_ Use this to indicate the current language of the page including the `lang` attribute on the `<html>` tag.
 
 ```html
+<!doctype html>
 <html lang="<?= $fluency->getLanguageCode(); ?>">
   <!-- markup -->
 </html>
