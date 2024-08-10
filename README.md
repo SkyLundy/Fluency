@@ -12,6 +12,9 @@ Fluency can be used:
 
 You can help make Fluency better by filing Github issues when bugs are found, or submit a pull request with fixes.
 
+**Notes on upgrading Fluency**
+Upgrading from earlier versions to 1.0.8 and earlier may cause errors to occur. It is recommended that versions prior to 1.0.9 be uninstalled and the latest version installed. This will not cause any content loss however the API key must be re-entered and module configuration be completed again.
+
 For support and community discussion about Fluency, visit [the module thread in the ProcessWire forums](https://processwire.com/talk/topic/24567-fluency-the-complete-translation-enhancement-suite-for-processwire/).
 
 ## Contents
