@@ -1,6 +1,6 @@
 # Fluency for ProcessWire Changelog
 
-### 1.0.10 2024-08-10
+### 2.0.0 2024-08-10
 
 NOTE: If upgrading from 1.0.8 or earlier it is recommended that you fully uninstall the module
 and then reinstall the module. Issues may be experienced if upgrading directly.
