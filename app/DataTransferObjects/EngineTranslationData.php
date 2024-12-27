@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Used to return a translation result from a translation engine
+ */
+
 declare(strict_types=1);
 
 namespace Fluency\DataTransferObjects;
@@ -7,12 +11,7 @@ namespace Fluency\DataTransferObjects;
 use \InvalidArgumentException;
 use Countable;
 use Fluency\DataTransferObjects\Traits\CreatesRetrievedAtTimestampTrait;
-use Fluency\DataTransferObjects\{ FluencyDTO, TranslationRequestData };
 use Stringable;
-
-/**
- * Used to return a translation result from a translation engine
- */
 
 final class EngineTranslationData extends FluencyDTO implements Countable, Stringable {
 

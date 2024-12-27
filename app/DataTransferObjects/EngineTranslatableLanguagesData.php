@@ -1,99 +1,101 @@
 <?php
 
+/**
+ * Represents a full list of languages that a translation engine can translate from and too
+ */
+
 declare(strict_types=1);
 
 namespace Fluency\DataTransferObjects;
 
 use Countable;
-use Fluency\DataTransferObjects\{ FluencyDTO, EngineLanguageData };
-use Fluency\DataTransferObjects\Traits\{ CreatesRetrievedAtTimestampTrait, ValidatesErrorsTrait };
-
-require_once __DIR__ . '/../Functions/typeChecking.php';
+use Fluency\DataTransferObjects\Traits\{CreatesRetrievedAtTimestampTrait, ValidatesErrorsTrait};
 
 use function Fluency\Functions\arrayContainsOnlyInstancesOf;
 
-/**
- * Represents a full list of languages that a translation engine can translate from and too
- */
+final class EngineTranslatableLanguagesData extends FluencyDTO implements Countable
+{
+    use CreatesRetrievedAtTimestampTrait;
+    use ValidatesErrorsTrait;
 
-final class EngineTranslatableLanguagesData extends FluencyDTO implements Countable {
+    /**
+     * @param array<EngineLanguageData> $languages   List of translatable languages, type validated
+     * @param bool                      $fromCache   Whether this data was cached
+     * @param ?string                   $retrievedAt Date and time data was retrieved from the service API
+     * @param string|null               $error       API error, must use App\Enums\FluencyErrors const
+     * @param string|null               $message     Error message if present
+     */
+    private function __construct(
+        public readonly array $languages,
+        public readonly bool $fromCache,
+        public readonly ?string $retrievedAt,
+        public readonly ?string $error,
+        public readonly ?string $message,
+    ) {}
 
-  use CreatesRetrievedAtTimestampTrait;
+    /**
+     * {@inheritdoc}
+     */
+    public static function fromArray(array $data): self
+    {
+        $data['languages'] ??= [];
 
-  use ValidatesErrorsTrait;
+        self::validateErrorIfPresent($data, 'error');
 
-  /**
-   * @param array<EngineLanguageData> $languages   List of translatable languages, type validated
-   * @param bool                      $fromCache   Whether this data was cached
-   * @param ?string                   $retrievedAt Date and time data was retrieved from the service API
-   * @param string|null               $error       API error, must use App\Enums\FluencyErrors const
-   * @param string|null               $message     Error message if present
-   */
-  private function __construct(
-    public readonly array $languages,
-    public readonly bool $fromCache,
-    public readonly ?string $retrievedAt,
-    public readonly ?string $error,
-    public readonly ?string $message,
-  ) {}
+        arrayContainsOnlyInstancesOf(
+            $data['languages'],
+            EngineLanguageData::class,
+            "Languages array must only contain instances of EngineLanguageData"
+        );
 
-  /**
-   * {@inheritdoc}
-   */
-  public static function fromArray(array $data): self {
-    $data['languages'] ??= [];
+        usort($data['languages'], fn($a, $b) => strcmp($a->targetName, $b->targetName));
 
-    self::validateErrorIfPresent($data, 'error');
+        return new self(...[
+            'error' => null,
+            ...$data,
+            'fromCache' => false,
+            'retrievedAt' => self::newRetrievedAtTimestamp(),
+            'message' => self::getMessageIfErrorPresent($data),
+        ]);
+    }
 
-    arrayContainsOnlyInstancesOf(
-      $data['languages'],
-      EngineLanguageData::class,
-      "Languages array must only contain instances of EngineLanguageData"
-    );
+    /**
+     * Internal use only
+     */
+    public static function fromCache(EngineTranslatableLanguagesData $translatableLanguages): self
+    {
+        return new self(...[
+            ...$translatableLanguages->toArray(),
+            'fromCache' =>  true
+        ]);
+    }
 
-    usort($data['languages'], fn($a, $b) => strcmp($a->targetName, $b->targetName));
+    public function bySourceCode(string $code): ?EngineLanguageData
+    {
+        return $this->getByCode('sourceCode', $code);
+    }
 
-    return new self(...[
-      'error' => null,
-      ...$data,
-      'fromCache' => false,
-      'retrievedAt' => self::newRetrievedAtTimestamp(),
-      'message' => self::getMessageIfErrorPresent($data),
-    ]);
-  }
+    public function byTargetCode(string $code): ?EngineLanguageData
+    {
+        return $this->getByCode('targetCode', $code);
+    }
 
-  /**
-   * Internal use only
-   */
-  public static function fromCache(EngineTranslatableLanguagesData $translatableLanguages): self {
-    return new self(...[
-      ...$translatableLanguages->toArray(),
-      'fromCache' =>  true
-    ]);
-  }
+    private function getByCode(string $codeType, string $code): ?EngineLanguageData
+    {
+        $code = strtolower($code);
 
-  public function bySourceCode(string $code): ?EngineLanguageData {
-    return $this->getByCode('sourceCode', $code);
-  }
+        return array_reduce(
+            $this->languages,
+            fn($match, $language) => $match = strtolower($language->$codeType) === $code ? $language
+                : $match
+        );
+    }
 
-  public function byTargetCode(string $code): ?EngineLanguageData {
-    return $this->getByCode('targetCode', $code);
-  }
-
-  private function getByCode(string $codeType, string $code): ?EngineLanguageData {
-    $code = strtolower($code);
-
-    return array_reduce(
-      $this->languages,
-      fn($match, $language) => $match = strtolower($language->$codeType) === $code ? $language
-                                                                                   : $match
-    );
-  }
-
-  /**
-   * Countable interface method
-   */
-  public function count(): int {
-    return count($this->languages);
-  }
+    /**
+     * Countable interface method
+     */
+    public function count(): int
+    {
+        return count($this->languages);
+    }
 }

@@ -1,6 +1,35 @@
 # Fluency for ProcessWire Changelog
 
-### 2.0.0 2024-08-10
+## 2.1.0 2025-03-10
+
+### New features, Bugfixes, Documentation, Code Improvement, Recommended for all users
+
+- Translation cache now caches translations permanently until cleared on the module config page when
+  translation caching is enabled.
+- Some Fluency methods are now hookable. Refer to README for documentation and examples. Credit to
+  @harikt for inspiring this feature.
+- Globally excluded strings can now be entered either one per line or all on one line separated by
+  a || (double pipe). Credit to @BernhardBaumrock for the feature suggestion
+- Translating static strings using the ProcessWire translator now offers the ability to specify the
+  language code to be used for the source language
+- Fix issue where strings configured to be excluded from translations on the module config page were
+  being translated. Credit to @BernhardBaumrock for finding and reporting
+- Correct issue where custom language code field that may optionally be added to ProcessWire
+  language pages was inconsistent and incorrectly documented.
+
+Housekeeping
+
+- Update PHP code formatting to follow [PSR-12 standards](https://www.php-fig.org/psr/psr-12/)
+- Update .editorconfig with additional file definitions
+- Remove extraneous namespace registrations with ProcessWire
+- Improve docblocks
+- Remove some annoying code styles
+- Remove file `import` statements where namespace `use` should be in source files
+- Simplify internal class/filenames
+- Update caniuse package
+- Update `href` in `Fluency.info.php` to reflect current forums post URL
+
+## 2.0.0 2024-08-10
 
 NOTE: If upgrading from 1.0.8 or earlier it is recommended that you fully uninstall the module
 and then reinstall the module. Issues may be experienced if upgrading directly.

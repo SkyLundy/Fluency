@@ -6,41 +6,44 @@ namespace Fluency\Engines\Traits;
 
 use function \ProcessWire\wire;
 
-trait LogsEngineData {
+trait LogsEngineData
+{
+    private string $logName = 'fluency-engine';
 
-  private string $logName = 'fluency-engine';
+    /**
+     * Log API issues
+     *
+     * @param  string      $error    A value from FluencyErrors
+     * @param  string      $message  A descriptive message, may be from API
+     * @param  mixed|array $response The API response object
+     */
+    protected function logError(string $error, ?string $message, mixed $response = []): void
+    {
+        $message ??= 'No Message';
 
-  /**
-   * Log API issues
-   *
-   * @param  string      $error    A value from FluencyErrors
-   * @param  string      $message  A descriptive message, may be from API
-   * @param  mixed|array $response The API response object
-   */
-  protected function logError(string $error, ?string $message, mixed $response = []): void {
-    $message ??= 'No Message';
+        $logMessage = "Engine: {$this->getEngine()} /" .
+            "Error: {$error} /" .
+            "Message: {$message} /" .
+            "Response: " . json_encode($response);
 
-    $logMessage = "Engine: {$this->getEngine()} /" .
-                  "Error: {$error} /" .
-                  "Message: {$message} /" .
-                  "Response: " . json_encode($response);
+        wire('log')->save($this->logName, $logMessage);
+    }
 
-    wire('log')->save($this->logName, $logMessage);
-  }
+    /**
+     * Logs general info
+     */
+    protected function logInfo(string $message): void
+    {
+        wire('log')->save(
+            $this->logName,
+            "Engine: {$this->getEngine()} / Message: {$message}"
+        );
+    }
 
-  /**
-   * Logs general info
-   */
-  protected function logInfo(string $message): void {
-    wire('log')->save(
-      $this->logName,
-      "Engine: {$this->getEngine()} / Message: {$message}"
-    );
-  }
+    protected function getEngine(): string
+    {
+        $class = explode('\\', get_class($this));
 
-  protected function getEngine(): string {
-    $class = explode('\\', get_class($this));
-
-    return end($class);
-  }
+        return end($class);
+    }
 }

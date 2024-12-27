@@ -42,6 +42,7 @@ const FtUiElements = (function () {
   /**
    * Creates a status placeholder
    *
+   * @param  {string} text Button text
    * @return {Element}
    */
   const createStatusElement = text => {
@@ -85,24 +86,66 @@ const FtUiElements = (function () {
     };
   };
 
-  const createTranslateAllButton = text => {
-    const elClasses = FtConfig.getElementClassesFor('translateAllButton');
+  /**
+   * Creates the translate to all for the language translator pages
+   *
+   * @param  {string} text Button label
+   * @return {Element}
+   */
+  const createLanguageTranslatorInputs = () => {
+    const elClasses = FtConfig.getElementClassesFor('languageTranslator');
+    const texts = FtConfig.getUiTextFor('languageTranslator');
 
-    const button = document.createElement('a');
-    button.innerText = FtConfig.getUiTextFor('languageTranslator').translateAllButton;
-    button.setAttribute('class', elClasses.button);
-    button.setAttribute('href', '');
+    // Translate All button
+    const translateAllButton = document.createElement('a');
+    translateAllButton.innerText = texts.translateAllButton;
+    translateAllButton.setAttribute('class', elClasses.translateButton);
+    translateAllButton.setAttribute('href', '');
 
+    // Source language select
+    const sourceLanguageSelect = document.createElement('select');
+    sourceLanguageSelect.setAttribute('class', elClasses.sourceLanguageSelect);
+
+    // Source language select options
+    FtConfig.getConfiguredLanguages().forEach(function (language) {
+      const option = document.createElement('option');
+      option.textContent = language.title;
+      option.value = language.engineLanguage.sourceCode;
+
+      if (language.default) {
+        option.selected = 'selected';
+        sourceLanguageSelect.prepend(option);
+
+        return;
+      }
+
+      sourceLanguageSelect.appendChild(option);
+    });
+
+    // Source language select label text
+    const selectLabelText = document.createElement('span');
+    selectLabelText.innerText = texts.sourceLanguageSelectLabel;
+
+    // Source language select label
+    const sourceLanguageSelectLabel = document.createElement('label');
+    sourceLanguageSelectLabel.setAttribute('class', elClasses.sourceLanguageSelectLabel);
+    sourceLanguageSelectLabel.appendChild(selectLabelText);
+    sourceLanguageSelectLabel.appendChild(sourceLanguageSelect);
+
+    // Container that holds all UI elements
     const content = document.createElement('div');
     content.setAttribute('class', elClasses.content);
-    content.appendChild(button);
+    content.appendChild(translateAllButton);
+    content.appendChild(sourceLanguageSelectLabel);
 
+    // ProcessWire UI fields container
     const container = document.createElement('li');
     container.setAttribute('class', elClasses.container);
     container.appendChild(content);
 
     return {
-      button,
+      translateAllButton,
+      sourceLanguageSelect,
       container,
     };
   };
@@ -110,7 +153,7 @@ const FtUiElements = (function () {
   return {
     createStatusElement,
     createTranslateButton,
-    createTranslateAllButton,
+    createLanguageTranslatorInputs,
     createIcon,
     elementClasses,
   };

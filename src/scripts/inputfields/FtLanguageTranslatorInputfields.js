@@ -55,16 +55,33 @@ const AllInputfieldTranslator = function (inputfields) {
 
   let sourceTargetMap = [];
 
+  let sourceLanguageSelect = null;
+
   this.getSelf = () => inputfields;
 
   this.getActivityOverlay = () => activityOverlay;
 
-  this.addTranslateButton = () => {
-    const { button, container } = FtUiElements.createTranslateAllButton();
+  this.addLanguageTranslatorInputs = () => {
+    const { translateAllButton, sourceLanguageSelect, container } =
+      FtUiElements.createLanguageTranslatorInputs();
 
-    this.bindTranslateButton(button);
+    this.sourceLanguageSelect = sourceLanguageSelect;
+
+    this.bindSourceLanguageSelect(sourceLanguageSelect);
+    this.bindTranslateButton(translateAllButton);
 
     document.querySelector('.Inputfields').insertAdjacentElement('afterbegin', container);
+  };
+
+  /**
+   * Bind the behavior that removes the state changed class that alerts the user of unsaved changes
+   */
+  this.bindSourceLanguageSelect = select => {
+    select.addEventListener('change', e => {
+      setTimeout(() => {
+        e.target.closest('.InputfieldStateChanged')?.classList.remove('InputfieldStateChanged');
+      }, 100);
+    });
   };
 
   this.bindTranslateButton = button => {
@@ -112,6 +129,8 @@ const AllInputfieldTranslator = function (inputfields) {
 
     let errorOccurred = false;
 
+    const sourceLangageCode = this.sourceLanguageSelect.value;
+
     translationGroups.forEach((translationGroup, i) => {
       // Stop trying if something went wrong
       if (errorOccurred) {
@@ -119,7 +138,7 @@ const AllInputfieldTranslator = function (inputfields) {
       }
 
       Fluency.getTranslation(
-        FtConfig.getDefaultLanguage().engineLanguage.sourceCode,
+        sourceLangageCode,
         FtConfig.getLanguageForId(id).engineLanguage.targetCode,
         translationGroup.map(sourceTarget => sourceTarget.text),
       )
@@ -179,7 +198,7 @@ const AllInputfieldTranslator = function (inputfields) {
 
     this.mapSourceTargetElements();
 
-    this.addTranslateButton();
+    this.addLanguageTranslatorInputs();
   })();
 };
 
@@ -202,7 +221,7 @@ const LanguageTranslatorInputfield = function (inputfieldContainer) {
 
   this.getActivityOverlay = () => activityOverlay;
 
-  this.addTranslateButton = () => {
+  this.addLanguageTranslatorInputs = () => {
     const { button, container } = FtUiElements.createTranslateButton(uiText.translate);
 
     this.bindTranslateButton(button);
@@ -218,6 +237,15 @@ const LanguageTranslatorInputfield = function (inputfieldContainer) {
     });
   };
 
+  /**
+   * Gets the selected language code from the source language select field
+   */
+  this.getSourceLanguageCode = () => {
+    const elClasses = FtConfig.getElementClassesFor('languageTranslator').sourceLanguageSelect;
+
+    return document.querySelector(`.${elClasses.split(' ').join('.')}`).value;
+  };
+
   this.translateContent = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const id = parseInt(urlParams.get('language_id'));
@@ -225,7 +253,7 @@ const LanguageTranslatorInputfield = function (inputfieldContainer) {
     activityOverlay.showActivity();
 
     Fluency.getTranslation(
-      FtConfig.getDefaultLanguage().engineLanguage.sourceCode,
+      this.getSourceLanguageCode(),
       FtConfig.getLanguageForId(id).engineLanguage.targetCode,
       sourceText,
     ).then(result => {
@@ -244,7 +272,7 @@ const LanguageTranslatorInputfield = function (inputfieldContainer) {
   (() => {
     activityOverlay = new FtActivityOverlay(this);
 
-    this.addTranslateButton();
+    this.addLanguageTranslatorInputs();
   })();
 };
 

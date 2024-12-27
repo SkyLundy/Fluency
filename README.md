@@ -46,6 +46,7 @@ For support and community discussion about Fluency, visit [the module thread in 
   - [Managing Cache](#managing-cache)
   - [Admin REST API Endpoints](#admin-rest-api-endpoints)
 - [Error Handling and Logging](#error-handling-and-logging)
+- [Hooking](#hooking)
 - [Known Issues](#known-issues)
 - [Contributing](#contributing)
 - [Cost](#cost)
@@ -280,8 +281,7 @@ With options:
 
 ```html
 <div class="language-select">
-  <?= $fluency->renderLanguageSelect( addInlineJs: false, id: 'my-custom-id', classes: ['some',
-  'classes'] ) ?>
+  <?= $fluency->renderLanguageSelect(false, 'my-custom-id', ['some', 'element', 'classes'] ) ?>
 </div>
 ```
 
@@ -374,7 +374,7 @@ Fluency can be accessed anywhere in ProcessWire using the `$fluency` variable. T
 
 Fluency is fully documented and formatted for the API Explorer tool in the outstanding (and personally recommended) [ProDevTools](https://processwire.com/talk/store/product/22-prodevtools/) module.
 
-All methods return [Data Transfer Objects](https://medium.com/@sjoerd_bol/how-to-use-data-transfer-objects-dtos-for-clean-php-code-3bbd47a2b3ab) that are immutable and predictable in structure and features. All values can be accessed via:
+Most methods return [Data Transfer Objects](https://medium.com/@sjoerd_bol/how-to-use-data-transfer-objects-dtos-for-clean-php-code-3bbd47a2b3ab) that are immutable and predictable in structure and features. All values can be accessed via:
 
 - Object properties `$dtoObject->property`
 - Be converted to an array using the `$dtoObject->toArray()` method
@@ -773,6 +773,51 @@ Fluency handles errors encountered when communicating with the translation API a
 `message` - Will contain a human-friendly message for the error type that occurred. These are located in `app/FluencyLocalization.php` and can be translated
 
 Translation Engine and third party service errors are stored under the `fluency-engine` log. If there are issues with translating content, refer to that log first to check whether the translation service is experiencing issues.
+
+## Hooking
+
+Fluency supports hooking for some methods. These can be used to customize or extend functionality.
+
+Most Fluency methods return [Data Transfer Objects](https://medium.com/@sjoerd_bol/how-to-use-data-transfer-objects-dtos-for-clean-php-code-3bbd47a2b3ab) that are immutable and provide additional support for working with return data. When hooking Fluency methods to change their return value, you will likely need to retrieve data from the returned object, modify it, then create a new data object. All Data Transfer Objects are well documented and easy to work with.
+
+### Hook Example: Adding a language to Fluency for translation
+
+A good example of where hooking Fluency methods may be useful is when [DeepL's language release process may prevent Fluency from offering all supported languages for use in ProcessWire](https://developers.deepl.com/docs/api-reference/languages).
+
+Here is an example of making Arabic available for translation before it's officially published to the API languages endpoint. With this hook, Arabic will be available in both the global translation tool as well as configurable as a language on the Fluency module config page.
+
+Note: This will only work if the language is recognized by the translation service and the `sourceCode` and `targetCode` values are correct according to the translation API in use.
+
+```php
+<?php namespace ProcessWire;
+
+use Fluency\DataTransferObjects\{EngineLanguageData, EngineTranslatableLanguagesData};
+
+// Hook after Fluency gets the available languages from the DeepL API
+wire()->addHookAfter('Fluency::getTranslatableLanguages', function (HookEvent $e) {
+    // $e->return is an instance of EngineTranslatableLanguageData
+    // The `languages` property is an array of EngineLanguageData objects
+    $languages = $e->return->languages;
+
+    // Manually define the values according to the API docs, add to the original languages array
+    $languages[] = EngineLanguageData::fromArray([
+        'sourceName' => __('Arabic'),
+        'sourceCode' => 'AR',
+        'targetName' => __('Arabic'),
+        'targetCode' => 'AR',
+        'meta' => [
+            'supports_formality' => false,
+        ],
+    ]);
+
+    // Instantiate a new EngineTranslatableLanguageData object with the language array, assign it to
+    // the return value
+    $e->return = EngineTranslatableLanguagesData::fromArray([
+        'languages' => $languages
+    ]);
+});
+
+```
 
 ## Known Issues
 

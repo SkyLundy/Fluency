@@ -1,124 +1,131 @@
 <?php
 
+/**
+ * A wrapper for ProcessWire's WireCache with added functionality and feature implementations
+ * specific to translations
+ */
+
 declare(strict_types=1);
 
 namespace Fluency\Caching;
 
-use Fluency\DataTransferObjects\{ EngineTranslationData, TranslationRequestData };
+use Fluency\DataTransferObjects\{EngineTranslationData, TranslationRequestData};
 use ProcessWire\WireCache;
 
-/**
- * This largely acts as a wrapper for ProcessWire's WireCache with added functionality and feature
- * implementations specific to translations
- */
+final class TranslationCache
+{
+    public const CACHE_NAMESPACE = 'Fluency.Translation';
 
-final class TranslationCache {
+    private const CACHE_EXPIRY = WireCache::expireNever;
 
-  public const CACHE_NAMESPACE = 'Fluency.Translation';
+    private ?WireCache $cache = null;
 
-  private const CACHE_EXPIRY = WireCache::expireMonthly;
-
-  private ?WireCache $cache = null;
-
-  private function cache(): WireCache {
-    return $this->cache ??= new WireCache();
-  }
-
-  public function getOrStoreNew(
-    TranslationRequestData $translationRequest,
-    callable $callback
-  ): EngineTranslationData {
-    $translationData = $this->get($translationRequest);
-
-    if (!$translationData) {
-      $translationData = $callback();
-
-      if (!$translationData->error) {
-        $this->store($translationData);
-      }
+    private function cache(): WireCache
+    {
+        return $this->cache ??= new WireCache();
     }
 
-    return $translationData;
-  }
+    public function getOrStoreNew(
+        TranslationRequestData $translationRequest,
+        callable $callback
+    ): EngineTranslationData {
+        $translationData = $this->get($translationRequest);
 
-  /**
-   * Saves translated content to cache. Will only store if there were no errors returned.
-   * @return void
-   */
-  public function store(EngineTranslationData $translationData): void {
-    if (!$translationData->translations || $translationData->error) {
-      return;
+        if (!$translationData) {
+            $translationData = $callback();
+
+            if (!$translationData->error) {
+                $this->store($translationData);
+            }
+        }
+
+        return $translationData;
     }
 
-    $this->cache()->saveFor(
-      self::CACHE_NAMESPACE,
-      $translationData->cacheKey,
-      serialize($translationData),
-      self::CACHE_EXPIRY
-    );
-  }
+    /**
+     * Saves translated content to cache. Will only store if there were no errors returned.
+     * @return void
+     */
+    public function store(EngineTranslationData $translationData): void
+    {
+        if (!$translationData->translations || $translationData->error) {
+            return;
+        }
 
-  /**
-   * Attempts to retrieve previously translated engine response object from cache.
-   */
-  public function get(TranslationRequestData $translationRequest): ?EngineTranslationData {
-    $translation = $this->cache()->getFor(self::CACHE_NAMESPACE, $translationRequest->cacheKey);
-
-    if (!$translation) {
-      return null;
+        $this->cache()->saveFor(
+            self::CACHE_NAMESPACE,
+            $translationData->cacheKey,
+            serialize($translationData),
+            self::CACHE_EXPIRY
+        );
     }
 
-    $translation = unserialize($translation);
+    /**
+     * Attempts to retrieve previously translated engine response object from cache.
+     */
+    public function get(TranslationRequestData $translationRequest): ?EngineTranslationData
+    {
+        $translation = $this->cache()->getFor(self::CACHE_NAMESPACE, $translationRequest->cacheKey);
 
-    return EngineTranslationData::fromCache($translation);
-  }
+        if (!$translation) {
+            return null;
+        }
 
-  /**
-   * Returns a count of the number of translations cached
-   * @return int
-   */
-  public function count(): int {
-    return array_reduce(
-      array_column($this->cache()->getInfo(), 'name'),
-      fn($total, $name) => str_starts_with($name, self::CACHE_NAMESPACE) ? ++$total : $total,
-      0
-    );
-  }
+        $translation = unserialize($translation);
 
-  /**
-   * Clear all cached translations
-   * @return int Returns the number of entries in cache, will be zero on success
-   */
-  public function clear(): int {
-    $this->cache()->deleteFor(self::CACHE_NAMESPACE);
+        return EngineTranslationData::fromCache($translation);
+    }
 
-    return $this->count();
-  }
+    /**
+     * Returns a count of the number of translations cached
+     * @return int
+     */
+    public function count(): int
+    {
+        return array_reduce(
+            array_column($this->cache()->getInfo(), 'name'),
+            fn($total, $name) => str_starts_with($name, self::CACHE_NAMESPACE) ? ++$total : $total,
+            0
+        );
+    }
 
-  /**
-   * Delete a cached translation by it's cache key
-   * @param  string $cacheKey Cache key
-   * @return bool             True on success
-   */
-  public function deleteByCacheKey(string $cacheKey): bool {
-    return $this->cache()->deleteFor(self::CACHE_NAMESPACE, $cacheKey);
-  }
+    /**
+     * Clear all cached translations
+     * @return int Returns the number of entries in cache, will be zero on success
+     */
+    public function clear(): int
+    {
+        $this->cache()->deleteFor(self::CACHE_NAMESPACE);
 
-  /**
-   * Gets all cached EngineTranslationData objects
-   * @return array<EngineTranslationData>
-   */
-  public function getAllCachedTranslations(): array {
-    $fluencyCaches = array_filter(
-      $this->cache()->getInfo(),
-      fn($item) => str_starts_with($item['name'], self::CACHE_NAMESPACE)
-    );
+        return $this->count();
+    }
 
-    return array_map(function($item) {
-      $key = explode('__', $item['name'])[1];
-      $cachedValue = $this->cache()->getFor(self::CACHE_NAMESPACE, $key);
+    /**
+     * Delete a cached translation by it's cache key
+     * @param  string $cacheKey Cache key
+     * @return bool             True on success
+     */
+    public function deleteByCacheKey(string $cacheKey): bool
+    {
+        return $this->cache()->deleteFor(self::CACHE_NAMESPACE, $cacheKey);
+    }
 
-      return unserialize($cachedValue);
-    }, $fluencyCaches);
-  }
+    /**
+     * Gets all cached EngineTranslationData objects
+     * @return array<EngineTranslationData>
+     */
+    public function getAllCachedTranslations(): array
+    {
+        $fluencyCaches = array_filter(
+            $this->cache()->getInfo(),
+            fn($item) => str_starts_with($item['name'], self::CACHE_NAMESPACE)
+        );
+
+        return array_map(function ($item) {
+            $key = explode('__', $item['name'])[1];
+            $cachedValue = $this->cache()->getFor(self::CACHE_NAMESPACE, $key);
+
+            return unserialize($cachedValue);
+        }, $fluencyCaches);
+    }
 }

@@ -1,0 +1,18 @@
+.ft-language-translator-button-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  .ft-source-language-select-label {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+
+    .ft-source-language-select {
+      display: block;
+      margin-left: 0.75rem;
+    }
+  }
+}

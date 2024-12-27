@@ -37,10 +37,12 @@ const FtConfig = (function () {
       container: 'ft-translate-button-container',
       button: 'ft-translate-button',
     },
-    translateAllButton: {
+    languageTranslator: {
       container: 'Inputfield InputfieldHeaderHidden',
-      content: 'InputfieldContent',
-      button: 'ft-translate-all-button',
+      content: 'InputfieldContent ft-language-translator-button-content',
+      translateButton: 'ft-translate-all-button',
+      sourceLanguageSelect: 'uk-select ft-source-language-select',
+      sourceLanguageSelectLabel: 'ft-source-language-select-label',
     },
     statusPlaceholder: {
       container: 'ft-translation-status-container',

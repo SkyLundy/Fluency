@@ -7,7 +7,7 @@ use function ProcessWire\wire;
 // File must be imported before use, does not work with namespacing
 require_once(wire('config')->paths('ProcessLanguageTranslator') . 'LanguageParser.php');
 
-use ProcessWire\{ Fluency, Language, LanguageParser, LanguageTranslator };
+use ProcessWire\{Fluency, Language, LanguageParser, LanguageTranslator};
 use Fluency\DataTransferObjects\ConfiguredLanguageData;
 use \InvalidArgumentException;
 use \RuntimeException;
@@ -207,7 +207,9 @@ class FluencyProcessWireFileTranslator {
       $textdomain = $translator->filenameToTextdomain($file);
       $targetFile = "{$this->filesDirectory}{$language->id}/{$textdomain}.json";
 
-      $translator->textdomainFileExists($textdomain) && unlink($targetFile);
+      if ($translator->textdomainFileExists($textdomain)) {
+        unlink($targetFile);
+      }
     }
   }
 
@@ -234,7 +236,9 @@ class FluencyProcessWireFileTranslator {
     foreach ($files as $file) {
       $file = "{$this->rootDirectory}{$file}";
 
-      !file_exists($file) && throw new InvalidArgumentException("'{$file}' does not exist");
+      if (!file_exists($file)) {
+        throw new InvalidArgumentException("'{$file}' does not exist");
+      }
     }
   }
 
@@ -245,10 +249,11 @@ class FluencyProcessWireFileTranslator {
    */
   private function checkSourceContentExists(array $sources): void {
     foreach ($sources as $file => $values) {
-      empty($values) && throw new RuntimeException(
-        "There are no values saved for strings in the default language for {$file}. Create " .
-        "default values by saving the default strings in the language translator page for {$file}"
-      );
+        if (empty($values)) {
+           throw new RuntimeException(
+            "There are no values saved for strings in the default language for {$file}. Create default values by saving the default strings in the language translator page for {$file}"
+          );
+        }
     }
   }
 
@@ -307,7 +312,9 @@ class FluencyProcessWireFileTranslator {
       $result = $this->fluency->translate($sourceCode, $targetCode, $chunk);
 
       // Handle a translation problem
-      $result->error && throw new RuntimeException($result->message);
+      if ($result->error) {
+        throw new RuntimeException($result->message);
+      }
 
       return $result->translations;
     }, $chunks);

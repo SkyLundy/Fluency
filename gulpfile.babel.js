@@ -152,21 +152,18 @@ const watch = async function () {
 };
 
 // Compile it all. Command defined in package.json, called with --production flag
-const build = function (done) {
+const build = async function () {
   gulp.series(
-    Styles.compileFluency,
-    Styles.compileStandaloneTranslator,
-    Styles.compileLanguageTranslator,
-    Styles.compileModuleConfig,
-    Styles.compileApiUsage,
     Scripts.compileFluency,
-    Scripts.compileLanguageTranslator,
-    Scripts.compileModuleConfig,
     Scripts.compileStandaloneTranslator,
     Scripts.compileApiUsage,
+    Scripts.compileLanguageTranslator,
+    Scripts.compileModuleConfig,
+    Styles.compileFluency,
+    Styles.compileStandaloneTranslator,
+    Styles.compileApiUsage,
+    Styles.compileModuleConfig,
   );
-
-  done();
 };
 
 export { watch, build };
