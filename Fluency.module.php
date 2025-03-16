@@ -676,9 +676,8 @@ final class Fluency extends Process implements Module, ConfigurableModule
      * By default this outputs HTML tags only for languages configured within Fluency as the language
      * codes needed are acquired through the
      *
-     * To use ProcessWire languages it is necessary to add an additional text field called `code` to
-     * the `language` system template and provide values for each language. Languages without a
-     * value for `code` will not be rendered.
+     * To use ProcessWire languages it is necessary to add an additional text field called`code` to the `language` system template and provide values for each language.
+     * Languages without a value will not be rendered in the markup.
      *
      * ~~~~~
      * <link rel="alternate" hreflang="https://awesomewebsite.com/" href="x-default" />
