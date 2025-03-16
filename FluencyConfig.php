@@ -325,12 +325,10 @@ class FluencyConfig extends ModuleConfig
 
         $engineLanguages = null;
 
-        $fluency = wire('modules')->Fluency;
-
         // Verify API credentials by getting translatable languages
         // 2 birds, 1 stone
         if ($this->selectedEngineIsValid() && !$moduleConfig->translation_api_ready || $engineChanged) {
-            $engineLanguages = $fluency->getTranslatableLanguages(true);
+            $engineLanguages = $engine->getLanguages();
 
             if ($engineLanguages->error) {
                 $this->saveModuleConfig(translation_api_ready: false);
@@ -344,7 +342,7 @@ class FluencyConfig extends ModuleConfig
         }
 
         // Get languages if the API is ready
-        $engineLanguages ??= $fluency->getTranslatableLanguages(true);
+        $engineLanguages = $engine->getLanguages();
 
         // Handle authentication failure, show error message
         if ($engineLanguages->error) {
