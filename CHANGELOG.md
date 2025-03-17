@@ -1,5 +1,13 @@
 # Fluency for ProcessWire Changelog
 
+## 2.1.1 2025-03-17
+
+### Major Bugfix. Recommended for all users
+
+- Fixes issue where upgrading or installing where a translation engine has not been configured
+  causes an error that prevents configuring the module or using translation features. Thanks to
+  @jacmaes for finding/reporting and @ryangorley, @fstrizzi, @tomfrit for helping troubleshoot
+
 ## 2.1.0 2025-03-10
 
 ### New features, Bugfixes, Documentation, Code Improvement, Recommended for all users
