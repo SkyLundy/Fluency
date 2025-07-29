@@ -1,47 +1,44 @@
 {
   "name": "processwire-fluency-translation",
-  "version": "1.1.0",
+  "version": "2.1.2",
   "description": "Translation integration for ProcessWire",
-  "devDependencies": {
-    "@babel/core": "^7.11.6",
-    "@babel/preset-env": "^7.11.5",
-    "@babel/register": "^7.11.5",
-    "@prettier/plugin-php": "^0.20.1",
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "babelify": "^10.0.0",
-    "browserify": "^16.5.2",
-    "gulp": "^4.0.2",
-    "gulp-autoprefixer": "^6.0.0",
-    "gulp-clean-css": "^4.3.0",
-    "gulp-concat": "^2.6.1",
-    "gulp-load-plugins": "^1.5.0",
-    "gulp-mode": "^1.1.0",
-    "gulp-notify": "^4.0.0",
-    "gulp-plumber": "^1.2.1",
-    "gulp-rename": "^1.4.0",
-    "gulp-sass": "^5.0.0",
-    "gulp-sourcemaps": "^2.6.5",
-    "gulp-uglify": "^3.0.1",
-    "prettier": "^3.0.3",
-    "sass": "^1.43.4",
-    "vinyl-buffer": "^1.0.1",
-    "vinyl-source-stream": "^2.0.0"
-  },
   "scripts": {
-    "watch": "gulp watch --development",
-    "dev": "gulp build --development",
-    "build": "gulp build --production",
-    "list-tasks": "gulp --tasks"
+    "dev": "rm -rf .parcel-cache && rm -rf ./assets/bundle && parcel watch -p 3000 --no-hmr --no-cache --dist-dir assets/bundle --log-level info",
+    "build": "rm -rf .parcel-cache && rm -rf ./assets/bundle && parcel build --dist-dir assets/bundle"
+  },
+  "default": {
+    "distDir": "./assets/bundle",
+    "context": "browser",
+    "outputFormat": "global",
+    "optimize": true
   },
   "repository": {
     "type": "git",
     "url": "git@gitlab.com:SkyLundy/Fluency.git"
   },
-  "browserslist": [
-    "defaults"
+  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "source": [
+    "./resources/css/fluency_api_usage.css",
+    "./resources/css/fluency_core.css",
+    "./resources/css/fluency_module_config.css",
+    "./resources/css/fluency_standalone_translator.css",
+    "./resources/scripts/fluency_api_usage.js",
+    "./resources/scripts/fluency.js",
+    "./resources/scripts/fluency_language_translator.js",
+    "./resources/scripts/fluency_module_config.js",
+    "./resources/scripts/fluency_standalone_translator.js"
   ],
   "author": "Sky Lundy",
   "private": true,
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "autoprefixer": "^10.4.23",
+    "buffer": "^6.0.3",
+    "parcel": "^2.16.3",
+    "postcss": "^8.5.6",
+    "postcss-import": "^16.1.1",
+    "postcss-nesting": "^13.0.2",
+    "prettier": "^3.7.4",
+    "process": "^0.11.10"
+  }
 }

@@ -14,7 +14,7 @@ class ApiUsageTableFieldset
 {
     use GeneratesFieldsetsTrait;
 
-    public static function render(bool $collapsed = false): InputfieldWrapper
+    public static function getFields(bool $collapsed = false): InputfieldWrapper
     {
         $collapsed ? Inputfield::collapsedYes : Inputfield::collapsedNever;
         $uiText = FluencyLocalization::getFor('usage');

@@ -1,0 +1,196 @@
+/*
+  Begin animated overlays
+  - Overlays consist of a div element appended to a field/fieldset which is
+    shown during a given operation. The animation is consistent with the
+    name of the operation translated into 9 languages that rapidly cycle
+    during the process to illustrate the multi-language capabilities as a design
+    flare.
+
+*/
+
+/* Classes are defined in FtActivityOverlay.js */
+
+/*
+  Allows the overlay to be contained with position: absolute to it's
+  respective container
+*/
+@keyframes backround-scroll {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@keyframes text-rotation {
+  0% {
+    opacity: 0;
+  }
+  1% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  3.5% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  11% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  12.5% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  20% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.ft-activity-overlay-container {
+  position: relative;
+
+  .ft-activity-overlay {
+    align-items: center;
+    color: var(--ft-activity-text-color);
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transition: opacity 0.3s;
+    width: 100%;
+    z-index: 10;
+    background-color: var(--ft-activity-background-color);
+    backdrop-filter: blur(var(--ft-activity-background-blur));
+
+    &.visible {
+      opacity: 1;
+      pointer-events: initial;
+    }
+
+    .ft-activity,
+    .ft-activity-message {
+      align-items: center;
+      display: flex;
+      height: 100%;
+      justify-content: center;
+      opacity: 0;
+      position: absolute;
+      width: 100%;
+      transition: opacity 0.5s;
+      font-size: 1.1rem;
+    }
+
+    .ft-activity-message {
+      padding: 1rem;
+      text-align: center;
+    }
+
+    &.message {
+      .ft-activity-message {
+        opacity: 1;
+      }
+
+      &.flash {
+        transition: opacity 0.3s;
+      }
+    }
+
+    &.message.error {
+      .ft-activity-message {
+        color: var(--ft-error-color);
+      }
+
+      &.flash {
+        .ft-activity-message {
+          background: rgb(from var(--ft-error-color) r g b / 50%);
+        }
+      }
+    }
+
+    &.message.success {
+      .ft-activity-message {
+        background-color: var(--ft-activity-success-background);
+        transition: opacity 0.1s;
+      }
+    }
+
+    /* Show the activity component */
+    &.activity {
+      .ft-activity {
+        opacity: 1;
+      }
+    }
+
+    /* Animated background for activity */
+    .ft-activity {
+      flex-direction: column;
+      font-size: 1rem;
+      justify-content: center;
+      letter-spacing: 2px;
+      opacity: 0;
+
+      .ft-activity-text {
+        text-align: center;
+        font-size: 1.15rem;
+        padding: 0 5rem 0.5rem;
+        border-bottom: 1px solid rgb(from var(--ft-activity-text-color) r g b / 0.25);
+      }
+
+      .ft-activity-animation-container {
+        display: flex;
+        justify-content: center;
+        padding-top: 0.5rem;
+        height: 2rem;
+
+        .ft-activity-animation-item {
+          animation: text-rotation 4.05s ease-in-out infinite 0s;
+          font-size: 1rem;
+          opacity: 0;
+          position: absolute;
+          user-select: none;
+
+          &:nth-of-type(2) {
+            animation-delay: 0.45s;
+          }
+
+          &:nth-of-type(3) {
+            animation-delay: 0.9s;
+          }
+
+          &:nth-of-type(4) {
+            animation-delay: 1.35s;
+          }
+
+          &:nth-of-type(5) {
+            animation-delay: 1.8s;
+          }
+
+          &:nth-of-type(6) {
+            animation-delay: 2.25s;
+          }
+
+          &:nth-of-type(7) {
+            animation-delay: 2.7s;
+          }
+
+          &:nth-of-type(8) {
+            animation-delay: 3.15s;
+          }
+
+          &:nth-of-type(9) {
+            animation-delay: 3.6s;
+          }
+        }
+      }
+    }
+  }
+}

@@ -33,6 +33,12 @@ final class FluencyMarkup
         ]);
     }
 
+    /**
+     * Render content wrapped within a <div> tag
+     * @param  string|int|array      $values  Content to wrap within the div
+     * @param  null|array $classes Classes to apply to the div, optional
+     * @return string
+     */
     public static function div(string|int|array $values, string|array|null $classes = []): string
     {
         $markup = <<<EOT
@@ -122,8 +128,8 @@ final class FluencyMarkup
      */
     public static function ul(
         string|array $items,
-        string|array|null $classes = '',
-        string $id = null
+        string|array|null $classes = [],
+        ?string $id = null
     ): string {
         $markup = <<<EOT
         <ul id="%{ID}" class="%{CLASS}">

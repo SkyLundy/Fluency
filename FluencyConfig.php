@@ -362,7 +362,7 @@ class FluencyConfig extends ModuleConfig
          */
 
         if ($this->engineInfo->providesUsageData) {
-            $inputfields->import(ApiUsageTableFieldset::render());
+            $inputfields->import(ApiUsageTableFieldset::getFields());
         }
 
         if (!$this->engineInfo->providesUsageData) {
@@ -477,7 +477,7 @@ class FluencyConfig extends ModuleConfig
                     'notes' => 'Translations remain cached forever until this cache is cleared.',
                     'columnWidth' => 50,
                     'defaultValue' => $this->getDefaults()['translation_cache_enabled'],
-                    'description' => __('Enabling caching can help keep API usage lower and increase the speed of translation when the same content is translated more than once.'),
+                    'description' => __('Translation caching reduces API usage and increases translation speed when the same content is translated more than once.'),
                     'checkedValue' => 1,
                     'uncheckedValue' => 0
                 ],
@@ -508,7 +508,7 @@ class FluencyConfig extends ModuleConfig
                 'translatable_languages_cache_management' => [
                     'type' => 'InputfieldMarkup',
                     'label' => __('Translatable Languages Cache Management'),
-                    'description' => __('Fluency caches the list of languages a third party supports. If a translation service introduces a language that is not available in Fluency, clear this cache.'),
+                    'description' => __('A cache of languages the translation service in use supports. Clear this cache if a translation service introduces a language that is not available in Fluency.'),
                     'collapsed' => Inputfield::collapsedNever,
                     'columnWidth' => 50,
                     'themeBorder' => 'hide',

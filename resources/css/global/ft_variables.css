@@ -1,0 +1,40 @@
+/* Colors */
+
+:root {
+  color-scheme: light dark;
+
+  /**
+   * ProcessWire Colors
+   *
+   * Define AdminThemeUikit v3 CSS custom properties in case they do not exist.
+   * Admin module color controls and custom CSS will override these if present/in-use
+   * Only using light theme colors since AdminThemeUikit only had dark mode in v3+
+   */
+  --ft-main-color: var(--pw-main-color, rgb(62, 185, 152));
+  --pw-blocks-background: rgb(255, 255, 255);
+  --pw-border-color: rgb(68, 68, 68);
+
+  /**
+   * Fluency colors
+   */
+  --ft-success: rgb(19, 148, 114);
+  --ft-error-color: var(--pw-error-inline-text-color, rgb(173, 31, 31));
+
+  --ft-input-state-modified-size: 2px;
+  /* Neat. https://blog.jim-nielsen.com/2021/css-relative-colors/ */
+  --ft-input-state-modified-color: rgb(from var(--ft-main-color) r g b / 0.75);
+  --ft-input-state-unmodified-color: var(--pw-blocks-background);
+
+  --ft-activity-success-background-color: rgba(var(--ft-success), 0.6);
+
+  --ft-activity-text-color: var(--ft-main-color);
+  --ft-activity-background-color: rgb(
+    from var(--pw-blocks-background, rgb(255, 255, 255)) r g b / 0.5
+  );
+  --ft-activity-background-blur: 6px;
+
+  --ft-inputfield-translate-status-color: rgb(135, 135, 135);
+  --ft-inputfield-translate-icon-color: rgb(89, 89, 89);
+
+  --ft-secondary-translate-button-container-border: rgb(201, 201, 201);
+}

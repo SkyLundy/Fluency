@@ -1,0 +1,54 @@
+.ft-standalone-translator-fieldset {
+  .ft-swap-languages {
+    .Inputfield.InputfieldButton {
+      margin-right: auto;
+      margin-left: auto;
+
+      button {
+        margin-top: 0.3rem;
+        margin-right: auto;
+        margin-left: auto;
+      }
+    }
+
+    .js-ft-swap-languages[disabled] {
+      cursor: not-allowed;
+    }
+  }
+
+  .ft-click-to-clear-container,
+  .ft-click-to-copy-container {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .ft-click-to-copy,
+    .ft-click-to-clear {
+      cursor: pointer;
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 400;
+      margin-left: auto;
+      margin-right: 0.75rem;
+      position: relative;
+
+      .ft-copy-icon,
+      .ft-clear-icon {
+        display: inline-block;
+        margin-left: 0.35rem;
+      }
+    }
+
+    .ft-click-to-copy {
+      pointer-events: none;
+      transition: opacity 0.3s;
+      opacity: 0;
+
+      &.enabled {
+        pointer-events: initial;
+        opacity: 1;
+      }
+    }
+  }
+}

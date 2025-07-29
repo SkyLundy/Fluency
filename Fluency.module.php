@@ -113,8 +113,8 @@ final class Fluency extends Process implements Module, ConfigurableModule
             return;
         }
 
-        $this->moduleJsPath = "{$this->urls->$this}assets/scripts/";
-        $this->moduleCssPath = "{$this->urls->$this}assets/styles/";
+        $this->moduleJsPath = "{$this->urls->$this}assets/bundle/scripts/";
+        $this->moduleCssPath = "{$this->urls->$this}assets/bundle/css/";
 
         $this->initializeCaches();
         $this->initializeTranslationEngine();
@@ -289,8 +289,8 @@ final class Fluency extends Process implements Module, ConfigurableModule
      */
     private function insertCoreAssets(): void
     {
-        $this->config->styles->add("{$this->moduleCssPath}fluency_core.min.css");
-        $this->config->scripts->add("{$this->moduleJsPath}fluency.bundle.js");
+        $this->config->styles->add("{$this->moduleCssPath}fluency_core.css");
+        $this->config->scripts->add("{$this->moduleJsPath}fluency.js");
     }
 
     /**
@@ -299,8 +299,8 @@ final class Fluency extends Process implements Module, ConfigurableModule
     private function insertFluencyConfigPageAssets(): void
     {
         if ($this->input->get->name === 'Fluency') {
-            $this->config->styles->add("{$this->moduleCssPath}fluency_module_config.min.css");
-            $this->config->scripts->add("{$this->moduleJsPath}fluency_module_config.bundle.js");
+            $this->config->styles->add("{$this->moduleCssPath}fluency_module_config.css");
+            $this->config->scripts->add("{$this->moduleJsPath}fluency_module_config.js");
         }
     }
 
@@ -314,8 +314,8 @@ final class Fluency extends Process implements Module, ConfigurableModule
         }
 
         $this->config->js('fluency', $this->getClientData());
-        $this->config->styles->add("{$this->moduleCssPath}fluency_core.min.css");
-        $this->config->scripts->add("{$this->moduleJsPath}fluency_language_translator.bundle.js");
+        $this->config->styles->add("{$this->moduleCssPath}fluency_core.css");
+        $this->config->scripts->add("{$this->moduleJsPath}fluency_language_translator.js");
     }
 
     /**
@@ -326,8 +326,8 @@ final class Fluency extends Process implements Module, ConfigurableModule
     public function insertStandaloneTranslatorAssets(): void
     {
         $this->config->js('fluency', $this->getClientData());
-        $this->config->scripts->add("{$this->moduleJsPath}fluency_standalone_translator.bundle.js");
-        $this->config->styles->add("{$this->moduleCssPath}fluency_standalone_translator.min.css");
+        $this->config->scripts->add("{$this->moduleJsPath}fluency_standalone_translator.js");
+        $this->config->styles->add("{$this->moduleCssPath}fluency_standalone_translator.css");
     }
 
     /**
@@ -338,8 +338,8 @@ final class Fluency extends Process implements Module, ConfigurableModule
     public function insertApiUsageTableFieldsetAssets(): void
     {
         $this->config->js('fluency', $this->getClientData());
-        $this->config->scripts->add("{$this->moduleJsPath}fluency_api_usage.bundle.js");
-        $this->config->styles->add("{$this->moduleCssPath}fluency_api_usage.min.css");
+        $this->config->scripts->add("{$this->moduleJsPath}fluency_api_usage.js");
+        $this->config->styles->add("{$this->moduleCssPath}fluency_api_usage.css");
     }
 
     /**
@@ -432,6 +432,7 @@ final class Fluency extends Process implements Module, ConfigurableModule
         return ConfiguredLanguageData::fromArray([
             'id' => $processWireId,
             'title' => $pwTitle,
+            'name' => $pwLanguage->name,
             'default' => $pwLanguage->name === 'default',
             'engineLanguage' => EngineLanguageData::fromJson($configuredLanguage),
             'isCurrentLanguage' => $pwLanguage === $userLanguage
@@ -790,7 +791,7 @@ final class Fluency extends Process implements Module, ConfigurableModule
     public function renderLanguageLinks(
         string|array|null $classes = null,
         string $id = '',
-        string $divider = null,
+        ?string $divider = null,
         ?string $activeClass = 'active',
         string $languageSource = 'fluency',
     ): string {
@@ -1192,13 +1193,13 @@ final class Fluency extends Process implements Module, ConfigurableModule
 
         $this->initializeTranslationEngine();
 
-        $wrapper->import(StandaloneTranslatorFieldset::render());
+        $wrapper->import(StandaloneTranslatorFieldset::getFields());
 
         if (
             $this->translationEngineIsReady() &&
             $this->translationEngineInfo->providesUsageData
         ) {
-            $wrapper->import(ApiUsageTableFieldset::render(true));
+            $wrapper->import(ApiUsageTableFieldset::getFields(true));
         }
 
         return $renderToString ? $wrapper->render() : $wrapper;

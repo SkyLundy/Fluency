@@ -1,2 +1,6 @@
 node_modules
 .dev
+.parcel-cache/
+parcel-trace-*
+*.log
+*.cache

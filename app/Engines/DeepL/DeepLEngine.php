@@ -205,16 +205,16 @@ final class DeepLEngine implements FluencyEngine
      * Makes call to DeepL API
      *
      * @param  string $endpoint Endpoint starting with a slash
-     * @param  string $method   HTTP method to use, default GET
+     * @param  string $method   HTTP method to use, 'GET', 'POST'
      * @param  array  $data     k/v array with data for API call, optional
-     * @return object
+     * @return stdClass
      */
     private function apiRequest(
         string $endpoint,
         string $method = 'GET',
         array $data = []
     ): stdClass {
-        $requestUrl = "{$this->apiUrl}{$endpoint}?auth_key={$this->apiKey}";
+        $requestUrl = "{$this->apiUrl}{$endpoint}";
 
         // WireHttp/http_build_query were not used as DeepL uses multipe 'data' keys queries for
         // multi-string requests which neither support. See DeepLEngine::createParamString()
@@ -222,21 +222,24 @@ final class DeepLEngine implements FluencyEngine
             CURLOPT_CONNECTTIMEOUT => 5,
             CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_USERAGENT => 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)'
+            CURLOPT_USERAGENT => 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)',
+            CURLOPT_HTTPHEADER => [
+                "Authorization: DeepL-Auth-Key {$this->apiKey}",
+            ],
         ];
 
         // Additional request configurations depending on HTTP method
-        switch ($method) {
+        switch (strtoupper($method)) {
             case 'POST':
                 $requestConfig[CURLOPT_POST] = true;
-                $requestConfig[CURLOPT_HTTPHEADER] = ['Content-Type:application/json'];
                 $requestConfig[CURLOPT_POSTFIELDS] = json_encode($data);
                 $requestConfig[CURLOPT_URL] = $requestUrl;
+                $requestConfig[CURLOPT_HTTPHEADER][] = 'Content-Type: application/json';
                 break;
             case 'GET':
                 $payload = $this->createParamString($data);
 
-                $requestConfig[CURLOPT_URL] = $payload ? "{$requestUrl}&{$payload}" : $requestUrl;
+                $requestConfig[CURLOPT_URL] = $payload ? "{$requestUrl}?{$payload}" : $requestUrl;
                 break;
             default:
                 throw new InvalidArgumentException("Method {$method} is invalid");
@@ -252,8 +255,6 @@ final class DeepLEngine implements FluencyEngine
 
         ['http_code' => $status] = curl_getinfo($ch);
 
-        curl_close($ch);
-
         $return = [
             'data' => [],
             'status' => $status,
@@ -262,7 +263,6 @@ final class DeepLEngine implements FluencyEngine
 
         // Handle fail
         if (!$response || $status < 200 || $status >= 300) {
-
             $return['error'] = match ($status) {
                 403 => FluencyErrors::AUTHENTICATION_FAILED,
                 400 => FluencyErrors::BAD_REQUEST,
@@ -286,6 +286,9 @@ final class DeepLEngine implements FluencyEngine
      * This is necessary as some requests require the use of the same parameter key more than once
      * which does not work with in-built methods or ProcessWire utilities
      * Accepts parameters with array values to recursively create parameters using the same key
+     *
+     * @param array<string, mixed> $data
+     * @return string
      */
     private function createParamString(array $data): string
     {
@@ -308,7 +311,7 @@ final class DeepLEngine implements FluencyEngine
      * Adds the tag that prevents DeepL from translating specified words/phrases.
      *
      * @param array        $texts          Array of content to add ignored tags to
-     * @param array|string $ignoredStrings Strings to ignore
+     * @param array|string $ignoredStrings Strings to ignore during translation
      */
     private function addIgnoredTags(array $texts, array|string $ignoredStrings = []): array
     {

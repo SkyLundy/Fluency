@@ -17,6 +17,7 @@ final class ConfiguredLanguageData extends FluencyDTO
     /**
      * @param int                 $id                ProcessWire language ID
      * @param string              $title             ProcessWire language title
+     * @param string              $name              ProcessWire language name
      * @param bool                $default           Is default language in ProcessWire
      * @param bool                $isCurrentLanguage Is the current user's language
      * @param EngineLanguageData  $engineLanguage    Translation engine language
@@ -26,6 +27,7 @@ final class ConfiguredLanguageData extends FluencyDTO
     private function __construct(
         public readonly int $id,
         public readonly string $title,
+        public readonly string $name,
         public readonly bool $default,
         public readonly bool $isCurrentLanguage,
         public readonly EngineLanguageData $engineLanguage,

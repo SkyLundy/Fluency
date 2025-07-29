@@ -17,6 +17,10 @@ Upgrading from earlier versions to 1.0.8 and earlier may cause errors to occur. 
 
 For support and community discussion about Fluency, visit [the module thread in the ProcessWire forums](https://processwire.com/talk/topic/24567-fluency-the-complete-translation-enhancement-suite-for-processwire/).
 
+**IMPORTANT**
+
+Fluency v2.2.0 or greater is required when using DeepL as the translation service. DeepL changed their API authentication method in January of 2025 and deprecated the previous method. Translation via DeepL in versions earlier to 2.2.0 will no longer work and result in a translation service error in the UI.
+
 ## Contents
 
 - [Requirements](#requirements)
@@ -24,6 +28,7 @@ For support and community discussion about Fluency, visit [the module thread in 
   - [Configuring](#configuring)
   - [Translation Engines](#translation-engines)
   - [Localizing Fluency](#localizing-fluency)
+  - [Theming Fluency](#theming-fluency)
   - [Upgrading or Removing](#upgrading-or-removing)
 - [Features and Usage](#features-and-usage)
   - [Translating Inputfields](#translating-inputfields)
@@ -49,6 +54,7 @@ For support and community discussion about Fluency, visit [the module thread in 
 - [Hooking](#hooking)
 - [Known Issues](#known-issues)
 - [Contributing](#contributing)
+  - [Coding Standards](#coding-standards)
 - [Cost](#cost)
 - [Supporting Module Development](#supporting-module-development)
 
@@ -105,6 +111,14 @@ If you're interested in contributing to Fluency by building a Translation Engine
 All text for the Fluency UI elements can be translated including messages, errors, and elements users use to interact with Fluency. This is done through ProcessWire's language setup. In the Admin visit Setup->Languages, and the "Find Files To Translate" feature within the language management page.
 
 All translatable texts are located in `Fluency/app/FluencyLocalization.php`
+
+### Theming Fluency
+
+Fluency is styled to match and complement AdminThemeUikit which is active by default when you install ProcessWire. It is also configured to work with AdminThemUikit v3 which adds built-in customizability for theming. When you choose a main color, or choose a custom main color, Fluency will match your theme choices.
+
+CSS for Fluency UI elements may be customized for some styles. Fluency uses [CSS custom properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascading_variables/Using_custom_properties) for values such as color in some rules.
+
+You can refrence the available custom properties that you can set values for in `Fluency/resources/css/global/ft_variables.css`
 
 ### Upgrading Or Removing
 
@@ -172,7 +186,7 @@ When content in a ProcessWire field changes, Fluency italicizes and adds a green
 
 ![fluency_translation_caching](https://github.com/SkyLundy/Fluency/assets/61801600/605aa092-5f72-4eab-9593-e72724892c40)
 
-All translations are cached by default for a period of one month. This helps reduce API account usage where the same content is translated more than once and significantly increases translation speed. Caching can be toggled on/off on the Fluency module config page. The translation cache can also be manually cleared either on the module config page, via the [Fluency module API](#managing-cache), or via an AJAX request using the [Fluency admin REST API](#admin-rest-api-endpoints).
+All translations are cached indefinitely. This helps reduce API account usage where the same content is translated more than once and significantly increases translation speed. Caching may be toggled on/off on the Fluency module config page. The translation cache can also be manually cleared either on the module config page, via the [Fluency module API](#managing-cache), or via an AJAX request using the [Fluency admin REST API](#admin-rest-api-endpoints).
 
 Translation caching relies on _exact_ value matching including punctuation, spelling, and capitalization. This ensures that an exact translation is always returned accurately. Translations that contain multiple strings are cached together.
 
@@ -791,6 +805,8 @@ Note: This will only work if the language is recognized by the translation servi
 ```php
 <?php namespace ProcessWire;
 
+// /site/ready.php
+
 use Fluency\DataTransferObjects\{EngineLanguageData, EngineTranslatableLanguagesData};
 
 // Hook after Fluency gets the available languages from the DeepL API
@@ -833,9 +849,32 @@ Feature suggestions are welcome. In fact, Fluency has been made better thanks to
 
 Fluency is modular in that it contains a framework for adding additional third party services as "Translation Engines". You can choose which Translation Engine you prefer and provide the credentials to connect via their API. As this project is open source, contributions for new third party services as Translation Engines are welcome. If you would like to request a new third party service, [file an issue in the Fluency GitHub repository](https://github.com/SkyLundy/Fluency/issues)
 
-If you'd like to develop one for yourself, feel free to fork Fluency, build a new Translation Engine, and create a pull request.
+If you'd like to develop a new translation engine, feel free to fork Fluency, build a new Translation Engine, and create a pull request. Please reference
+
+Every effort has been made to make Fluency robustly documented within the code. Full docblocks with information have been added in all files. Additional docblock markup that is parsed by the ProcessWire API Explorer has been added with descriptions and example usage for all primary module methods. JavaScript files are also well documented with docblocks on each method and each object. [ProDevTools](https://processwire.com/talk/store/product/22-prodevtools/)
 
 Developer documentation for integrating third party translation services as Translation Engines is located in `Fluency/app/Engines/DEVDOC.md`. _Documentation is a work in progress_. If you need help or more information, feel free to send me a PM on the [ProcessWire forum](https://processwire.com/talk/).
+
+### Tech Stack
+
+Aside from build tools, Fluency is intentionally built without libraries and external dependencies to ensure that the module is stable long-term. Vanilla JavaScript and CSS are used exclusively. To make use of more advanced features, bundle assets, and optimize output, [Parcel](https://parceljs.org/) is used for JavaScript and CSS.
+
+CSS is processed by PostCSS to add import bundling and nested rules.
+
+**Using Parcel**
+
+In the Fluency module directory, execute the following commands in a terminal instance for development:
+
+`npm install`
+`npm run dev`
+
+To build for production execute:
+
+`npm run build`
+
+### Coding Standards
+
+Code contributins and bugfixes are welcome via pull requests. Please ensure that your PHP code adheres to [PSR-12 standards](https://www.php-fig.org/psr/psr-12/), JavaScript matches the common conventions followed in existing files, and CSS is formatted and clear.
 
 ## Cost
 

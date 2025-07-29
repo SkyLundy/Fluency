@@ -1,0 +1,55 @@
+/*
+ Classes are defined in FtLanguageTab.js
+ Indicates that the content of an associated field has changed since page load
+*/
+*[data-ft-initialized] {
+  ul {
+    li {
+      a.langTabLink {
+        position: relative;
+        padding-top: calc(var(--ft-input-state-modified-size) * 2);
+
+        &:before {
+          background-color: var(--ft-input-state-unmodified-color);
+          position: absolute;
+          top: calc(var(--ft-input-state-modified-size) * -1);
+          left: 0;
+          width: 100%;
+          height: var(--ft-input-state-modified-size);
+          content: '';
+          transition: background-color 0.3s;
+        }
+
+        &.ft-content-changed {
+          font-style: italic;
+
+          &:before {
+            background-color: var(--ft-input-state-modified-color);
+          }
+        }
+      }
+    }
+  }
+}
+
+#ProcessPageEditSettings *[data-ft-initialized] {
+  .LanguageSupport {
+    position: relative;
+    padding-left: calc(var(--ft-input-state-modified-size) * 4);
+
+    &:before {
+      background-color: var(--ft-input-state-unmodified-color);
+      position: absolute;
+      left: calc(var(--ft-input-state-modified-size) * -2);
+      top: 0;
+      height: 100%;
+      width: var(--ft-input-state-modified-size);
+      content: '';
+      transition: background-color 0.3s;
+    }
+
+    &.ft-content-changed:before {
+      background-color: var(--ft-input-state-modified-color);
+    }
+  }
+}

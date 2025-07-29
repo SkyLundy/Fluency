@@ -14,7 +14,7 @@ class StandaloneTranslatorFieldset
 {
     use GeneratesFieldsetsTrait;
 
-    public static function render(bool $collapsed = false): InputfieldWrapper
+    public static function getFields(bool $collapsed = false): InputfieldWrapper
     {
         $fluencyConfig = (new FluencyConfig())->getConfigData();
         $modules = wire('modules');
@@ -75,7 +75,7 @@ class StandaloneTranslatorFieldset
                         'options' => $sourceLanguageSelectOptions->options,
                         'optionAttributes' => $sourceLanguageSelectOptions->attributes,
                     ],
-                    'ft_swap_languages' => [
+                    'ft_swap_languages_markup' => [
                         'type' => 'InputfieldMarkup',
                         'label' => ' ',
                         'collapsed' => Inputfield::collapsedNever,
@@ -91,6 +91,7 @@ class StandaloneTranslatorFieldset
                                 'name' => "swap_languages",
                                 'value' => 1,
                                 'attributes' => [
+                                    'name' => 'ft_swap_languages',
                                     'icon' => 'exchange',
                                     'class' => self::appendInputfieldClasses('InputfieldSubmit', 'js-ft-swap-languages')
                                 ]
