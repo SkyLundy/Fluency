@@ -1,5 +1,14 @@
 # Fluency for ProcessWire Changelog
 
+## 2.1.2 XXX
+
+### New features
+
+- Add clarification to requirement of AdminThemeUiKit to use Fluency
+- Add 'name' property to ConfiguredLangaugeData object that stores the ProcessWire name of the
+  language
+- Fix deprecated implicit null parameters
+
 ## 2.1.1 2025-03-17
 
 ### Major Bugfix. Recommended for all users

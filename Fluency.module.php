@@ -432,6 +432,7 @@ final class Fluency extends Process implements Module, ConfigurableModule
         return ConfiguredLanguageData::fromArray([
             'id' => $processWireId,
             'title' => $pwTitle,
+            'name' => $pwLanguage->name,
             'default' => $pwLanguage->name === 'default',
             'engineLanguage' => EngineLanguageData::fromJson($configuredLanguage),
             'isCurrentLanguage' => $pwLanguage === $userLanguage
@@ -790,7 +791,7 @@ final class Fluency extends Process implements Module, ConfigurableModule
     public function renderLanguageLinks(
         string|array|null $classes = null,
         string $id = '',
-        string $divider = null,
+        ?string $divider = null,
         ?string $activeClass = 'active',
         string $languageSource = 'fluency',
     ): string {
