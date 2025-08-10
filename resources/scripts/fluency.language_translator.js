@@ -2,6 +2,7 @@ import FtLanguageTranslatorInputfields from './inputfields/FtLanguageTranslatorI
 import FtConfig from './global/FtConfig';
 
 window.addEventListener('load', e => {
+  console.log(FtConfig);
   if (FtConfig.moduleShouldInitialize()) {
     FtLanguageTranslatorInputfields.init();
   }

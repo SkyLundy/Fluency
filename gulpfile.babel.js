@@ -38,7 +38,7 @@ var onError = function (error) {
 
 // Standalone paths
 const assetDirs = {
-  src: './src/',
+  src: './resources/',
   dest: './assets/',
 };
 

@@ -55,8 +55,6 @@ const AllInputfieldTranslator = function (inputfields) {
 
   let sourceTargetMap = [];
 
-  let sourceLanguageSelect = null;
-
   this.getSelf = () => inputfields;
 
   this.getActivityOverlay = () => activityOverlay;
