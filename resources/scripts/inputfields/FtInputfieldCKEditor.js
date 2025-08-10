@@ -113,6 +113,9 @@ const FtInputfieldCKEditor = function (inputfield) {
     instance.setData(value);
     instance.fire('change');
 
+    // Vanilla JS events are not visible to jQuery and vice-versa
+    $(instance).trigger('change');
+
     return this.contentHasChanged(languageId);
   };
 

@@ -140,6 +140,9 @@ const FtInputfieldTinyMCE = function (inputfield) {
 
     field.dispatchEvent(new Event('input'));
 
+    // Vanilla JS events are not detected by jQuery and vice-versa
+    $(field).trigger('change');
+
     return this.contentHasChanged(languageId);
   };
 
@@ -172,7 +175,7 @@ const FtInputfieldTinyMCE = function (inputfield) {
     }
 
     textareas[languageId] = this.getSelf().querySelector(
-      `[data-language="${languageId}"] textarea`
+      `[data-language="${languageId}"] textarea`,
     );
 
     return textareas[languageId];
@@ -225,7 +228,7 @@ const FtInputfieldTinyMCE = function (inputfield) {
    */
   this.bindTinymceEvents = (languageId, tinymceInstance) => {
     tinymceInstance.on('keyup', e =>
-      this.getTextareaForLanguage(languageId).dispatchEvent(new Event('input'))
+      this.getTextareaForLanguage(languageId).dispatchEvent(new Event('input')),
     );
   };
 

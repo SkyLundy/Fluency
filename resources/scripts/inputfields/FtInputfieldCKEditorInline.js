@@ -132,6 +132,9 @@ const FtInputfieldCKEditorInline = function (inputfield) {
 
     contentElement.dispatchEvent(new Event('input'));
 
+    // Vanilla JS events are not visible to jQuery and vice-versa
+    $(contentElement).trigger('change');
+
     return this.contentHasChanged(languageId);
   };
 

@@ -96,6 +96,9 @@ const FtInputfieldTextarea = function (inputfield) {
     // Required to programmatically trigger the event listener for this field
     field.dispatchEvent(new Event('keyup'));
 
+    // Vanilla JS events are not visible to jQuery and vice-versa
+    $(field).trigger('change');
+
     return this.contentHasChanged(languageId);
   };
 

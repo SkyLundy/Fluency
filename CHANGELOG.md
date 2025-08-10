@@ -2,12 +2,17 @@
 
 ## 2.1.2 XXX
 
-### New features
+### New features, Bugfixes/Compatability
 
 - Add clarification to requirement of AdminThemeUiKit to use Fluency
 - Add 'name' property to ConfiguredLangaugeData object that stores the ProcessWire name of the
   language
 - Fix deprecated implicit null parameters
+- Add jQuery change event firing when translated values are inserted.
+- Add additional TinyMCE compatability.
+
+This release addresses issues with change detection in RockPageBuilder fields. Links to issues
+reported [here](https://processwire.com/talk/topic/24567-fluency-the-complete-translation-enhancement-suite-for-processwire/?do=findComment&comment=249741), and [here](https://processwire.com/talk/topic/24567-fluency-the-complete-translation-enhancement-suite-for-processwire/?do=findComment&comment=249746).
 
 ## 2.1.1 2025-03-17
 

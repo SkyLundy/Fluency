@@ -105,6 +105,10 @@ const FtInputfieldPageName = function (inputfield) {
     // Required to programmatically trigger the event listener for this field
     field.dispatchEvent(new Event('keyup'));
 
+    // Vanilla JS events are not visible to jQuery and vice-versa
+    // This is likely not an issue in the UI, but triggered as a precaution
+    $(field).trigger('change');
+
     return this.contentHasChanged(languageId);
   };
 

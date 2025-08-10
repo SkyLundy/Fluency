@@ -113,10 +113,16 @@ const FtInputfieldTinyMCEInline = function (inputfield) {
   this.setValueForLanguage = (languageId, value) => {
     const contentElement = this.getContentElementForLanguage(languageId);
 
+    // Click event ensures that TinyMCE has been initialized before inserting content
+    contentElement.click();
+
     contentElement.innerHTML = value;
 
     // Required to programmatically trigger the event listener for this field
     contentElement.dispatchEvent(new Event('input'));
+
+    // Vanilla JS events are not visible to jQuery and vice-versa
+    $(contentElement).trigger('change');
 
     return this.contentHasChanged(languageId);
   };
