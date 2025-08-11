@@ -133,7 +133,7 @@ final class FluencyLocalization
                 FluencyErrors::SERVICE_UNAVAILABLE => __('The translation service is not available, please try again later'),
                 FluencyErrors::AUTHENTICATION_FAILED => __('Translation API authentication failed, check credentials'),
                 FluencyErrors::AUTHORIZATION_FAILED => __('Translation API authorization failed, check that access is permitted'),
-                FluencyErrors::RATE_LIMIT_EXCEEDED => __('Translation rate limit exceeded, please wait then try again'),
+                FluencyErrors::RATE_LIMIT_EXCEEDED => __('Translation service rate limit exceeded, please wait then try again'),
                 FluencyErrors::BAD_REQUEST => __('The translation API request contains errors or is invalid'),
                 FluencyErrors::QUOTA_EXCEEDED => __('The translation service usage quota has been exceeded'),
                 FluencyErrors::INTERNAL_SERVER_ERROR => __('The translation service is experiencing internal issues, please try again later'),

@@ -26,6 +26,17 @@ final class DeepLEngine implements FluencyEngine
     use LocalizesPageUrls;
     use LogsEngineData;
 
+    /**
+     * The maximum number of requests made if a too many requests error is returned
+     */
+    private const API_MAX_ATTEMPTS = 5;
+
+    /**
+     * The amount of time that is added to each successive API call if too many requests error is
+     * returned
+     */
+    private const API_BACKOFF_TIME = 100000;
+
     private ?string $apiUrl;
 
     private ?string $apiKey;
@@ -207,12 +218,13 @@ final class DeepLEngine implements FluencyEngine
      * @param  string $endpoint Endpoint starting with a slash
      * @param  string $method   HTTP method to use, default GET
      * @param  array  $data     k/v array with data for API call, optional
+     * @param  int    $attemps  The number of API call attempts, used for backoff calls
      * @return object
      */
     private function apiRequest(
         string $endpoint,
         string $method = 'GET',
-        array $data = []
+        array $data = [],
     ): stdClass {
         $requestUrl = "{$this->apiUrl}{$endpoint}?auth_key={$this->apiKey}";
 
@@ -243,39 +255,58 @@ final class DeepLEngine implements FluencyEngine
                 break;
         }
 
-        $ch = curl_init();
+        $apiAttempts = 0;
 
-        curl_setopt_array($ch, $requestConfig);
+        while ($apiAttempts < self::API_MAX_ATTEMPTS) {
+            $apiAttempts += 1;
 
-        $response = curl_exec($ch);
-        $response = is_string($response) ? json_decode($response) : null;
+            $ch = curl_init();
 
-        ['http_code' => $status] = curl_getinfo($ch);
+            curl_setopt_array($ch, $requestConfig);
 
-        curl_close($ch);
+            $response = curl_exec($ch);
+            $response = is_string($response) ? json_decode($response) : null;
 
-        $return = [
-            'data' => [],
-            'status' => $status,
-            'error' => null,
-        ];
+            ['http_code' => $status] = curl_getinfo($ch);
 
-        // Handle fail
-        if (!$response || $status < 200 || $status >= 300) {
+            curl_close($ch);
 
-            $return['error'] = match ($status) {
-                403 => FluencyErrors::AUTHENTICATION_FAILED,
-                400 => FluencyErrors::BAD_REQUEST,
-                429 => FluencyErrors::RATE_LIMIT_EXCEEDED,
-                456 => FluencyErrors::QUOTA_EXCEEDED,
-                default => FluencyErrors::SERVICE_UNAVAILABLE,
-            };
+            $return = [
+                'data' => [],
+                'status' => $status,
+                'error' => null,
+            ];
 
-            $this->logError($return['error'], $response?->message, $response);
-        }
+            // Handle fail
+            if (!$response || $status < 200 || $status >= 300) {
 
-        if (!$return['error']) {
-            $return['data'] = $response;
+                $return['error'] = match ($status) {
+                    403 => FluencyErrors::AUTHENTICATION_FAILED,
+                    400 => FluencyErrors::BAD_REQUEST,
+                    429 => FluencyErrors::RATE_LIMIT_EXCEEDED,
+                    456 => FluencyErrors::QUOTA_EXCEEDED,
+                    default => FluencyErrors::SERVICE_UNAVAILABLE,
+                };
+
+                $this->logError($return['error'], $response?->message, $response);
+
+                $quotaExceeded = $return['error'] === FluencyErrors::QUOTA_EXCEEDED;
+
+                // Only re-attempt if the error was due to exceeded rate limit
+                if (!$quotaExceeded) {
+                    return (object) $return;
+                }
+
+                if ($apiAttempts < self::API_MAX_ATTEMPTS) {
+                    usleep($apiAttempts * self::API_BACKOFF_TIME);
+                }
+            }
+
+            if (!$return['error']) {
+                $return['data'] = $response;
+
+                return (object) $return;
+            }
         }
 
         return (object) $return;
