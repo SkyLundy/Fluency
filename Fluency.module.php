@@ -680,12 +680,12 @@ final class Fluency extends Process implements Module, ConfigurableModule
      * Languages without a value will not be rendered in the markup.
      *
      * ~~~~~
-     * <link rel="alternate" hreflang="https://awesomewebsite.com/" href="x-default" />
-     * <link rel="alternate" hreflang="https://awesomewebsite.com/" href="en-us" />
-     * <link rel="alternate" hreflang="https://awesomewebsite.com/fr/" href="fr" />
-     * <link rel="alternate" hreflang="https://awesomewebsite.com/de/" href="de" />
-     * <link rel="alternate" hreflang="https://awesomewebsite.com/it/" href="it" />
-     * <link rel="alternate" hreflang="https://awesomewebsite.com/es/" href="es" />
+     * <link rel="alternate" href="https://awesomewebsite.com/" hreflang="x-default" />
+     * <link rel="alternate" href="https://awesomewebsite.com/" hreflang="en-us" />
+     * <link rel="alternate" href="https://awesomewebsite.com/fr/" hreflang="fr" />
+     * <link rel="alternate" href="https://awesomewebsite.com/de/" hreflang="de" />
+     * <link rel="alternate" href="https://awesomewebsite.com/it/" hreflang="it" />
+     * <link rel="alternate" href="https://awesomewebsite.com/es/" hreflang="es" />
      * ~~~~~
      *
      * #pw-group-Developer-Tools
@@ -708,8 +708,8 @@ final class Fluency extends Process implements Module, ConfigurableModule
         );
 
         $defaultTag = Markup::altLanguageLink(
-            hrefLang: $this->page->localHttpUrl($this->languages->get('name=default')),
-            href: 'x-default'
+            href: $this->page->localHttpUrl($this->languages->get('name=default')),
+            hrefLang: 'x-default'
         );
 
         array_unshift($allTags, $defaultTag);
