@@ -1,0 +1,140 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "460a93371cb106d2df8482b02d827161",
+    "packages": [
+        {
+            "name": "hari/pw-module",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/harikt/pwmoduleinstaller.git",
+                "reference": "2cedadfa337133f3a3f395c8a077e24f8ae0560c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/harikt/pwmoduleinstaller/zipball/2cedadfa337133f3a3f395c8a077e24f8ae0560c",
+                "reference": "2cedadfa337133f3a3f395c8a077e24f8ae0560c",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0 || ^2.0"
+            },
+            "require-dev": {
+                "composer/composer": "^1.10.23 || ^2.1.9"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "PW\\Composer\\Plugin",
+                "plugin-modifies-install-path": true
+            },
+            "autoload": {
+                "psr-0": {
+                    "PW\\Composer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Kyle Robinson Young",
+                    "email": "kyle@dontkry.com",
+                    "homepage": "https://github.com/shama"
+                },
+                {
+                    "name": "Paul M. Jones",
+                    "email": "pmjones88@gmail.com",
+                    "homepage": "http://paul-m-jones.com"
+                },
+                {
+                    "name": "Hari KT",
+                    "email": "kthari85@gmail.com",
+                    "homepage": "http://harikt.com"
+                },
+                {
+                    "name": "Radon8472",
+                    "email": "develop@raon-software.net",
+                    "homepage": "https://github.com/Radon8472"
+                }
+            ],
+            "description": "Installs processwire 3rd party modules to PW system \"site/modules\" directory.",
+            "keywords": [
+                "installer",
+                "module",
+                "processwire"
+            ],
+            "support": {
+                "issues": "https://github.com/harikt/pwmoduleinstaller/issues",
+                "source": "https://github.com/harikt/pwmoduleinstaller/tree/1.1.1"
+            },
+            "time": "2022-07-04T04:40:05+00:00"
+        },
+        {
+            "name": "wireframe-framework/processwire-composer-installer",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wireframe-framework/processwire-composer-installer.git",
+                "reference": "caa2491abb37e43982813104346e3530c607b638"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wireframe-framework/processwire-composer-installer/zipball/caa2491abb37e43982813104346e3530c607b638",
+                "reference": "caa2491abb37e43982813104346e3530c607b638",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0 || ^2.0",
+                "hari/pw-module": "^1.0.0"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "wireframe\\ComposerInstaller\\Plugin"
+            },
+            "autoload": {
+                "psr-4": {
+                    "wireframe\\ComposerInstaller\\": "src/ComposerInstaller/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MPL-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Teppo Koivula",
+                    "email": "teppo@wireframe-framework.com",
+                    "homepage": "https://wireframe-framework.com"
+                }
+            ],
+            "description": "Custom Composer installer for the ProcessWire CMS/CMF modules and site profiles.",
+            "homepage": "https://wireframe-framework.com/docs/processwire-composer-installer/",
+            "keywords": [
+                "composer",
+                "installer",
+                "processwire"
+            ],
+            "support": {
+                "issues": "https://github.com/wireframe-framework/processwire-composer-installer/issues",
+                "source": "https://github.com/wireframe-framework/processwire-composer-installer/tree/1.1.1"
+            },
+            "time": "2022-06-02T13:01:19+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {},
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=8.1.0"
+    },
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
+}

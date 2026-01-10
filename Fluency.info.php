@@ -6,7 +6,7 @@ namespace ProcessWire;
 
 $info = [
     'title' => 'Fluency',
-    'version' => '220',
+    'version' => '230',
     'href' => 'https://processwire.com/talk/topic/24567-fluency-the-complete-translation-enhancement-suite-for-processwire/',
     'icon' => 'language',
     'summary' => 'The complete translation enhancement suite for ProcessWire.',

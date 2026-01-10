@@ -1,6 +1,5 @@
 import FtActivityOverlay from '../ui/FtActivityOverlay';
 import FtConfig from '../global/FtConfig';
-import FtInputfields from './FtInputfields';
 import FtInputfieldTranslateButton from '../ui/FtInputfieldTranslateButton';
 import FtLanguageTab from '../ui/FtLanguageTab';
 
@@ -64,6 +63,13 @@ const FtInputfieldCKEditor = function (inputfield) {
    * @type {?String}
    */
   let defaultLanguageInstanceId = null;
+
+  /**
+   * This is the base inputfield ID that does not have a language ID appended
+   * ex. Inputfield_example vs Inputfield_example__1028
+   * @type {?String}
+   */
+  let inputfieldBaseId = null;
 
   /**
    * Activity overlay object, set on instantiation
@@ -133,25 +139,21 @@ const FtInputfieldCKEditor = function (inputfield) {
       return editorInstances[languageId];
     }
 
-    const ckeditorSelector = this.createCKEditorSelector(languageId);
+    const editorSelectorByLanguageId = [inputfieldBaseId, languageId]
+      .filter(val => !!val)
+      .join('__');
 
-    editorInstances[languageId] = CKEDITOR.instances[ckeditorSelector];
+    let editor = CKEDITOR.instances[editorSelectorByLanguageId];
 
-    return editorInstances[languageId];
-  };
-
-  /**
-   * Creates a CKEditor ID used to get instances by language
-   * @access private
-   * @param  {String|Int} languageId ProcessWire language ID
-   * @return {String}
-   */
-  this.createCKEditorSelector = languageId => {
-    if (languageId == FtConfig.getDefaultLanguage().id) {
-      return defaultLanguageInstanceId;
+    // If ther was no editor found with this ID then a different default language has been set
+    // and the CKEditor instance will be found without an ID appended
+    if (!editor) {
+      editor = CKEDITOR.instances[inputfieldBaseId];
     }
 
-    return `${defaultLanguageInstanceId}__${languageId}`;
+    editorInstances[languageId] = editor;
+
+    return editorInstances[languageId];
   };
 
   /**
@@ -199,7 +201,22 @@ const FtInputfieldCKEditor = function (inputfield) {
   this.initContainers = () => {
     const allInputContainers = this.getInputContainers();
 
-    defaultLanguageInstanceId = Object.values(allInputContainers)[0].id.replace('langTab_', '');
+    // The first input container will have an inputfield ID without any language ID appended
+    inputfieldBaseId = Object.values(allInputContainers)[0].id.replace('langTab_', '');
+
+    const defaultLanguageProcessWireId = FtConfig.getDefaultLanguage().id.toString();
+
+    const containerElements = Object.values(allInputContainers);
+
+    for (var i = containerElements.length - 1; i >= 0; i--) {
+      let containerId = containerElements[i].id;
+
+      if (containerId.endsWith(defaultLanguageProcessWireId)) {
+        defaultLanguageInstanceId = containerId.replace('langTab_', '');
+
+        break;
+      }
+    }
 
     for (let languageId in allInputContainers) {
       let inputContainer = allInputContainers[languageId];

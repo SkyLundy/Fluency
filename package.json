@@ -1,6 +1,6 @@
 {
   "name": "processwire-fluency-translation",
-  "version": "2.1.2",
+  "version": "2.3.0",
   "description": "Translation integration for ProcessWire",
   "scripts": {
     "dev": "rm -rf .parcel-cache && rm -rf ./assets/bundle && parcel watch -p 3000 --no-hmr --no-cache --dist-dir assets/bundle --log-level info",
