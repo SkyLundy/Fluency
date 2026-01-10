@@ -1,5 +1,11 @@
 # Fluency for ProcessWire Changelog
 
+## 2.2.x
+
+- Made a lot of Fluency module methods hookable
+- Changed access to localized strings to Fluency methods rather than direct from the Localization object to make hooking possible
+- Added the ability to set a new default language in an AllConfiguredLanguagesData object instance.
+
 ## 2.2.0 2025-12-23
 
 ### Critical update. New features, Bugfixes/Compatability. Required for users of DeepL.

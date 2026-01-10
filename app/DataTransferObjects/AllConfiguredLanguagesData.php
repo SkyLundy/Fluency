@@ -56,6 +56,38 @@ final class AllConfiguredLanguagesData extends FluencyDTO implements Countable
     }
 
     /**
+     * Set the default language by ID
+     */
+    public function setDefault(int|string $processWireIdOrName): self
+    {
+          $languages = array_map(function($language) use ($processWireIdOrName) {
+            // If this language is currently the default language, create a new language data object and
+            // set isDefault to false
+            if ($language->default) {
+              return ConfiguredLanguageData::fromArray([
+                    ...$language->toArray(),
+                    'default' => false,
+                    'engineLanguage' => $language->engineLanguage,
+                ]);
+            }
+
+            // Assuming you want this language to be the default language
+            // This is assuming the name of your language in ProcessWire is 'french'
+            if ($language->id === $processWireIdOrName || $language->name === $processWireIdOrName) {
+              return ConfiguredLanguageData::fromArray([
+                    ...$language->toArray(),
+                    'default' => true,
+                    'engineLanguage' => $language->engineLanguage,
+                ]);
+            }
+
+            return $language;
+          }, $this->languages);
+
+          return self::fromArray(['languages' => $languages]);
+    }
+
+    /**
      * Gets the current language if it's configured in Fluency
      * @return ConfiguredLanguageData|null
      */

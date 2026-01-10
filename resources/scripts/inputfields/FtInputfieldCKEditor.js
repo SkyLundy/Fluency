@@ -135,7 +135,15 @@ const FtInputfieldCKEditor = function (inputfield) {
 
     const ckeditorSelector = this.createCKEditorSelector(languageId);
 
-    editorInstances[languageId] = CKEDITOR.instances[ckeditorSelector];
+    let editor = CKEDITOR.instances[this.createCKEditorSelector(languageId)];
+
+    // If ther was no editor found with this ID then a different default language has been set
+    // and the CKEditor instance will be found without an ID appended
+    if (!editor) {
+      editor = CKEDITOR.instances[this.createCKEditorSelector()];
+    }
+
+    editorInstances[languageId] = editor;
 
     return editorInstances[languageId];
   };
@@ -147,7 +155,7 @@ const FtInputfieldCKEditor = function (inputfield) {
    * @return {String}
    */
   this.createCKEditorSelector = languageId => {
-    if (languageId == FtConfig.getDefaultLanguage().id) {
+    if (languageId == FtConfig.getDefaultLanguage().id || !languageId) {
       return defaultLanguageInstanceId;
     }
 

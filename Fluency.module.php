@@ -185,7 +185,7 @@ final class Fluency extends Process implements Module, ConfigurableModule
      */
     private function registerFieldConfigurationHooks(): void
     {
-        $localization = Localization::getFor('fieldConfiguration');
+        $localization = $this->getLocalizedStringsFor('fieldConfiguration');
 
         // Adds a "Disable Fluency" checkbox for a hooked field configuration
         $addCheckbox = function (HookEvent $e) use ($localization): void {
@@ -358,7 +358,7 @@ final class Fluency extends Process implements Module, ConfigurableModule
      *
      * @return AllConfiguredLanguagesData
      */
-    public function getConfiguredLanguages(): AllConfiguredLanguagesData
+    public function ___getConfiguredLanguages(): AllConfiguredLanguagesData
     {
         $engineInfo = $this->translationEngineInfo;
 
@@ -468,6 +468,31 @@ final class Fluency extends Process implements Module, ConfigurableModule
     }
 
     /**
+     * Get all localized strings
+     *
+     * #pw-group-Localization
+     *
+     * @return stdClass
+     */
+    public function ___getLocalizedStrings(): stdClass
+    {
+        return Localization::getAll();
+    }
+
+    /**
+     * Get specific group of localized strings by property name
+     *
+     * #pw-group-Localization
+     *
+     * @param  string $property Name of property in Localization::getAll()
+     * @return stdClass
+     */
+    public function ___getLocalizedStringsFor(string $property): stdClass
+    {
+        return Localization::getFor($property);
+    }
+
+    /**
      * Gets all configuration data in one object. This is passed to the Fluency UI rendering
      * JavaScript
      *
@@ -478,13 +503,13 @@ final class Fluency extends Process implements Module, ConfigurableModule
      *
      * @return stdClass All data needed by client UI scripts.
      */
-    public function getClientData(): stdClass
+    public function ___getClientData(): stdClass
     {
         return (object) [
             'apiEndpoints' => $this->getApiEndpoints(),
             'configuredLanguages' => $this->getConfiguredLanguages()->languages,
             'unconfiguredLanguages' => $this->getUnconfiguredLanguages(),
-            'localization' => Localization::getAll(),
+            'localization' => $this->getLocalizedStrings(),
             'engine' => $this->getTranslationEngineInfo(),
             'interface' => [
                 'inputfieldTranslationAction' => $this->fluencyConfig?->inputfield_translation_action,
@@ -575,7 +600,7 @@ final class Fluency extends Process implements Module, ConfigurableModule
 
         // Get all configured languages
         $allConfiguredLanguages = $this->getConfiguredLanguages();
-        dd($allConfiguredLanguages);
+
         // Set source to default language if not passed
         $sourceLanguage ??= $allConfiguredLanguages->getDefault();
 
@@ -657,7 +682,7 @@ final class Fluency extends Process implements Module, ConfigurableModule
      * @return string|null
      * @throws InvalidArgumentException
      */
-    public function getLanguageCode(
+    public function ___getLanguageCode(
         ?int $processWireId = null,
         string $languageSource = 'fluency'
     ): ?string {
@@ -696,7 +721,7 @@ final class Fluency extends Process implements Module, ConfigurableModule
      *                                 Default: 'fluency'
      * @return string
      */
-    public function renderAltLanguageMetaLinkTags(string $languageSource = 'fluency'): string
+    public function ___renderAltLanguageMetaLinkTags(string $languageSource = 'fluency'): string
     {
         $languages = $this->getLanguagesForMarkup($languageSource);
 
@@ -741,7 +766,7 @@ final class Fluency extends Process implements Module, ConfigurableModule
      * @return string
      * @throws InvalidArgumentException
      */
-    public function renderLanguageSelect(
+    public function ___renderLanguageSelect(
         bool $addInlineJs = true,
         string $id = '',
         string|array $classes = [],
@@ -788,7 +813,7 @@ final class Fluency extends Process implements Module, ConfigurableModule
      *                                    Default: 'fluency'
      * @return string
      */
-    public function renderLanguageLinks(
+    public function ___renderLanguageLinks(
         string|array|null $classes = null,
         string $id = '',
         ?string $divider = null,
@@ -902,7 +927,7 @@ final class Fluency extends Process implements Module, ConfigurableModule
      *
      * @return int
      */
-    public function getCachedTranslationsCount(): int
+    public function ___getCachedTranslationsCount(): int
     {
         return $this->translationCache->count();
     }
@@ -914,7 +939,7 @@ final class Fluency extends Process implements Module, ConfigurableModule
      *
      * @return int The number of cached translations, zero indicates success
      */
-    public function clearTranslationCache(): int
+    public function ___clearTranslationCache(): int
     {
         return $this->translationCache->clear();
     }
@@ -929,7 +954,7 @@ final class Fluency extends Process implements Module, ConfigurableModule
      *
      * @return int Number of cached translatable languages, zero indicates success
      */
-    public function clearTranslatableLanguagesCache(): int
+    public function ___clearTranslatableLanguagesCache(): int
     {
         return $this->engineLanguagesCache->clear();
     }
@@ -941,7 +966,7 @@ final class Fluency extends Process implements Module, ConfigurableModule
      *
      * @return bool
      */
-    public function translatableLanguagesAreCached(): bool
+    public function ___translatableLanguagesAreCached(): bool
     {
         return (bool) $this->engineLanguagesCache->count();
     }
@@ -953,7 +978,7 @@ final class Fluency extends Process implements Module, ConfigurableModule
      *
      * @return int Number of items remaining in cache, zero indicates success
      */
-    public function clearAllCaches(): int
+    public function ___clearAllCaches(): int
     {
         $translatableLanguages = $this->clearTranslatableLanguagesCache();
         $translations = $this->clearTranslationCache();
@@ -1066,7 +1091,7 @@ final class Fluency extends Process implements Module, ConfigurableModule
      *
      * @return EngineApiUsageData
      */
-    public function getTranslationApiUsage(): EngineApiUsageData
+    public function ___getTranslationApiUsage(): EngineApiUsageData
     {
         return $this->translationEngine->getApiUsage();
     }

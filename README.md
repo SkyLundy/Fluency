@@ -835,6 +835,26 @@ wire()->addHookAfter('Fluency::getTranslatableLanguages', function (HookEvent $e
 
 ```
 
+### Hook Example: Changing the default language
+
+This will change what is presented as the default language in the UI.
+
+```php
+<?php namespace ProcessWire;
+
+// /site/init.php
+
+wire()->addHookAfter(
+    'Fluency::getConfiguredLanguages',
+    fn (HookEvent $e) => $e->return = $e->return->setDefault('fr')
+);
+
+wire()->addHookAfter(
+    'Fluency::getLocalizedStrings',
+    fn (HookEvent $e) => $e->return->inputfieldTranslateButtons->translateButton = "Translate from French"
+);
+```
+
 ## Known Issues
 
 - The browser plugin for Grammarly may conflict with Fluency and is a known issue for many web apps. If you encounter issues, the solution is to either disable Grammarly while using Fluency in the ProcessWire admin, or log into the admin in a private browser window where Grammarly may not be running. Instructions provided by Grammarly [here](https://support.grammarly.com/hc/en-us/articles/115000091612-Turn-off-Grammarly-on-one-or-more-websites).
