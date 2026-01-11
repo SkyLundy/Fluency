@@ -4,3 +4,4 @@ node_modules
 parcel-trace-*
 *.log
 *.cache
+vendor/

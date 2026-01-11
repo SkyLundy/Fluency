@@ -4,7 +4,7 @@
 
 - Made a lot of Fluency module methods hookable
 - Changed access to localized strings to Fluency methods rather than direct from the Localization object to make hooking possible
-- Added the ability to set a new default language in an AllConfiguredLanguagesData object instance.
+- Added the ability to set a new default language in an AllConfiguredLanguagesData object instance. Instructions for usage added to README.md. Credit to @ivangretsky for the feature request
 
 ## 2.2.0 2025-12-23
 
