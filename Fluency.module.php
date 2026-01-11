@@ -1033,7 +1033,7 @@ final class Fluency extends Process implements Module, ConfigurableModule
      * @param  bool $caching           Can override module config per-request
      * @return EngineTranslationData
      */
-    public function translate(
+    public function ___translate(
         string $sourceLanguage = '',
         string $targetLanguage = '',
         array|string $content = [],

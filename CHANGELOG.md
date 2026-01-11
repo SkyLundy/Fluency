@@ -1,37 +1,70 @@
 # Fluency for ProcessWire Changelog
 
-## 2.2.x
+## 2.3.0
 
-- Made a lot of Fluency module methods hookable
-- Changed access to localized strings to Fluency methods rather than direct from the Localization object to make hooking possible
-- Added the ability to set a new default language in an AllConfiguredLanguagesData object instance. Instructions for usage added to README.md. Credit to @ivangretsky for the feature request
+## New features
+
+- Most Fluency module methods are now hookable:
+  - `Fluency::clearAllCaches()`
+  - `Fluency::clearTranslatableLanguagesCache()`
+  - `Fluency::clearTranslationCache()`
+  - `Fluency::getCachedTranslationsCount()`
+  - `Fluency::getClientData()`
+  - `Fluency::getConfiguredLanguages()`
+  - `Fluency::getLanguageCode()`
+  - `Fluency::getLocalizedStrings()` (new method)
+  - `Fluency::getLocalizedStringsFor()` (new method)
+  - `Fluency::getTranslationApiUsage()`
+  - `Fluency::renderAltLanguageMetaLinkTags()`
+  - `Fluency::renderLanguageLinks()`
+  - `Fluency::renderLanguageSelect()`
+  - `Fluency::translate()`
+  - `Fluency::translatableLanguagesAreCached()`
+- Changed access to localized strings via new methods in Fluency rather than direct from the
+  `FluencyLocalization` object to make hooking possible. UI strings can be modified at runtime where
+  desired.
+- Added the ability to set a new default language in an `AllConfiguredLanguagesData` object instance.
+  Instructions for usage added to README.md. Credit to @ivangretsky for the feature request
+- Fix formatting in this CHANGELOG file so that lines of text follow a uniform max-width.
 
 ## 2.2.0 2025-12-23
 
 ### Critical update. New features, Bugfixes/Compatability. Required for users of DeepL.
 
-**Critical**: All users employing DeepL as the translation service must upgrade. DeepL API authentication requirements will change in January 2025 with previous methods deprecated. Using Fluency with DeepL after 2025-12-15 will cause all translations to fail with a translation service error displayed in the UI.
+**Critical**: All users employing DeepL as the translation service must upgrade. DeepL API
+authentication requirements will change in January 2025 with previous methods deprecated. Using
+Fluency with DeepL after 2025-12-15 will cause all translations to fail with a translation service
+error displayed in the UI.
 
-- Update DeepL authentication method to Auth header from deprecated URL paramter. More information in the DeepL API documentation [here](https://developers.deepl.com/docs/resources/breaking-changes-change-notices/march-2025-deprecating-get-requests-to-translate-and-authenticating-with-auth_key)
+- Update DeepL authentication method to Auth header from deprecated URL paramter. More information
+  in the DeepL API documentation [here](https://developers.deepl.com/docs/resources/breaking-changes-change-notices/march-2025-deprecating-get-requests-to-translate-and-authenticating-with-auth_key)
 - Add clarification to requirement of AdminThemeUikit to use Fluency in README
 - Add 'name' property to ConfiguredLangaugeData object that makes the ProcessWire name of the
   language available
-- Fix deprecated PHP 8.4 deprecated implicit null parameters in FluencyMarkup class. Credit to @BernhardBaumrock for finding/reporting
-- Add jQuery change event trigger when translated values are inserted in addition to native JavaScript change event. See note on change detection in RockPageBuilder fields below
+- Fix deprecated PHP 8.4 deprecated implicit null parameters in FluencyMarkup class. Credit to
+  @BernhardBaumrock for finding/reporting
+- Add jQuery change event trigger when translated values are inserted in addition to native
+  JavaScript change event. See note on change detection in RockPageBuilder fields below
 - Add additional TinyMCE compatability.
 - Replace Gulp with Parcel for asset bundling.
 - Replace Sass with CSS, replace Sass transpiler with PostCSS
-- Add compatibility with new AdminThemeUikit 3 theme and theme features. Remains backwards compatible with previous versions
+- Add compatibility with new AdminThemeUikit 3 theme and theme features. Remains backwards
+  compatible with previous versions
 - UI design updates.
 - Updated README.md with documentation for theming Fluency
-- API usage table now shows used/limit/remaining numbers formatted with commas to more easily read when they're large
+- API usage table now shows used/limit/remaining numbers formatted with commas to more easily read
+  when they're large
 - Remove legacy/unused code and files. Code cleanup. A little more docblocking.
-- Change console warnings about unrecognized fields when attempting to initialize translation to only show when debug is enabled so we aren't junking up the browser console
+- Change console warnings about unrecognized fields when attempting to initialize translation to
+  only show when debug is enabled so we aren't junking up the browser console
 - Added additional documentation for contributing and the tech stack for asset bundling
 
-This release addresses issues with change detection in RockPageBuilder fields. Links to issues reported [here](https://processwire.com/talk/topic/24567-fluency-the-complete-translation-enhancement-suite-for-processwire/?do=findComment&comment=249741), and [here](https://processwire.com/talk/topic/24567-fluency-the-complete-translation-enhancement-suite-for-processwire/?do=findComment&comment=249746).
+This release addresses issues with change detection in RockPageBuilder fields. Links to issues
+reported [here](https://processwire.com/talk/topic/24567-fluency-the-complete-translation-enhancement-suite-for-processwire/?do=findComment&comment=249741), and [here](https://processwire.com/talk/topic/24567-fluency-the-complete-translation-enhancement-suite-for-processwire/?do=findComment&comment=249746).
 
-This release also contains the fix for incorrect `href` and `hreflang` when outputting language meta tags using `$fluency->renderAltLinkLanguageMetaTags()`. [Pull Request](https://github.com/SkyLundy/Fluency/pull/19) credit to @WebWorkingMan for reporting and bugfix
+This release also contains the fix for incorrect `href` and `hreflang` when outputting language meta
+tags using `$fluency->renderAltLinkLanguageMetaTags()`. [Pull Request](https://github.com/SkyLundy/Fluency/pull/19) credit to
+@WebWorkingMan for reporting and bugfix
 
 ## 2.1.1 2025-03-17
 
