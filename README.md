@@ -254,12 +254,12 @@ Output:
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Your Awesome Website</title>
-    <link rel="alternate" hreflang="https://awesomewebsite.com/" href="x-default" />
-    <link rel="alternate" hreflang="https://awesomewebsite.com/" href="en-us" />
-    <link rel="alternate" hreflang="https://awesomewebsite.com/fr/" href="fr" />
-    <link rel="alternate" hreflang="https://awesomewebsite.com/de/" href="de" />
-    <link rel="alternate" hreflang="https://awesomewebsite.com/it/" href="it" />
-    <link rel="alternate" hreflang="https://awesomewebsite.com/es/" href="es" />
+    <link rel="alternate" href="https://awesomewebsite.com/" hreflang="x-default" />
+    <link rel="alternate" href="https://awesomewebsite.com/" hreflang="en-us" />
+    <link rel="alternate" href="https://awesomewebsite.com/fr/" hreflang="fr" />
+    <link rel="alternate" href="https://awesomewebsite.com/de/" hreflang="de" />
+    <link rel="alternate" href="https://awesomewebsite.com/it/" hreflang="it" />
+    <link rel="alternate" href="https://awesomewebsite.com/es/" hreflang="es" />
   </head>
 </html>
 ```

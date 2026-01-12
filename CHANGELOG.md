@@ -1,6 +1,6 @@
 # Fluency for ProcessWire Changelog
 
-## 2.3.0
+## 2.3.0 2026-01-12
 
 ## New features
 
@@ -18,14 +18,15 @@
   - `Fluency::renderAltLanguageMetaLinkTags()`
   - `Fluency::renderLanguageLinks()`
   - `Fluency::renderLanguageSelect()`
-  - `Fluency::translate()`
   - `Fluency::translatableLanguagesAreCached()`
+  - `Fluency::translate()`
 - Changed access to localized strings via new methods in Fluency rather than direct from the
   `FluencyLocalization` object to make hooking possible. UI strings can be modified at runtime where
   desired.
 - Added the ability to set a new default language in an `AllConfiguredLanguagesData` object instance.
   Instructions for usage added to README.md. Credit to @ivangretsky for the feature request
 - Fix formatting in this CHANGELOG file so that lines of text follow a uniform max-width.
+- Correct example href/hreflang markup for meta link tags in README.md
 
 ## 2.2.0 2025-12-23
 
