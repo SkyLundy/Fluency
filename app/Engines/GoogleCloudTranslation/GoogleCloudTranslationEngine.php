@@ -119,10 +119,13 @@ final class GoogleCloudTranslationEngine implements FluencyEngine
     ): object {
         $requestUrl = self::API_URL . "{$endpoint}?key={$this->apiKey}";
 
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+
         $requestConfig = [
             CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_USERAGENT => 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)'
+            CURLOPT_USERAGENT => 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)',
+            CURLOPT_REFERER => "{$protocol}://{$_SERVER['HTTP_HOST']}",
         ];
 
         switch ($method) {
