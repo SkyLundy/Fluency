@@ -1,5 +1,15 @@
 # Fluency for ProcessWire Changelog
 
+## 2.3.X 2026-01-12
+
+### Bugfixes and improvements
+
+- Fixed issue where passing the current default language name or ID to
+  `AllConfiguredLangaugesData::setDefault()` would cause no languages to be the default credit to
+  @ivangretsky for finding and reporting
+- Added `CURLOPT_REFERRER` to `GoogleCloudTranslationEngine` to allow setting API call restrictions
+  in the Google Cloud admin. Credit to @eelke for finding and reporting
+
 ## 2.3.0 2026-01-12
 
 ## New features
